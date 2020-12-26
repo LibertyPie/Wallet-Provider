@@ -1,0 +1,26 @@
+{
+  "name": "web3providers",
+  "version": "1.0.0",
+  "description": "A unified api for web3 wallet  connections",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "web3",
+    "ethereum",
+    "binance",
+    "smart",
+    "chain",
+    "trustwallet"
+  ],
+  "author": "libertypie",
+  "license": "MIT",
+  "devDependencies": {
+    "webpack": "^5.11.0",
+    "webpack-cli": "^4.3.0"
+  },
+  "dependencies": {
+    "micromodal": "^0.4.6"
+  }
+}
