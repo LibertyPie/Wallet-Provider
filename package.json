@@ -20,6 +20,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
+    "@types/micromodal": "^0.3.2",
     "babel-loader": "^8.2.2",
     "babel-plugin-inline-svg": "^1.2.0",
     "html-webpack-inline-svg-plugin": "^2.3.0",

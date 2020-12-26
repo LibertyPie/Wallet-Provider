@@ -8,7 +8,7 @@
         "es2015",
         "dom"
       ],
-      //"jsx": "react",
+      "moduleResolution":"Node",
       "allowJs": true
     }
   }

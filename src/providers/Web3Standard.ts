@@ -4,10 +4,6 @@
  * @author https://github.com/libertypie
  */
 
-declare global {
-    interface Window {}
-}
-
  import Provider from "../interface/Provider";
  import NetworkCodes from "../classes/NetworkCodes"
  import Status from "../classes/Status"
@@ -25,8 +21,8 @@ declare global {
 
     _accounts: Array<any> = [];
 
-    constructor(walletIdentifier: string ){
-        this._provider = this.windowObj[walletIdentifier];
+    constructor(provider: Object ){
+        this._provider = provider;
     }
 
     /**
@@ -54,7 +50,7 @@ declare global {
                          .setCode(NetworkCodes.wallet_not_found)
         }
 
-
+     
         //lets request access 
         try {
 
@@ -113,7 +109,7 @@ declare global {
         this._onDisconnectCallback = callback;
     }
 
-    /**
+    /** 
      * getProvider
      */
     getProvider(): any {

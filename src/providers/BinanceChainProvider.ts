@@ -1,7 +1,12 @@
 /**
- * LibertyPie
+ * WalletProvider 
+ * @license MIT 
+ * @author https://github.com/libertypie
  */
 
-class EthereumProvider {
-
-}
+import Web3Standard from "./Web3Standard";
+class EthereumProvider extends Web3Standard{
+    constructor(){
+        super((window as any).BinanceChain)
+    }
+}   
