@@ -4,17 +4,20 @@
  * @author https://github.com/libertypie
  */
 
+ import Status from "../classes/Status"
 
 interface Provider {
-    initialize(): any;
+    initialize(): Status;
     connect(): any;
     disconnect(): any;
-    onConnect(callback: Function): any;
-    onDisconnect(callback: Function): any;
-    onRequestPending(callback: Function): any;
-    onError(callback: Function): any;
     getProvider(): any;
     isSupported(): boolean;
+    
+    onConnect(callback: Function): void;
+    onDisconnect(callback: Function): void;
+    onPermissionRequest(callback: Function): void;
+    onError(callback: Function): void;
+
  }
 
  export default Provider;

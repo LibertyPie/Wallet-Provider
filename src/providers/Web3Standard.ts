@@ -14,13 +14,27 @@ declare global {
 
  class Web3Standard implements Provider {
 
-    _provider: Object = null
+    _provider: any = null
     windowObj = (window as any);
-    onConnectCallback: Function;
+
+    //events
+    _onConnectCallback: Function = () => {};
+    _onDisconnectCallback: Function = () => {};
+    _onPermissionRequestCallback: Function = () => {}
+    _onErrorCallback: Function = () => {}
+
     _accounts: Array<any> = [];
 
     constructor(walletIdentifier: string ){
         this._provider = this.windowObj[walletIdentifier];
+    }
+
+    /**
+     * initialize the plugin
+     */
+    initialize(): Status {
+
+        return Status.success("")
     }
 
     /**
@@ -48,8 +62,8 @@ declare global {
 
             let account = this._accounts[0]
             
-            if(this.onConnectCallback != null && typeof this.onConnectCallback == "function"){
-                this.onConnectCallback({provider:  this._provider, account: account})
+            if(this._onConnectCallback != null && typeof this._onConnectCallback == "function"){
+                this._onConnectCallback({provider:  this._provider, account: account})
             }
 
             return Status.successPromise("",{
@@ -63,10 +77,40 @@ declare global {
     }
 
     /**
+     * disconnect
+     * @param callback 
+     */
+    disconnect(): Status {
+        return Status.success("")
+    }
+
+    /**
      * onConnect
      */
     onConnect(callback: Function = () => {}){
-        this.onConnectCallback = callback;
+        this._onConnectCallback = callback;
+    }
+
+    /**
+     * onPermission
+     * @param callback 
+     */
+    onPermissionRequest(callback: Function = () => {}){
+        this._onPermissionRequestCallback = callback;
+    }
+
+    /**
+     * on error
+     */
+    onError(callback: Function = () => {}): void {
+        this._onErrorCallback = callback
+    }
+
+    /**
+     * onConnect
+     */
+    onDisconnect(callback: Function = () => {}){
+        this._onDisconnectCallback = callback;
     }
 
     /**
