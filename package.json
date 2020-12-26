@@ -4,7 +4,8 @@
   "description": "A unified api for web3 wallet  connections",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "webpack --mode development --watch",
+    "build": "webpack --mode production"
   },
   "keywords": [
     "web3",
@@ -17,6 +18,9 @@
   "author": "libertypie",
   "license": "MIT",
   "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "babel-loader": "^8.2.2",
     "webpack": "^5.11.0",
     "webpack-cli": "^4.3.0"
   },
