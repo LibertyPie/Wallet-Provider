@@ -21,13 +21,13 @@
             throw new Error("options_must_be_object")
         }
 
-        this.config = {...this.config,options}
+        this.config = Object.assign(this.config,options);
     }
 
     /**
      * modalMarkup
      */
-    _getModalMarkup(modalId){
+    _getModalMarkup(modalId: string){
 
         let modalMarkup = `
             <div id="${modalId}" aria-hidden="true">
@@ -35,7 +35,7 @@
                     <div role="dialog" aria-modal="true" aria-labelledby="${modalId}-title" >
                         <header>
                             <h2 id="${modalId}-title">
-                                ${modalTitle}
+                                ${this.config.modalTitle}
                             </h2>
                             <button aria-label="Close modal" data-micromodal-close></button>
                         </header>

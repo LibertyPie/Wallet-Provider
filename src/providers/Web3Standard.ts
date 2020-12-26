@@ -1,26 +1,39 @@
 /**
- * LibertyPie
+ * WalletProvider 
+ * @license MIT 
+ * @author https://github.com/libertypie
  */
-import Status from "../../classes/Status"
-import NetworkCodes from "../../classes/networkCodes"
 
-class EthereumProvider {
+declare global {
+    interface Window {}
+}
 
-    _onConnectCallback = null;
-    _provider = window.BinanceChain;
-    _accounts = [];
+ import Provider from "../interface/Provider";
+ import NetworkCodes from "../classes/NetworkCodes"
+ import Status from "../classes/Status"
+
+ class Web3Standard implements Provider {
+
+    _provider: Object = null
+    windowObj = (window as any);
+    onConnectCallback: Function;
+    _accounts: Array<any> = [];
+
+    constructor(walletIdentifier: string ){
+        this._provider = this.windowObj[walletIdentifier];
+    }
 
     /**
      * wether the provider is supported in the browser
      */
-    isSupported(){
-        return _provider;
+    isSupported(): boolean {
+        return (typeof this._provider !== 'undefined');
     }
 
     /**
-     * connect - Connect to the provide
+     * connect
      */
-    async connect(){
+    async  connect(): Promise<any> { 
 
         if(!this.isSupported()){
             return Status.error("wallet_not_found")
@@ -49,20 +62,20 @@ class EthereumProvider {
         }
     }
 
-
     /**
      * onConnect
      */
-    onConnect(callback = null){
+    onConnect(callback: Function = () => {}){
         this.onConnectCallback = callback;
     }
 
     /**
      * getProvider
      */
-    getProvider(){
+    getProvider(): any {
         return this._provider;
     }
 
-    
-}
+ }
+
+ export default Web3Standard;

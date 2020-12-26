@@ -1,0 +1,7 @@
+/**
+ * LibertyPie
+ */
+
+class EthereumProvider {
+
+}
