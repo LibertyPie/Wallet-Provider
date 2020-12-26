@@ -4,8 +4,11 @@
   "description": "A unified api for web3 wallet  connections",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack --mode development --watch",
-    "build": "webpack --mode production"
+    "dev-compile-style": "npx node-sass --include-path scss ./src/assets/styles/main.scss  ./src/assets/styles/main.css --watch --output-style compressed",
+    "build-dev": "compile-style; npx tsc-bundle tsconfig.json --watch --debug",
+    "dev": "npx concurrently \"npm:dev-compile-style\" \"npm:build-dev\"",
+    "compile-style": "npx node-sass --include-path scss ./src/assets/styles/main.scss  ./src/assets/styles/main.css --output-style compressed",
+    "build": "compile-style && npx tsc-bundle tsconfig.json"
   },
   "keywords": [
     "web3",
@@ -18,18 +21,10 @@
   "author": "libertypie",
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.12.10",
-    "@babel/preset-env": "^7.12.11",
-    "@types/micromodal": "^0.3.2",
-    "babel-loader": "^8.2.2",
-    "babel-plugin-inline-svg": "^1.2.0",
-    "html-webpack-inline-svg-plugin": "^2.3.0",
-    "html-webpack-plugin": "^4.5.0",
-    "terser-webpack-plugin": "^5.0.3",
-    "ts-loader": "^8.0.12",
+    "concurrently": "^5.3.0",
+    "node-sass": "^5.0.0",
     "typescript": "^4.1.3",
-    "webpack": "^5.11.0",
-    "webpack-cli": "^4.3.0"
+    "typescript-bundle": "^1.0.17"
   },
   "dependencies": {
     "micromodal": "^0.4.6"

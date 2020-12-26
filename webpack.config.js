@@ -28,25 +28,26 @@ module.exports = {
 
   module: {
     rules: [
-        {
-            test: /\.tsx?$/,
-            use: 'ts-loader',
-            exclude: /node_modules/,
-        },
+    
        {
-        test: /\.m?js$/,
+        test: /\.(m?js)$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
-          options: {
-            presets: [
-              ['@babel/preset-env', { targets: "defaults" }]
-            ],
-            plugins: ['@babel/plugin-proposal-class-properties']
-          }
+          loader: 'babel-loader'
         }
       },
 
+      {
+        test: /\.tsx?$/,
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true
+            }
+          }
+        ]
+      }
       
     ]
   }
