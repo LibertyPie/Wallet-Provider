@@ -22,7 +22,7 @@
     
     .modal__container {
         background-color: #fff;
-        padding: 30px;
+        padding: 10px;
         width: 680px;
         max-width: 98%;
         max-height: 100vh;
@@ -61,64 +61,131 @@
         color: rgba(0,0,0,.8);
     }
     
-    .modal__btn {
-        font-size: .875rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        padding-top: .5rem;
-        padding-bottom: .5rem;
-        background-color: #e6e6e6;
-        color: rgba(0,0,0,.8);
-        border-radius: .25rem;
-        border-style: none;
-        border-width: 0;
-        cursor: pointer;
-        -webkit-appearance: button;
-        text-transform: none;
-        overflow: visible;
-        line-height: 1.15;
-        margin: 0;
-        will-change: transform;
-        -moz-osx-font-smoothing: grayscale;
-        -webkit-backface-visibility: hidden;
-        backface-visibility: hidden;
-        -webkit-transform: translateZ(0);
-        transform: translateZ(0);
-        transition: -webkit-transform .25s ease-out;
-        transition: transform .25s ease-out;
-        transition: transform .25s ease-out,-webkit-transform .25s ease-out;
-    }
-    
-    .modal__btn:focus, .modal__btn:hover {
-        -webkit-transform: scale(1.05);
-        transform: scale(1.05);
-    }
-    
-    .modal__btn-primary {
-        background-color: #00449e;
-        color: #fff;
-    }
     
     .row {
 
         display: flex;
         flex-direction: row;
+        margin: 6px;
         
         .col {
             flex: 0 50%;
-            height: 180px;
+            width: 50%;
         }
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 680px) {
         .row {
-            display: block;
+            display: block !important;
         }
         .col {
-            width: 100%;
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto;
+        }
+
+        .provider_item{
+            height: auto !important;
         }
     }
 
+    .flex { 
+        display: flex;
+        &.flex_column {flex-direction: column;}
+        &.flex_row {flex-direction: row;}
+    }
+
+
+    .provider_item{
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        background-color: #f9fafc;
+        padding: 5px;
+        border-radius: 8px !important;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        height: 210px;
+        
+        .title{ 
+            text-transform: capitalize; 
+            font-size: 24px; 
+            margin:4px; 
+            margin-top: 10px;
+            color: #747476;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            text-align: center;
+            width: calc(98%);
+        }
+
+        .icon{
+            height: 90px;
+            width: 90px;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin-bottom: 10px;
+        }
+
+        .web3_wallets_icon{
+            background-image: url("data:image/svg+xml,%3Csvg height='512' width='512' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs/%3E%3Cpath d='M118.179 133.179a14.953 14.953 0 01-10.606-4.393L64.131 85.344c-5.858-5.858-5.858-15.356 0-21.213 5.857-5.857 15.355-5.857 21.213 0l33.204 33.204C156.747 64.127 205.009 46 256 46c8.284 0 15 6.716 15 15s-6.716 15-15 15c-47.997 0-93.176 18.746-127.215 52.785a14.952 14.952 0 01-10.606 4.394zM74.549 452.451a14.95 14.95 0 01-10.606-4.394c-5.858-5.857-5.858-15.355 0-21.213l33.393-33.393C64.127 355.253 46 306.991 46 256c0-8.284 6.716-15 15-15s15 6.716 15 15c0 47.996 18.746 93.176 52.785 127.215 5.858 5.857 5.858 15.355 0 21.213l-43.63 43.63a14.953 14.953 0 01-10.606 4.393z' fill='%2361729b'/%3E%3Cpath d='M256 466c-8.284 0-15-6.716-15-15s6.716-15 15-15c47.996 0 93.176-18.746 127.215-52.785 5.857-5.857 15.355-5.857 21.213 0l43.439 43.438c5.858 5.857 5.858 15.355 0 21.213-5.857 5.857-15.355 5.857-21.213 0l-33.201-33.201C355.253 447.873 306.991 466 256 466zM451 271c-8.284 0-15-6.716-15-15 0-47.996-18.746-93.176-52.785-127.215-5.858-5.858-5.858-15.355 0-21.213l43.477-43.477c5.857-5.857 15.355-5.857 21.213 0s5.858 15.355 0 21.213l-33.239 33.239C447.873 156.747 466 205.009 466 256c0 8.284-6.716 15-15 15z' fill='%2347568c'/%3E%3Ccircle cx='50' cy='50' fill='%23a5e887' r='50'/%3E%3Ccircle cx='462' cy='50' fill='%2300cc76' r='50'/%3E%3Ccircle cx='50' cy='462' fill='%23a5e887' r='50'/%3E%3Ccircle cx='462' cy='462' fill='%2300cc76' r='50'/%3E%3Cpath d='M256 106c-8.795 0-29.375 12.5-29.375 12.5s-18.336-4.693-19.083-4.47c-54.464 18.642-94.898 67.799-100.798 126.972 0 0 8.506 9.937 8.506 14.998s-8.506 15-8.506 15c5.901 59.172 46.336 108.33 100.8 126.97l19.263-2.136S246.014 406 256 406c9.604 0 28.108-9.956 28.108-9.956l20.348 1.925c54.464-18.64 94.898-67.797 100.8-126.969 0 0-10.756-9.939-10.756-15s10.756-14.998 10.756-14.998c-5.9-59.173-46.334-108.33-100.797-126.971L286 116.75S266.49 106 256 106z' fill='%234bb9ec'/%3E%3Cpath d='M394.5 256c0-5.061 10.756-14.998 10.756-14.998-5.9-59.173-46.334-108.33-100.797-126.971L286 116.75S266.49 106 256 106v300c9.604 0 28.108-9.956 28.108-9.956l20.348 1.925c54.464-18.64 94.898-67.797 100.8-126.969 0 0-10.756-9.939-10.756-15z' fill='%230095ff'/%3E%3Cpath d='M106 256c0 5.063.256 10.065.748 15h298.504c.492-4.935.748-9.938.748-15s-.256-10.065-.748-15H106.748a151.153 151.153 0 00-.748 15z' fill='%23d5e8fe'/%3E%3Cpath d='M405.252 241H256v30h149.252c.492-4.935.748-9.938.748-15s-.256-10.065-.748-15z' fill='%23b5dbff'/%3E%3Cpath d='M284.315 143.418C295.074 173.259 301 213.241 301 256c0 42.76-5.926 82.742-16.685 112.583C274.645 395.404 263.126 406 256 406c16.949 0 33.248-2.83 48.455-8.035C321.993 362.979 331 309.298 331 256s-9.007-106.98-26.545-141.965C289.248 108.83 272.949 106 256 106c7.126 0 18.645 10.596 28.315 37.418z' fill='%23d5e8fe'/%3E%3Cpath d='M227.684 368.583C216.925 338.742 211 298.76 211 256s5.925-82.742 16.684-112.582C237.355 116.596 248.874 106 256 106c-16.949 0-33.248 2.83-48.455 8.034C190.007 149.02 181 202.702 181 256s9.007 106.979 26.545 141.966C222.752 403.17 239.051 406 256 406c-7.126 0-18.645-10.596-28.316-37.417z' fill='%23edf5ff'/%3E%3C/svg%3E");
+        }
+
+        .binance_chain_wallet_icon {
+            background-image: url("data:image/svg+xml,%0A%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2500.01 2500'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23f3ba2f;%7D%3C/style%3E%3C/defs%3E%3Ctitle%3Ebi%3C/title%3E%3Cg id='Layer_2' data-name='Layer 2'%3E%3Cg id='Layer_1-2' data-name='Layer 1'%3E%3Cpath class='cls-1' d='M764.48,1050.52,1250,565l485.75,485.73,282.5-282.5L1250,0,482,768l282.49,282.5M0,1250,282.51,967.45,565,1249.94,282.49,1532.45Zm764.48,199.51L1250,1935l485.74-485.72,282.65,282.35-.14.15L1250,2500,482,1732l-.4-.4,282.91-282.12M1935,1250.12l282.51-282.51L2500,1250.1,2217.5,1532.61Z'/%3E%3Cpath class='cls-1' d='M1536.52,1249.85h.12L1250,963.19,1038.13,1175h0l-24.34,24.35-50.2,50.21-.4.39.4.41L1250,1536.81l286.66-286.66.14-.16-.26-.14'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .provider_info {
+            font-size: 15px;
+            color: #8e8e91;
+            letter-spacing: 0.2px;
+            margin-top:5px;
+        }
+
+        .sub_icon{
+            width: 16px;
+            height: 16px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .supported_wallets {
+            line-height: 14px;
+            font-size: 14px;
+            flex-wrap: nowrap;
+            padding: 5px;
+            div{ 
+                padding: 0px 4px 0px 4px;
+                white-space: nowrap;
+                margin-top:5px;
+             }
+        }
+
+        .metamask_16{
+            background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAQCAMAAADH72RtAAAA1VBMVEUAAAD0hBvqexvkdht2PRbkdhvkdhvkdhvkdht2PRbMuKnkdhuhVBh2PRb2hRvidht2PRbArZ7NnXrCZBnafDD2hRvkdht2PRbkdhvXcBv2hRu9ZRl2PRbArZ52PRbArZ6aUBitWhn2hRt2PRbkdhrOYRbufxvechrzgRvYaxjArZ7PbBquWxh9QRZBPDjrexvEaBm8YxmfUxiLSBeGRRfRvK6llYrVlF3fklRcVE5yUjXgfS23aCXRch/Jah/oexveeBrdbxrLahrUZxeSSxdOMhdAKxcM58GKAAAAInRSTlMAgDDPz4BgQBAQ7+/v79/f38/Pz7+vr6+fn4+Pj4BwMDAgLRD9wQAAAL1JREFUGNNNztduAkEQRNEytgHnnANQ3cMGdsk55///JHoEEtyXkc7UQwNXJZxWBH7Tl2we+zJftwI8iiT6eeZ7qLTERKx1EJKcNVLxcuEprZDlpviAD/G1ybo9x03Lb5KD/Es7qQdqostGU+7snjmpewnK5I/dQDJyLuTCuRr5BnzTvifTkDo2IIF7nublXDVySitcuUAVuFRVN+ptN8N+FKmXjOrN63W3Wh10nm3/DhvlgMJTHMd/QD6b2wEMaB765TMIRwAAAABJRU5ErkJggg==");
+        }
+
+        .brave_16{
+            background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAABGlBMVEUAAADgPCbiPCbxVCvgPCbhPCbxVSvxVSvxUyrhPCbfPCbkPSfxVSvxVSvxVSvgPCbxVivgPCbxVSvpSSjxVivxVSvxVCvxVSvgPCbxVCvwTSrxVivfPCbfPCbxVCvwSCrxVivfPCbxVivhPCb////hPCbxVSvwSyrwUCrqPijmPijjPCbxUivvRCnuQCn+9PL6vrDwnpP3zsn7yr34qpXuhnj5sqL0cVLyXzj86OT729f5z8n4w7zztq70n5TvkYX2knrtemvlVEH98/L96uX808r2tq70qqH4ppX3nYj1im31hGzzc1/yb1/sbl3xY1HyXUTxUTbtSzXlSDT839f83df1tq71k4f1inn1iG30el/yZ1HmYU/xWzjy//X5AAAAJHRSTlMAYIBg75+AQDAwIM+vn3BwYEAgEO/v79/fz8+/v6+PgFBQICDYx/R8AAABjklEQVQ4y3WS51bCQBCFV+miIGLvZbMoCCGQhCpVQESp9vL+r+HusHsmRrw/cpIzX27uZC9BHV9fJhLpzFUypfnIAnkYAtqSa7gRCHiYA+BELLbifBmEAAht1hkCD48KQOIUpg29YzayOqV6t27kSgYQZ2hQoC41HRabjBVv3UC7pWleAjrnBnlK86aZBaz0YhhVSnPcYb6In7F7MXjqfydsSivJWb0sni1NWwbgAAxAgw4HmnALFofoMNedzi81+VBXDgGewaQg2GXYhvsbniFEQIwrS7myH7CgIedqC7KqiAY4WJaca0cSiAgAgtoT/qt7EFAoKoEgUxa09Dkqyw0ggtQWnxcpqCp3aGEECKGA58kUHOgXB3y/+2CLNcZvr9OeMIKjwkJBCNMuwI/qDg1jJgBHpXaAeBdjeQpcuwS1BkBRHklFJIQIGEJWri/mtZQqHCquOjnQqaU6GScO+VVpxyNZWjhJVwqsPSZARbadgDdK/ii4h0D4giySXwH4ebfJvgDCIfK/TtIZ1+s/ibtsC9II9P0AAAAASUVORK5CYII=");        
+        }
+
+        .opera_16 {
+            background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAclBMVEUAAAD0Qzb1QzbyQjTTLy/zQjXzQzbWLi7RLi70Qzb0QjX0Qjb3RTTRRi70QzbTLy/0QzbXMTDTLy/bNDHdNTHTLy/nOjL0QzbTLy/TLy/TLy/xQjbTMDDTMDDbMy/UMDDzRDfTLy/0Qzb0RDX0QzbTLy/l9Cn4AAAAJHRSTlMAtPYl99GBOibmdHEdBe/p6OTk1MrDwLmurJ6ShnVwalNSinh0uLm0AAAAdklEQVQY02VPRwKDMAxzgIbR0tJJN0v6/xchCRzAPnlpiavYmrwy9iBz7SNg97ieb//SzwbAJ02/JJ/+DqBwTZeQzYR3/wH6JpNMLIA2LDKSP8+w0J/Il+TAcZG7kxe1UBBFqmWl2BiTcmVdhwvxhzqq6j52/QhjfQ5KZNQH4AAAAABJRU5ErkJggg==");
+        }
+
+        .trustwallet_16 {
+            background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAUVBMVEUAAAAzdbszdbszdbszdbszdbszdbszdbszdbszdbszdbszdbtmmMzy9vuZut1NhsSzy+bZ5fLM3e7m7ve/1OpAfr+AqdVZj8j///+MsdlzoNAIU6iwAAAAC3RSTlMA3xDvz7+vYDCAQLieikoAAACESURBVBjTZY9REsIwCESxqdZ2Q0iTtFXvf1CBqB92P5jhATsLmaYbVONEXcMVH13u3o/4KRjxubQ1+s5AC3CUynmvXHZgJvWLfSo56QoFBQWupAAEBfUPbI8O2tNA0MLiwK3MFDlbHxlmutjNWqJkfgGYe7AtMTfxYN/ocvTo5+dO778BRU0J8StKOSkAAAAASUVORK5CYII=");
+        }
+
+        .status_16 {
+            background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAMFBMVEUAAABbbe5bbe5bbe5bbe5bbe5bbe7////W2/t6iPHM0fq3v/ittveOm/OEkvJwf/DcYthnAAAABnRSTlMAz79gIO+tFDY8AAAAbklEQVQI12NgYDBKS1NmAALHNCAQYWBgCQMxUh0YGIFU3rQ0AQaztLSc8qq0ZAa1tLTt5eVpSQxpafnlQEYakJHZ0dELZtzo6JgGZgBlvgEZakBGdVpaElD78vJjaUDtjGmZz4BmCsCtgFsKdwYAndQtXIEfsPUAAAAASUVORK5CYII=");
+        }
+    } //end provider Item
 
     /**************************\
         Demo Animation Style
@@ -171,4 +238,7 @@
     .micromodal-slide .modal__overlay {
         will-change: transform;
     }
+
+   
+
 }

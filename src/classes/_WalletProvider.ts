@@ -45,16 +45,21 @@ import Status from "./Status"
     constructor(options = {}){
 
         if(typeof options != 'object'){
-            throw new Error("options_must_be_object")
+            throw new Exception("options_must_be_object","Options must be an object")
+            return
         }
 
         this.config = Object.assign(this.config,options);
 
+        if(!this.config.providers.hasOwnProperty("web_wallets")){
+            this.config.providers = {...{web3_wallets: {}}, ...this.config.providers}
+        }
 
-        //lets insert the markup
-        this._injectModalMarkup(this.modalId);
+        //process and validate enabled providers 
+        this.validateEnabledProviders();
 
-        let _this = this;
+        //inject modal
+        this._injectModalMarkup();
 
         MicroModal.init({       
             onShow: modal => this._onModalShow(modal), 
@@ -68,6 +73,27 @@ import Status from "./Status"
         });
        
     }
+
+    /**
+     * process provider configs
+     */
+    private validateEnabledProviders(){
+        
+        //let check enabled providers 
+        let enabledProviders = this.config.providers;
+
+        for(let provider of Object.keys(enabledProviders)){
+            if(!this.providerModules.hasOwnProperty(provider)){
+                
+                let exception = new Exception("unknown_provider",`Unknown provider name ${provider}`);
+
+                this.dispatchEvent("error",exception);
+                
+                throw exception;
+            }   
+        }
+        
+    } //end fun
 
     /**
      * trigger  onError Event 
@@ -144,7 +170,9 @@ import Status from "./Status"
     /**
      * modalMarkup
      */
-    private _injectModalMarkup(modalId: string): void {
+    private _injectModalMarkup(): void {
+
+        let modalId = this.modalId;
 
         //lets check if the class is created already
         let styleId = document.getElementById("wallet_provider__style")
@@ -156,6 +184,44 @@ import Status from "./Status"
             document.head.appendChild(style);
         }
         
+        let providersMarkup = "";
+
+        for(let provider of Object.keys(this.config.providers)){
+
+            let enabledProviderInfo = this.config.providers[provider];
+            let providerDescText = enabledProviderInfo.connect_text || "";
+
+            if(provider == "web3_wallets"){
+                providerDescText = `
+                    <div class="flex flex_row supported_wallets flex_wrap">
+                        <div class="flex flex_row">
+                            <div class="sub_icon metamask_16"></div>
+                            <div>MetaMask</div>
+                        </div>
+                        <div class="flex flex_row">
+                            <div class="sub_icon brave_16"></div>
+                            <div>Brave</div>
+                        </div>
+                        <div class="flex flex_row">
+                            <div class="sub_icon trustwallet_16"></div>
+                            <div>Trust Wallet</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            providersMarkup  += `
+                <a class="col">
+                    <div class="provider_item">
+                        <div class="icon ${provider}_icon"></div>
+                        <h1 class="title">${provider.replace(/(\_)+/g," ")}</h1>
+                        <div class="provider_info">
+                            ${providerDescText}
+                        </div>
+                    </div>
+                </a>
+            `;
+        }
 
         let modalMarkup = `
             <div class="wallet_provider__wrapper">
@@ -170,15 +236,7 @@ import Status from "./Status"
                             </header>
                             <main class="modal__content" id="${modalId}-content">
                               <div class="row">
-                                <a class="col" style="border: 1px solid black;">
-                                    LOL
-                                </a>
-                                <a class="col" style="border: 1px solid green;">
-                                    Bee
-                                </a>
-                                <a class="col" style="border: 1px solid red;">
-                                    Cee
-                                </a>
+                                ${providersMarkup}
                               </div>
                             </main>
                         </div>
@@ -206,9 +264,9 @@ import Status from "./Status"
                 this.dispatchEvent("error",new Exception("unknown_provider",`Unknown provider name ${provider}`));
                 return Promise.resolve(Status.error("unknown_provider").setCode(ErrorCodes.unknown_provider));
             }   
-
-            
         }
+
+
     } //end fun
 
  }

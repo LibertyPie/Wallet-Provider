@@ -4,6 +4,17 @@
  * @license MIT
  * @author https://github.com/libertypie
  */
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -52,7 +63,7 @@ var Exception_1 = __importDefault(require("./Exception"));
 var Status_1 = __importDefault(require("./Status"));
 var _WalletProvider = /** @class */ (function () {
     function _WalletProvider(options) {
-        var _this_1 = this;
+        var _this = this;
         if (options === void 0) { options = {}; }
         /**
          * default config
@@ -79,15 +90,20 @@ var _WalletProvider = /** @class */ (function () {
         this.eventNames = ["modalOpen", "modalClose", "connect", "disconnect", "error"];
         this.registeredEvents = {};
         if (typeof options != 'object') {
-            throw new Error("options_must_be_object");
+            throw new Exception_1.default("options_must_be_object", "Options must be an object");
+            return;
         }
         this.config = Object.assign(this.config, options);
-        //lets insert the markup
-        this._injectModalMarkup(this.modalId);
-        var _this = this;
+        if (!this.config.providers.hasOwnProperty("web_wallets")) {
+            this.config.providers = __assign({ web3_wallets: {} }, this.config.providers);
+        }
+        //process and validate enabled providers 
+        this.validateEnabledProviders();
+        //inject modal
+        this._injectModalMarkup();
         micromodal_1.default.init({
-            onShow: function (modal) { return _this_1._onModalShow(modal); },
-            onClose: function (modal) { return _this_1._onModalClose(modal); },
+            onShow: function (modal) { return _this._onModalShow(modal); },
+            onClose: function (modal) { return _this._onModalClose(modal); },
             openClass: 'is-open',
             disableScroll: true,
             disableFocus: false,
@@ -95,6 +111,21 @@ var _WalletProvider = /** @class */ (function () {
             awaitCloseAnimation: false,
         });
     }
+    /**
+     * process provider configs
+     */
+    _WalletProvider.prototype.validateEnabledProviders = function () {
+        //let check enabled providers 
+        var enabledProviders = this.config.providers;
+        for (var _i = 0, _a = Object.keys(enabledProviders); _i < _a.length; _i++) {
+            var provider = _a[_i];
+            if (!this.providerModules.hasOwnProperty(provider)) {
+                var exception = new Exception_1.default("unknown_provider", "Unknown provider name " + provider);
+                this.dispatchEvent("error", exception);
+                throw exception;
+            }
+        }
+    }; //end fun
     /**
      * trigger  onError Event
      * @param string
@@ -124,19 +155,19 @@ var _WalletProvider = /** @class */ (function () {
      * show the modal
      */
     _WalletProvider.prototype.showModal = function () {
-        var _this_1 = this;
+        var _this = this;
         micromodal_1.default.show(this.modalId, {
-            onShow: function (modal) { return _this_1._onModalShow(modal); },
-            onClose: function (modal) { return _this_1._onModalClose(modal); },
+            onShow: function (modal) { return _this._onModalShow(modal); },
+            onClose: function (modal) { return _this._onModalClose(modal); },
         });
     };
     /**
      * hide the modal
      */
     _WalletProvider.prototype.hideModal = function () {
-        var _this_1 = this;
+        var _this = this;
         micromodal_1.default.close(this.modalId, {
-            onClose: function (modal) { return _this_1._onModalClose(modal); },
+            onClose: function (modal) { return _this._onModalClose(modal); },
         });
     };
     /**
@@ -164,7 +195,8 @@ var _WalletProvider = /** @class */ (function () {
     /**
      * modalMarkup
      */
-    _WalletProvider.prototype._injectModalMarkup = function (modalId) {
+    _WalletProvider.prototype._injectModalMarkup = function () {
+        var modalId = this.modalId;
         //lets check if the class is created already
         var styleId = document.getElementById("wallet_provider__style");
         if (styleId == null) {
@@ -173,7 +205,17 @@ var _WalletProvider = /** @class */ (function () {
             style.innerHTML = main_css_1.default;
             document.head.appendChild(style);
         }
-        var modalMarkup = "\n            <div class=\"wallet_provider__wrapper\">\n                <div class=\"modal micromodal-slide\" id=\"" + modalId + "\" class=\"modal\" aria-hidden=\"true\">\n                    <div class=\"modal__overlay\" tabindex=\"-1\" data-micromodal-close>\n                        <div class=\"modal__container\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"" + modalId + "-title\">\n                            <header class=\"modal__header\">\n                                <h2 class=\"modal__title\" id=\"" + modalId + "-title\">\n                                    " + this.config.modalTitle + "\n                                </h2>\n                                <button class=\"modal__close\" aria-label=\"Close modal\" data-micromodal-close></button>\n                            </header>\n                            <main class=\"modal__content\" id=\"" + modalId + "-content\">\n                              <div class=\"row\">\n                                <a class=\"col\" style=\"border: 1px solid black;\">\n                                    LOL\n                                </a>\n                                <a class=\"col\" style=\"border: 1px solid green;\">\n                                    Bee\n                                </a>\n                                <a class=\"col\" style=\"border: 1px solid red;\">\n                                    Cee\n                                </a>\n                              </div>\n                            </main>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
+        var providersMarkup = "";
+        for (var _i = 0, _a = Object.keys(this.config.providers); _i < _a.length; _i++) {
+            var provider = _a[_i];
+            var enabledProviderInfo = this.config.providers[provider];
+            var providerDescText = enabledProviderInfo.connect_text || "";
+            if (provider == "web3_wallets") {
+                providerDescText = "\n                    <div class=\"flex flex_row supported_wallets flex_wrap\">\n                        <div class=\"flex flex_row\">\n                            <div class=\"sub_icon metamask_16\"></div>\n                            <div>MetaMask</div>\n                        </div>\n                        <div class=\"flex flex_row\">\n                            <div class=\"sub_icon brave_16\"></div>\n                            <div>Brave</div>\n                        </div>\n                        <div class=\"flex flex_row\">\n                            <div class=\"sub_icon trustwallet_16\"></div>\n                            <div>Trust Wallet</div>\n                        </div>\n                    </div>\n                ";
+            }
+            providersMarkup += "\n                <a class=\"col\">\n                    <div class=\"provider_item\">\n                        <div class=\"icon " + provider + "_icon\"></div>\n                        <h1 class=\"title\">" + provider.replace(/(\_)+/g, " ") + "</h1>\n                        <div class=\"provider_info\">\n                            " + providerDescText + "\n                        </div>\n                    </div>\n                </a>\n            ";
+        }
+        var modalMarkup = "\n            <div class=\"wallet_provider__wrapper\">\n                <div class=\"modal micromodal-slide\" id=\"" + modalId + "\" class=\"modal\" aria-hidden=\"true\">\n                    <div class=\"modal__overlay\" tabindex=\"-1\" data-micromodal-close>\n                        <div class=\"modal__container\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"" + modalId + "-title\">\n                            <header class=\"modal__header\">\n                                <h2 class=\"modal__title\" id=\"" + modalId + "-title\">\n                                    " + this.config.modalTitle + "\n                                </h2>\n                                <button class=\"modal__close\" aria-label=\"Close modal\" data-micromodal-close></button>\n                            </header>\n                            <main class=\"modal__content\" id=\"" + modalId + "-content\">\n                              <div class=\"row\">\n                                " + providersMarkup + "\n                              </div>\n                            </main>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         var modalNode = document.createElement("div");
         modalNode.innerHTML = modalMarkup;
         document.body.appendChild(modalNode);
