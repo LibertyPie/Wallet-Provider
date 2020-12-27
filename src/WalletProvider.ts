@@ -4,11 +4,11 @@
  * @author https://github.com/libertypie
  */
 
-
+ 
 import MicroModal from 'micromodal'; 
-import MicroModalCSS from '../assets/styles/main.css';
+import MicroModalCSS from "./assets/styles/main.css";
 
- class WalletProviderCore {
+ class WalletProvider {
 
     /**
      * default config 
@@ -41,14 +41,14 @@ import MicroModalCSS from '../assets/styles/main.css';
             this.config.providers.push("ethereum_provider")
         }
 
-        this.modalId = `modal-1`
+        this.modalId = `wallet__provider`
 
         //lets insert the markup
         this._injectModalMarkup(this.modalId);
 
         MicroModal.init({
-            onShow: this._onModalShow,
-            onClose: this._onModalClose,
+            onShow:  (modal) => this._onModalShow(modal),
+            onClose: (modal) => this._onModalClose(modal),
             //openTrigger: 'data-wallet-provider-open', 
             //closeTrigger: 'data-wallet-provider-close', 
             openClass: 'is-open',
@@ -56,7 +56,7 @@ import MicroModalCSS from '../assets/styles/main.css';
             disableFocus: false,
             awaitOpenAnimation: false, 
             awaitCloseAnimation: false,
-            debugMode: true
+            //debugMode: true
         });
        
     }
@@ -70,7 +70,6 @@ import MicroModalCSS from '../assets/styles/main.css';
      * on Modal show event
      */
     private _onModalShow(modal: any){
-        alert(10000)
         this.isModalVisible = true;
         let eventCallback: any = this.registeredEvents.onModalOpen || null;
         if(typeof eventCallback == 'function'){
@@ -134,6 +133,7 @@ import MicroModalCSS from '../assets/styles/main.css';
         
 
         let modalMarkup = `
+            <div class="wallet_provider__wrapper">
                 <div id="${modalId}" aria-hidden="true">
                     <div tabindex="-1" data-micromodal-close>
                         <div role="dialog" aria-modal="true" aria-labelledby="${modalId}-title" >
@@ -151,6 +151,7 @@ import MicroModalCSS from '../assets/styles/main.css';
                         </div>
                     </div>
                 </div>
+            </div>
         `;
 
       
@@ -166,4 +167,4 @@ import MicroModalCSS from '../assets/styles/main.css';
 
  }
 
- export default WalletProviderCore;
+ export default WalletProvider;

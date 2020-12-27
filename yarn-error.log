@@ -1,0 +1,65 @@
+Arguments: 
+  /usr/local/bin/node /usr/local/Cellar/yarn/1.22.4/libexec/bin/yarn.js build
+
+PATH: 
+  /Users/drsuccess/.cargo/bin:/Volumes/SuccessLab/programs/nwjs-v0.41.2-osx-x64:/Volumes/SuccessLab/programs/nwjs-sdk-v0.41.2-osx-x64:/opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/share/dotnet:/opt/X11/bin:~/.dotnet/tools:/Library/Apple/usr/bin:/Users/drsuccess/.cargo/bin:/Users/drsuccess/opt/anaconda3/bin:/Users/drsuccess/opt/anaconda3/condabin:/Volumes/SuccessLab/programs/nwjs-v0.41.2-osx-x64:/Volumes/SuccessLab/programs/nwjs-sdk-v0.41.2-osx-x64:/opt/local/bin:/opt/local/sbin:/Volumes/SuccessLab/SDK/flutter/bin:/Users/drsuccess/Library/Android/sdk/emulator:/Users/drsuccess/Library/Android/sdk/tools:/Users/drsuccess/Library/Android/sdk/tools/bin:/Users/drsuccess/Library/Android/sdk/platform-tools:/Volumes/SuccessLab/SDK/flutter/bin:/Users/drsuccess/Library/Android/sdk/emulator:/Users/drsuccess/Library/Android/sdk/tools:/Users/drsuccess/Library/Android/sdk/tools/bin:/Users/drsuccess/Library/Android/sdk/platform-tools
+
+Yarn version: 
+  1.22.4
+
+Node version: 
+  12.18.2
+
+Platform: 
+  darwin x64
+
+Trace: 
+  SyntaxError: /Volumes/SuccessLab/drive/Projects/Dapps/WalletProvider/package.json: Unexpected token , in JSON at position 223
+      at JSON.parse (<anonymous>)
+      at /usr/local/Cellar/yarn/1.22.4/libexec/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/usr/local/Cellar/yarn/1.22.4/libexec/lib/cli.js:310:30)
+      at /usr/local/Cellar/yarn/1.22.4/libexec/lib/cli.js:321:13
+
+npm manifest: 
+  {
+    "name": "web3providers",
+    "version": "1.0.0",
+    "description": "A unified api for web3 wallet  connections",
+    "main": "index.js",
+    "scripts": {
+      "copy-assets": "npx copy-and-watch src/assets/* build/src/assets/",
+  ,    "copy-assets-dev": "npx copy-and-watch --watch src/assets/* build/src/assets/",
+      "dev-compile-style": "npx node-sass --include-path scss ./src/assets/styles/main.scss  ./src/assets/styles/main.css --watch --output-style compressed",
+      "build-dev": "npx tsc --watch --project tsconfig.json",
+      "dev": "npx concurrently \"npm:copy-assets-dev\" \"npm:dev-compile-style\" \"npm:build-dev\"",
+      "compile-style": "npx node-sass --include-path scss ./src/assets/styles/main.scss  ./src/assets/styles/main.css --output-style compressed",
+      "build": "npm run compile-style && npx tsc --project tsconfig.json && npm run copy-assets"
+    },
+    "keywords": [
+      "web3",
+      "ethereum",
+      "binance",
+      "smart",
+      "chain",
+      "trustwallet"
+    ],
+    "author": "libertypie",
+    "license": "MIT",
+    "devDependencies": {
+      "@types/node": "^14.14.16",
+      "concurrently": "^5.3.0",
+      "copy-and-watch": "^0.1.5",
+      "node-sass": "^5.0.0",
+      "typescript": "^4.1.3"
+    },
+    "dependencies": {
+      "micromodal": "^0.4.6"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
