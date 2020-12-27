@@ -44,7 +44,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var NetworkCodes_1 = __importDefault(require("../classes/NetworkCodes"));
+var ErrorCodes_1 = __importDefault(require("../classes/ErrorCodes"));
 var Status_1 = __importDefault(require("../classes/Status"));
 var Web3Standard = /** @class */ (function () {
     function Web3Standard(provider) {
@@ -81,7 +81,7 @@ var Web3Standard = /** @class */ (function () {
                     case 0:
                         if (!this.isSupported()) {
                             return [2 /*return*/, Status_1.default.error("wallet_not_found")
-                                    .setCode(NetworkCodes_1.default.wallet_not_found)];
+                                    .setCode(ErrorCodes_1.default.wallet_not_found)];
                         }
                         _b.label = 1;
                     case 1:

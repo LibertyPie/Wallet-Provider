@@ -4,8 +4,8 @@
   "description": "A unified api for web3 wallet  connections",
   "main": "index.js",
   "scripts": {
-    "copy-assets": "npx copy-and-watch src/**/*.{css,json,svg,png,scss} build",
-    "copy-assets-dev": "npx copy-and-watch --watch src/**/*.{css,json,svg,png} build",
+    "copy-assets": "npx copy-and-watch src/**/*.{css,json,svg,png,scss} build/src",
+    "copy-assets-dev": "npx copy-and-watch --watch src/**/*.{css,json,svg,png} build/src",
     "dev-compile-style": "npx node-sass --include-path scss ./src/assets/styles/main.scss  ./src/assets/styles/main.css --watch --output-style compressed",
     "build-dev": "npx tsc --watch --project tsconfig.json",
     "dev": "npx concurrently \"npm:copy-assets-dev\" \"npm:dev-compile-style\" \"npm:build-dev\"",

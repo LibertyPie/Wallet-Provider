@@ -1,9 +1,4 @@
 "use strict";
-/**
- * WalletProvider
- * @license MIT
- * @author https://github.com/libertypie
- */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -21,12 +16,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var _WalletProvider_1 = __importDefault(require("./classes/_WalletProvider"));
-var WalletProvider = /** @class */ (function (_super) {
-    __extends(WalletProvider, _super);
-    function WalletProvider() {
-        return _super !== null && _super.apply(this, arguments) || this;
+var ErrorCodes_1 = __importDefault(require("./ErrorCodes"));
+var Exception = /** @class */ (function (_super) {
+    __extends(Exception, _super);
+    function Exception(name, message) {
+        var _this = this;
+        var code = ErrorCodes_1.default[name] || null;
+        var errorMsgFull = message ? name + ": " + message : code;
+        _this = _super.call(this, errorMsgFull) || this;
+        _this.name = name;
+        _this.code = code;
+        _this.message = errorMsgFull;
+        return _this;
     }
-    return WalletProvider;
-}(_WalletProvider_1.default));
-exports.default = WalletProvider;
+    Exception.prototype.toString = function () {
+        return this.message;
+    };
+    return Exception;
+}(Error));
+exports.default = Exception;

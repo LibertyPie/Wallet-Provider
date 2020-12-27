@@ -5,7 +5,7 @@
  */
 
  import Provider from "../interface/Provider";
- import NetworkCodes from "../classes/NetworkCodes"
+ import NetworkCodes from "../classes/ErrorCodes"
  import Status from "../classes/Status"
 
  class Web3Standard implements Provider {

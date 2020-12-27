@@ -1,6 +1,6 @@
 /**
- * WalletProvider
- * @license MIT
+ * WalletProvider 
+ * @license MIT 
  * @author https://github.com/libertypie
  */
-export {};
+

@@ -23,7 +23,8 @@
     .modal__container {
         background-color: #fff;
         padding: 30px;
-        max-width: 500px;
+        width: 680px;
+        max-width: 98%;
         max-height: 100vh;
         border-radius: 4px;
         overflow-y: auto;
@@ -98,8 +99,27 @@
         color: #fff;
     }
     
-    
-    
+    .row {
+
+        display: flex;
+        flex-direction: row;
+        
+        .col {
+            flex: 0 50%;
+            height: 180px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .row {
+            display: block;
+        }
+        .col {
+            width: 100%;
+        }
+    }
+
+
     /**************************\
         Demo Animation Style
     \**************************/
