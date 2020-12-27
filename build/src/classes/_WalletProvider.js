@@ -73,7 +73,8 @@ var _WalletProvider = /** @class */ (function () {
                 "web3_wallets": {}
             },
             modalClass: "",
-            modalTitle: "Select Wallet"
+            modalTitle: "Select Wallet",
+            cacheProvider: true
         };
         /**
          * providers
@@ -86,6 +87,8 @@ var _WalletProvider = /** @class */ (function () {
         this.modalId = "__wallet__provider";
         //is modal visible
         this.isModalVisible = false;
+        //provider cache name 
+        this.providerCacheName = "__wallet_provider_cache";
         //  events
         this.eventNames = ["modalOpen", "modalClose", "connect", "disconnect", "error"];
         this.registeredEvents = {};
@@ -111,6 +114,20 @@ var _WalletProvider = /** @class */ (function () {
             awaitCloseAnimation: false,
         });
     }
+    /**
+     * hasCachedProvider
+     */
+    _WalletProvider.prototype.hasCachedProvider = function () {
+        var providerCache = this.getProviderCache();
+        if (providerCache == null || typeof providerCache !== 'object')
+            return false;
+    }; //end fun 
+    /**
+     * getProviderCache
+     */
+    _WalletProvider.prototype.getProviderCache = function () {
+        return window.localStorage.getItem(this.providerCacheName) || null;
+    }; //end 
     /**
      * process provider configs
      */
@@ -213,13 +230,21 @@ var _WalletProvider = /** @class */ (function () {
             if (provider == "web3_wallets") {
                 providerDescText = "\n                    <div class=\"flex flex_row supported_wallets flex_wrap\">\n                        <div class=\"flex flex_row\">\n                            <div class=\"sub_icon metamask_16\"></div>\n                            <div>MetaMask</div>\n                        </div>\n                        <div class=\"flex flex_row\">\n                            <div class=\"sub_icon brave_16\"></div>\n                            <div>Brave</div>\n                        </div>\n                        <div class=\"flex flex_row\">\n                            <div class=\"sub_icon trustwallet_16\"></div>\n                            <div>Trust Wallet</div>\n                        </div>\n                    </div>\n                ";
             }
-            providersMarkup += "\n                <a class=\"col\">\n                    <div class=\"provider_item\">\n                        <div class=\"icon " + provider + "_icon\"></div>\n                        <h1 class=\"title\">" + provider.replace(/(\_)+/g, " ") + "</h1>\n                        <div class=\"provider_info\">\n                            " + providerDescText + "\n                        </div>\n                    </div>\n                </a>\n            ";
+            providersMarkup += "\n                <a href=\"#\" class=\"col provider_item_btn\">\n                    <div class=\"provider_item\">\n                        <div class=\"icon " + provider + "_icon\"></div>\n                        <h1 class=\"title\">" + provider.replace(/(\_)+/g, " ") + "</h1>\n                        <div class=\"provider_info\">\n                            " + providerDescText + "\n                        </div>\n                    </div>\n                </a>\n            ";
         }
         var modalMarkup = "\n            <div class=\"wallet_provider__wrapper\">\n                <div class=\"modal micromodal-slide\" id=\"" + modalId + "\" class=\"modal\" aria-hidden=\"true\">\n                    <div class=\"modal__overlay\" tabindex=\"-1\" data-micromodal-close>\n                        <div class=\"modal__container\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"" + modalId + "-title\">\n                            <header class=\"modal__header\">\n                                <h2 class=\"modal__title\" id=\"" + modalId + "-title\">\n                                    " + this.config.modalTitle + "\n                                </h2>\n                                <button class=\"modal__close\" aria-label=\"Close modal\" data-micromodal-close></button>\n                            </header>\n                            <main class=\"modal__content\" id=\"" + modalId + "-content\">\n                              <div class=\"row\">\n                                " + providersMarkup + "\n                              </div>\n                            </main>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
+        document.querySelectorAll(".modal_provider_item");
         var modalNode = document.createElement("div");
         modalNode.innerHTML = modalMarkup;
         document.body.appendChild(modalNode);
     };
+    /**
+     * handleProviderItemClick
+     * @param string providerId
+     */
+    _WalletProvider.prototype.handleProviderItemClick = function (providerId) {
+        alert("10000");
+    }; //end fun
     /**
      * connect
      */

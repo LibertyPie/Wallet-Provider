@@ -21,7 +21,8 @@ import Status from "./Status"
             "web3_wallets": {}
         },
         modalClass: "",
-        modalTitle: "Select Wallet"
+        modalTitle: "Select Wallet",
+        cacheProvider: true
     }
 
     /**
@@ -37,6 +38,9 @@ import Status from "./Status"
 
     //is modal visible
     private isModalVisible: boolean = false;
+
+    //provider cache name 
+    private providerCacheName = "__wallet_provider_cache"
 
     //  events
     eventNames = ["modalOpen","modalClose","connect","disconnect","error"];
@@ -73,6 +77,22 @@ import Status from "./Status"
         });
        
     }
+
+    /**
+     * hasCachedProvider
+     */
+    hasCachedProvider(): boolean {
+        let providerCache = this.getProviderCache()
+        if(providerCache == null || typeof providerCache !== 'object') return false;
+
+    } //end fun 
+
+    /**
+     * getProviderCache
+     */
+    private getProviderCache(): any {
+        return (window as any).localStorage.getItem(this.providerCacheName) || null 
+    }//end 
 
     /**
      * process provider configs
@@ -211,7 +231,7 @@ import Status from "./Status"
             }
 
             providersMarkup  += `
-                <a class="col">
+                <a href="#" class="col provider_item_btn">
                     <div class="provider_item">
                         <div class="icon ${provider}_icon"></div>
                         <h1 class="title">${provider.replace(/(\_)+/g," ")}</h1>
@@ -245,11 +265,21 @@ import Status from "./Status"
             </div>
         `;
 
+        document.querySelectorAll(".modal_provider_item")
+
         let modalNode = document.createElement("div");
         modalNode.innerHTML = modalMarkup;
 
         document.body.appendChild(modalNode)
     }
+
+    /**
+     * handleProviderItemClick
+     * @param string providerId
+     */
+    handleProviderItemClick(providerId: string){
+        alert("10000")
+    }//end fun
 
     /**
      * connect
