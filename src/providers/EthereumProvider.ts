@@ -8,13 +8,10 @@ import Web3Standard from "./Web3Standard";
 
 class EthereumProvider  extends Web3Standard {
 
-    constructor(){
+    constructor(opts: any){
         super(((window as any).ethereum || (window as any).web3))
     }
 
-    static getInstance(): EthereumProvider {
-        return new EthereumProvider();
-    }
 }    
 
 export default EthereumProvider;

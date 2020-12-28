@@ -65,6 +65,14 @@ var Status = /** @class */ (function () {
     Status.prototype.getCode = function () {
         return this._code;
     };
+    Status.prototype.getData = function () {
+        return this._data;
+    };
+    /**
+     * static methods
+     * @param msg
+     * @param data
+     */
     Status.success = function (msg, data) {
         if (data === void 0) { data = null; }
         return (new Status()).buildStatus("success", msg, data);

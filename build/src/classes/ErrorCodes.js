@@ -9,6 +9,6 @@ exports.default = {
     connect_request_rejected_by_user: 4001,
     request_already_pending: -32002,
     unknown_provider: 1000,
-    options_must_be_object: 1100,
-    walletconnect_package_required: 1200
+    opts_must_be_object: 1100,
+    wc_package_required: 1200,
 };

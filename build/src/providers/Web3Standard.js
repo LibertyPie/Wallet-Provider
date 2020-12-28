@@ -46,10 +46,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var ErrorCodes_1 = __importDefault(require("../classes/ErrorCodes"));
 var Status_1 = __importDefault(require("../classes/Status"));
+var ethers_1 = require("ethers");
 var Web3Standard = /** @class */ (function () {
     function Web3Standard(provider) {
         this._provider = null;
-        this.windowObj = window;
         //events
         this._onConnectCallback = function () { };
         this._onDisconnectCallback = function () { };
@@ -77,6 +77,7 @@ var Web3Standard = /** @class */ (function () {
         var _this = this;
         if (typeof this._provider == 'undefined')
             return;
+        this._provider.autoRefreshOnNetworkChange = false;
         //on connect
         this._provider.on('connect', function (chainId) {
             if (!_this.isOnconnectEventTriggered)
@@ -91,13 +92,24 @@ var Web3Standard = /** @class */ (function () {
         this._provider.on('error', function (error) {
             _this._onErrorCallback(error);
         });
-        this._provider.on('chainChanged', function (chainId) {
-            _this._onChainChangedCallback(chainId);
-        });
-        this._provider.on('accountsChanged', function (accounts) {
-            _this._accounts = accounts;
-            _this._onAccountsChangedCallback(accounts);
-        });
+        this._provider.on('chainChanged', function (chainId) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.getAccounts()];
+                    case 1:
+                        _a.sent();
+                        this._onChainChangedCallback(chainId);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        this._provider.on('accountsChanged', function (accounts) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                this._accounts = accounts;
+                this._onAccountsChangedCallback(accounts);
+                return [2 /*return*/];
+            });
+        }); });
         this._provider.on('message', function (message) {
             _this._onMessageCallback(message);
         });
@@ -129,10 +141,12 @@ var Web3Standard = /** @class */ (function () {
                     case 2:
                         _a._accounts = _b.sent();
                         account = this._accounts[0];
+                        this._web3 = new ethers_1.providers.Web3Provider(this._provider);
                         resultObj = {
                             account: account,
                             chainId: this.getChainId(),
-                            provider: this._provider
+                            provider: this._provider,
+                            web3: this._web3
                         };
                         if (!this.isOnconnectEventTriggered && this.isConnected()) {
                             this._onConnectCallback(resultObj);
@@ -157,6 +171,37 @@ var Web3Standard = /** @class */ (function () {
         return this.chainId;
     };
     /**
+     * getAccounts
+     */
+    Web3Standard.prototype.getAccounts = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, e_2;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _b.trys.push([0, 2, , 3]);
+                        _a = this;
+                        return [4 /*yield*/, this._web3.listAccounts()];
+                    case 1:
+                        _a._accounts = _b.sent();
+                        console.log("this._accounts ", this._accounts);
+                        return [2 /*return*/, Status_1.default.successPromise("", this._accounts)];
+                    case 2:
+                        e_2 = _b.sent();
+                        this._onErrorCallback(e_2);
+                        return [2 /*return*/, Status_1.default.error(e_2.message).setCode(e_2.code)];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    }; //end fun 
+    /**
+     * getWeb3
+     */
+    Web3Standard.prototype.getWeb3 = function () {
+        return this._web3;
+    };
+    /**
      * isConnected
      */
     Web3Standard.prototype.isConnected = function () {
@@ -167,6 +212,8 @@ var Web3Standard = /** @class */ (function () {
      * @param callback
      */
     Web3Standard.prototype.disconnect = function () {
+        this._provider.disconnect();
+        this._onDisconnectCallback();
         return Status_1.default.success("");
     };
     /**

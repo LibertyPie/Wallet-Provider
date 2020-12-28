@@ -66,7 +66,7 @@ import Status from "./Status"
     constructor(options = {}){
 
         if(typeof options != 'object'){
-            throw new Exception("options_must_be_object","Options must be an object")
+            throw new Exception("opts_must_be_object","Options must be an object")
             return
         }
 
@@ -264,7 +264,7 @@ import Status from "./Status"
             }
 
             providersMarkup  += `
-                <a href="#" data-provider="${provider}" class="col provider_item_btn">
+                <a href="#" data-provider="${provider}" class="m__col provider_item_btn">
                     <div class="provider_item">
                         <div class="icon ${provider}_icon"></div>
                         <h1 class="title">${provider.replace(/(\_)+/g," ")}</h1>
@@ -288,7 +288,7 @@ import Status from "./Status"
                                 <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
                             </header>
                             <main class="modal__content" id="${modalId}-content">
-                              <div class="row">
+                              <div class="m__row">
                                 ${providersMarkup}
                               </div>
                             </main>
@@ -348,7 +348,10 @@ import Status from "./Status"
         
         let providerModule = await this.getProviderModule(providerName)
 
-        let providerInst = new providerModule()
+        //lets  add options
+        let providerOpts = this.config.providers[providerName] || {}
+
+        let providerInst = new providerModule(providerOpts)
 
         let defaultFun = () => {}
 

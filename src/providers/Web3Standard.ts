@@ -7,23 +7,26 @@
  import Provider from "../interface/Provider";
  import NetworkCodes from "../classes/ErrorCodes"
  import Status from "../classes/Status"
+ import { providers as ethersProviders } from "ethers";
 
  class Web3Standard implements Provider {
 
-    private _provider: any = null
-    private windowObj = (window as any);
+    protected _provider: any = null
+    //private windowObj = (window as any);
 
-    private  chainId: null;
+    protected _web3: any;
+
+    protected  chainId: null;
 
     //events
-    private _onConnectCallback: Function = () => {};
-    private _onDisconnectCallback: Function = () => {};
-    private _onPermissionRequestCallback: Function = () => {}
-    private _onErrorCallback: Function = () => {}
-    private _onAccountsChangedCallback: Function = () => {}
-    private _onChainChangedCallback: Function = () => {}
-    private _onConnectErrorCallback: Function = () => {}
-    private _onMessageCallback: Function = () => {}
+    protected _onConnectCallback: Function = () => {};
+    protected _onDisconnectCallback: Function = () => {};
+    protected _onPermissionRequestCallback: Function = () => {}
+    protected _onErrorCallback: Function = () => {}
+    protected _onAccountsChangedCallback: Function = () => {}
+    protected _onChainChangedCallback: Function = () => {}
+    protected _onConnectErrorCallback: Function = () => {}
+    protected _onMessageCallback: Function = () => {}
 
     /**
      * isOnconnectEventTriggered
@@ -33,9 +36,11 @@
      */
     isOnconnectEventTriggered = false;
 
-    private _accounts: Array<any> = [];
+    protected _accounts: Array<string> = [];
 
-    constructor(provider: Object ){
+
+    constructor(provider: Object){
+        
         this._provider = provider;
 
         this.initialize();
@@ -47,6 +52,8 @@
     private initialize(){
 
         if(typeof this._provider == 'undefined') return
+
+        this._provider.autoRefreshOnNetworkChange = false;
 
         //on connect
         this._provider.on('connect', (chainId: string)=>{
@@ -64,11 +71,12 @@
             this._onErrorCallback(error)
         });
 
-        this._provider.on('chainChanged', (chainId) => {
+        this._provider.on('chainChanged', async (chainId) => {
+            await this.getAccounts();
             this._onChainChangedCallback(chainId)
         });
 
-        this._provider.on('accountsChanged', (accounts: Array<string>) => {
+        this._provider.on('accountsChanged', async (accounts: Array<string>) => {
             this._accounts = accounts;
             this._onAccountsChangedCallback(accounts);
         });
@@ -76,7 +84,7 @@
         this._provider.on('message', (message: string) => {
             this._onMessageCallback(message);
         });
-        
+
     } //end fun
     
 
@@ -91,7 +99,7 @@
     /**
      * connect
      */
-    async  connect(): Promise<any> { 
+    async  connect(): Promise<Status> { 
 
         if(!this.isSupported()){
             return Status.error("wallet_not_found")
@@ -102,14 +110,17 @@
         //lets request access 
         try {
 
-            this._accounts = await  this._provider.request({ method: 'eth_requestAccounts' });
+             this._accounts = await  this._provider.request({ method: 'eth_requestAccounts' });
 
             let account = this._accounts[0]
+
+            this._web3 = new  ethersProviders.Web3Provider(this._provider)
 
             let resultObj = {
                 account,
                 chainId: this.getChainId(),
-                provider: this._provider
+                provider: this._provider,
+                web3: this._web3
             }
 
             if(!this.isOnconnectEventTriggered && this.isConnected()) {
@@ -133,6 +144,31 @@
     }
 
     /**
+     * getAccounts
+     */
+    async getAccounts(): Promise<Status> {
+        try{
+          
+            this._accounts = await this._web3.listAccounts()
+
+            console.log("this._accounts ", this._accounts )
+
+            return Status.successPromise("",this._accounts);
+    
+        } catch (e){
+            this._onErrorCallback(e)
+            return Status.error(e.message).setCode(e.code);
+        }
+    } //end fun 
+
+    /**
+     * getWeb3
+     */
+    getWeb3(): any {
+        return this._web3;
+    }
+
+    /**
      * isConnected
      */
     isConnected(): boolean {
@@ -144,6 +180,8 @@
      * @param callback 
      */
     disconnect(): Status {
+        this._provider.disconnect();
+        this._onDisconnectCallback()
         return Status.success("")
     }
 

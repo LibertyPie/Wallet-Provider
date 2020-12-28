@@ -34,6 +34,16 @@
         return this._code;
     }
 
+    getData<T>(): T {
+        return this._data as T;
+    }
+
+    /**
+     * static methods
+     * @param msg 
+     * @param data 
+     */
+
     static success(msg: string, data: any = null): Status {
         return (new Status()).buildStatus("success",msg,data)
     }

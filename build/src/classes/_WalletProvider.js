@@ -125,7 +125,7 @@ var _WalletProvider = /** @class */ (function () {
         ];
         this.registeredEvents = {};
         if (typeof options != 'object') {
-            throw new Exception_1.default("options_must_be_object", "Options must be an object");
+            throw new Exception_1.default("opts_must_be_object", "Options must be an object");
             return;
         }
         this.config = Object.assign(this.config, options);
@@ -281,9 +281,9 @@ var _WalletProvider = /** @class */ (function () {
             if (provider == "web3_wallets") {
                 providerDescText = "\n                    <div class=\"flex flex_row supported_wallets flex_wrap\">\n                        <div class=\"flex flex_row\">\n                            <div class=\"sub_icon metamask_16\"></div>\n                            <div>MetaMask</div>\n                        </div>\n                        <div class=\"flex flex_row\">\n                            <div class=\"sub_icon brave_16\"></div>\n                            <div>Brave</div>\n                        </div>\n                        <div class=\"flex flex_row\">\n                            <div class=\"sub_icon trustwallet_16\"></div>\n                            <div>Trust Wallet</div>\n                        </div>\n                    </div>\n                ";
             }
-            providersMarkup += "\n                <a href=\"#\" data-provider=\"" + provider + "\" class=\"col provider_item_btn\">\n                    <div class=\"provider_item\">\n                        <div class=\"icon " + provider + "_icon\"></div>\n                        <h1 class=\"title\">" + provider.replace(/(\_)+/g, " ") + "</h1>\n                        <div class=\"provider_info\">\n                            " + providerDescText + "\n                        </div>\n                    </div>\n                </a>\n            ";
+            providersMarkup += "\n                <a href=\"#\" data-provider=\"" + provider + "\" class=\"m__col provider_item_btn\">\n                    <div class=\"provider_item\">\n                        <div class=\"icon " + provider + "_icon\"></div>\n                        <h1 class=\"title\">" + provider.replace(/(\_)+/g, " ") + "</h1>\n                        <div class=\"provider_info\">\n                            " + providerDescText + "\n                        </div>\n                    </div>\n                </a>\n            ";
         } //end for loop
-        var modalMarkup = "\n            <div class=\"wallet_provider__wrapper\">\n                <div class=\"modal micromodal-slide\" id=\"" + modalId + "\" class=\"modal\" aria-hidden=\"true\">\n                    <div class=\"modal__overlay\" tabindex=\"-1\" data-micromodal-close>\n                        <div class=\"modal__container\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"" + modalId + "-title\">\n                            <header class=\"modal__header\">\n                                <h2 class=\"modal__title\" id=\"" + modalId + "-title\">\n                                    " + this.config.modalTitle + "\n                                </h2>\n                                <button class=\"modal__close\" aria-label=\"Close modal\" data-micromodal-close></button>\n                            </header>\n                            <main class=\"modal__content\" id=\"" + modalId + "-content\">\n                              <div class=\"row\">\n                                " + providersMarkup + "\n                              </div>\n                            </main>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
+        var modalMarkup = "\n            <div class=\"wallet_provider__wrapper\">\n                <div class=\"modal micromodal-slide\" id=\"" + modalId + "\" class=\"modal\" aria-hidden=\"true\">\n                    <div class=\"modal__overlay\" tabindex=\"-1\" data-micromodal-close>\n                        <div class=\"modal__container\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"" + modalId + "-title\">\n                            <header class=\"modal__header\">\n                                <h2 class=\"modal__title\" id=\"" + modalId + "-title\">\n                                    " + this.config.modalTitle + "\n                                </h2>\n                                <button class=\"modal__close\" aria-label=\"Close modal\" data-micromodal-close></button>\n                            </header>\n                            <main class=\"modal__content\" id=\"" + modalId + "-content\">\n                              <div class=\"m__row\">\n                                " + providersMarkup + "\n                              </div>\n                            </main>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         var modalNode = document.createElement("div");
         modalNode.innerHTML = modalMarkup;
         document.body.appendChild(modalNode);
@@ -337,13 +337,16 @@ var _WalletProvider = /** @class */ (function () {
      */
     _WalletProvider.prototype._proccessConnect = function (providerName) {
         return __awaiter(this, void 0, void 0, function () {
-            var providerModule, providerInst, defaultFun;
+            var providerModule, providerOpts, providerInst, defaultFun;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.getProviderModule(providerName)];
+                    case 0: return [4 /*yield*/, this.getProviderModule(providerName)
+                        //lets  add options
+                    ];
                     case 1:
                         providerModule = _a.sent();
-                        providerInst = new providerModule();
+                        providerOpts = this.config.providers[providerName] || {};
+                        providerInst = new providerModule(providerOpts);
                         defaultFun = function () { };
                         //lets now register  some events 
                         providerInst.onConnect(this.registeredEvents.connect || defaultFun);
