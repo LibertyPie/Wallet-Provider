@@ -78,7 +78,6 @@ var path = require("path");
 var micromodal_1 = __importDefault(require("micromodal"));
 var main_css_1 = __importDefault(require("../assets/styles/main.css"));
 var Exception_1 = __importDefault(require("./Exception"));
-var Status_1 = __importDefault(require("./Status"));
 var _WalletProvider = /** @class */ (function () {
     function _WalletProvider(options) {
         var _this_1 = this;
@@ -111,6 +110,7 @@ var _WalletProvider = /** @class */ (function () {
         this.selectedProviderName = null;
         //  events
         this.eventNames = [
+            "message",
             "modalOpen",
             "modalClose",
             "connect",
@@ -336,7 +336,7 @@ var _WalletProvider = /** @class */ (function () {
      */
     _WalletProvider.prototype._proccessConnect = function (providerName) {
         return __awaiter(this, void 0, void 0, function () {
-            var providerModule, providerInst, defaultFun, connectStatus;
+            var providerModule, providerInst, defaultFun;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.getProviderModule(providerName)];
@@ -349,14 +349,11 @@ var _WalletProvider = /** @class */ (function () {
                         providerInst.onDisconnect(this.registeredEvents.disconnect || defaultFun);
                         providerInst.onPermissionRequest(this.registeredEvents.permissionRequest || defaultFun);
                         providerInst.onError(this.registeredEvents.error || defaultFun);
-                        providerInst.onAccountChange(this.registeredEvents.accountChange || defaultFun);
-                        providerInst.onChainChange(this.registeredEvents.chainChange || defaultFun);
+                        providerInst.onAccountsChanged(this.registeredEvents.accountChange || defaultFun);
+                        providerInst.onChainChanged(this.registeredEvents.chainChange || defaultFun);
                         providerInst.onConnectError(this.registeredEvents.connectError || defaultFun);
-                        return [4 /*yield*/, providerInst.connect()];
-                    case 2:
-                        connectStatus = _a.sent();
-                        console.log(connectStatus);
-                        return [2 /*return*/, Status_1.default.successPromise("")];
+                        providerInst.onMessage(this.registeredEvents.message || defaultFun);
+                        return [2 /*return*/, providerInst.connect()];
                 }
             });
         });

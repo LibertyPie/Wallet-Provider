@@ -12,13 +12,16 @@ interface Provider {
     disconnect(): any;
     getProvider(): any;
     isSupported(): boolean;
+    isConnected(): boolean;
+    getChainId(): string;
     
     onConnect(callback: Function): void;
     onDisconnect(callback: Function): void;
     onPermissionRequest(callback: Function): void;
     onError(callback: Function): void;
-    onAccountChange(callback: Function): void;
-    onChainChange(callback: Function): void;
+    onAccountsChanged(callback: Function): void;
+    onChainChanged(callback: Function): void;
+    onMessage(callback: Function): void;
 
  }
 

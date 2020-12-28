@@ -22,10 +22,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Web3Standard_1 = __importDefault(require("./Web3Standard"));
-var EthereumProvider = /** @class */ (function (_super) {
-    __extends(EthereumProvider, _super);
-    function EthereumProvider() {
+var BinanceChainProvider = /** @class */ (function (_super) {
+    __extends(BinanceChainProvider, _super);
+    function BinanceChainProvider() {
         return _super.call(this, window.BinanceChain) || this;
     }
-    return EthereumProvider;
+    BinanceChainProvider.getInstance = function () {
+        return new BinanceChainProvider();
+    };
+    return BinanceChainProvider;
 }(Web3Standard_1.default));
+exports.default = BinanceChainProvider;

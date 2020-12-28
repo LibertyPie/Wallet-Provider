@@ -5,8 +5,14 @@
  */
 
 import Web3Standard from "./Web3Standard";
-class EthereumProvider extends Web3Standard{
+class BinanceChainProvider extends Web3Standard{
     constructor(){
         super((window as any).BinanceChain)
     }
+
+    static getInstance(): BinanceChainProvider {
+        return new BinanceChainProvider();
+    }
 }   
+
+export default BinanceChainProvider;

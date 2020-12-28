@@ -55,29 +55,51 @@ var Web3Standard = /** @class */ (function () {
         this._onDisconnectCallback = function () { };
         this._onPermissionRequestCallback = function () { };
         this._onErrorCallback = function () { };
-        this._onAccountChangeCallback = function () { };
-        this._onChainChangeCallback = function () { };
+        this._onAccountsChangedCallback = function () { };
+        this._onChainChangedCallback = function () { };
         this._onConnectErrorCallback = function () { };
+        this._onMessageCallback = function () { };
+        /**
+         * isOnconnectEventTriggered
+         * This will track if onconnect event was called or not, because on page
+         * reopen, we will need to retrigger the event
+         * this will prevent multiple events
+         */
+        this.isOnconnectEventTriggered = false;
         this._accounts = [];
         this._provider = provider;
-        this.setUpProviderEvents();
+        this.initialize();
     } //end fun
     /**
      * set up provider events
      */
-    Web3Standard.prototype.setUpProviderEvents = function () {
+    Web3Standard.prototype.initialize = function () {
         var _this = this;
         if (typeof this._provider == 'undefined')
             return;
         //on connect
         this._provider.on('connect', function (chainId) {
-            _this._onConnectCallback(chainId);
+            if (!_this.isOnconnectEventTriggered)
+                _this._onConnectCallback(chainId);
         });
         /**
          * disconnect
          */
         this._provider.on('disconnect', function (err) {
-            _this._onConnectCallback(err);
+            _this._onDisconnectCallback(err);
+        });
+        this._provider.on('error', function (error) {
+            _this._onErrorCallback(error);
+        });
+        this._provider.on('chainChanged', function (chainId) {
+            _this._onChainChangedCallback(chainId);
+        });
+        this._provider.on('accountsChanged', function (accounts) {
+            _this._accounts = accounts;
+            _this._onAccountsChangedCallback(accounts);
+        });
+        this._provider.on('message', function (message) {
+            _this._onMessageCallback(message);
         });
     }; //end fun
     /**
@@ -91,7 +113,7 @@ var Web3Standard = /** @class */ (function () {
      */
     Web3Standard.prototype.connect = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, account, e_1;
+            var _a, account, resultObj, e_1;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -107,10 +129,15 @@ var Web3Standard = /** @class */ (function () {
                     case 2:
                         _a._accounts = _b.sent();
                         account = this._accounts[0];
-                        return [2 /*return*/, Status_1.default.successPromise("", {
-                                account: account,
-                                provider: this._provider
-                            })];
+                        resultObj = {
+                            account: account,
+                            chainId: this.getChainId(),
+                            provider: this._provider
+                        };
+                        if (!this.isOnconnectEventTriggered && this.isConnected()) {
+                            this._onConnectCallback(resultObj);
+                        }
+                        return [2 /*return*/, Status_1.default.successPromise("", resultObj)];
                     case 3:
                         e_1 = _b.sent();
                         this._onConnectErrorCallback(e_1);
@@ -119,6 +146,21 @@ var Web3Standard = /** @class */ (function () {
                 }
             });
         });
+    };
+    /**
+     * getChainId
+     */
+    Web3Standard.prototype.getChainId = function () {
+        if (this.chainId == null) {
+            this.chainId = this._provider.chainId;
+        }
+        return this.chainId;
+    };
+    /**
+     * isConnected
+     */
+    Web3Standard.prototype.isConnected = function () {
+        return this._provider.isConnected();
     };
     /**
      * disconnect
@@ -160,9 +202,9 @@ var Web3Standard = /** @class */ (function () {
      * on account change
      * @param callback
      */
-    Web3Standard.prototype.onAccountChange = function (callback) {
+    Web3Standard.prototype.onAccountsChanged = function (callback) {
         if (callback === void 0) { callback = function () { }; }
-        this._onAccountChangeCallback = callback;
+        this._onAccountsChangedCallback = callback;
     };
     /**
      * onConnectError
@@ -176,9 +218,17 @@ var Web3Standard = /** @class */ (function () {
     * onChainChange
     * @param callback
     */
-    Web3Standard.prototype.onChainChange = function (callback) {
+    Web3Standard.prototype.onChainChanged = function (callback) {
         if (callback === void 0) { callback = function () { }; }
-        this._onChainChangeCallback = callback;
+        this._onChainChangedCallback = callback;
+    };
+    /**
+     * onMessage
+     * @param callback
+     */
+    Web3Standard.prototype.onMessage = function (callback) {
+        if (callback === void 0) { callback = function () { }; }
+        this._onMessageCallback = callback;
     };
     /**
      * getProvider

@@ -47,6 +47,7 @@ import Status from "./Status"
 
     //  events
     eventNames = [
+        "message",
         "modalOpen",
         "modalClose",
         "connect",
@@ -355,15 +356,12 @@ import Status from "./Status"
         providerInst.onDisconnect(this.registeredEvents.disconnect || defaultFun)
         providerInst.onPermissionRequest(this.registeredEvents.permissionRequest || defaultFun)
         providerInst.onError(this.registeredEvents.error || defaultFun)
-        providerInst.onAccountChange(this.registeredEvents.accountChange || defaultFun)
-        providerInst.onChainChange(this.registeredEvents.chainChange || defaultFun)
+        providerInst.onAccountsChanged(this.registeredEvents.accountChange || defaultFun)
+        providerInst.onChainChanged(this.registeredEvents.chainChange || defaultFun)
         providerInst.onConnectError(this.registeredEvents.connectError || defaultFun)
+        providerInst.onMessage(this.registeredEvents.message || defaultFun)
 
-        let connectStatus = await providerInst.connect();
-
-        console.log(connectStatus)
-
-        return  Status.successPromise("")
+        return  providerInst.connect();
     } //end fun
 
     /**

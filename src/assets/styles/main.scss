@@ -8,12 +8,14 @@
         font-family: -apple-system,BlinkMacSystemFont,avenir next,avenir,helvetica neue,helvetica,ubuntu,roboto,noto,segoe ui,arial,sans-serif;
     }
 
-    a {
+    a, 
+    a:hover,
+    a:active,
+    a:visited
+    {
+        border: 0 !important;
         text-decoration: none !important;
-        border: none !important;
-        &:hover, &:active, &:visited, &:focus {
-            text-decoration: none !important;
-        }
+        outline: 0 !important;
     }
     
     .modal__overlay {
@@ -91,7 +93,6 @@
             width: 100% !important;
             max-width: 100% !important;
             height: auto !important;
-         
         }
 
         .provider_item{
