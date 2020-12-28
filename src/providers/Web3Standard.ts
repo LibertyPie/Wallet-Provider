@@ -27,15 +27,31 @@
 
     constructor(provider: Object ){
         this._provider = provider;
-    }
+
+        this. setUpProviderEvents();
+    } //end fun
 
     /**
-     * initialize the plugin
+     * set up provider events
      */
-    initialize(): Status {
+    private setUpProviderEvents(){
 
-        return Status.success("")
-    }
+        if(typeof this._provider == 'undefined') return
+
+        //on connect
+        this._provider.on('connect', (chainId: string)=>{
+            this._onConnectCallback(chainId)
+        });
+
+        /**
+         * disconnect
+         */
+        this._provider.on('disconnect', (err: any)=>{
+            this._onConnectCallback(err)
+        });
+        
+    } //end fun
+   
 
     /**
      * wether the provider is supported in the browser
@@ -62,10 +78,6 @@
 
             let account = this._accounts[0]
             
-            if(this._onConnectCallback != null && typeof this._onConnectCallback == "function"){
-                this._onConnectCallback({provider:  this._provider, account: account})
-            }
-
             return Status.successPromise("",{
                 account,
                 provider: this._provider

@@ -168,11 +168,16 @@ import Status from "./Status"
     /**
      * show the modal
      */
-    showModal(){
+    async showModal(): Promise<string>{
+        
         MicroModal.show(this.modalId,{
             onShow: modal => this._onModalShow(modal), 
             onClose: modal => this._onModalClose(modal),    
         })
+
+        this.selectedProviderName = await this.handleProviderItemClick();
+
+        return this.selectedProviderName;
     }
 
     /**
@@ -294,39 +299,52 @@ import Status from "./Status"
         let modalNode = document.createElement("div");
         modalNode.innerHTML = modalMarkup;
 
-        Array.from(modalNode.querySelectorAll(".provider_item_btn")).forEach((el)=>{
-
-            //provider 
-            let provider = (el as any).dataset.provider || null;
-
-            if(provider  == null) return false;
-
-            el.addEventListener("click",(e)=>{
-                e.preventDefault()
-                
-                //selected or say clicked provider
-                _this.selectedProviderName = provider;
-
-                //lets connect 
-                _this.connect();
-            })
-        })
-
         document.body.appendChild(modalNode)
     }
 
+    /**
+     * handleProviderItemClick
+     */
+    async handleProviderItemClick(): Promise<string> {
+
+        let _this = this;
+
+        return new Promise((resolve,reject)=>{
+            Array.from(document.querySelectorAll(".provider_item_btn")).forEach((el)=>{
+
+                //provider 
+                let provider = (el as any).dataset.provider || null;
+    
+                if(provider  == null) return false;
+    
+                el.addEventListener("click",(e)=>{
+                    e.preventDefault()
+                    
+                    //return selected provider
+                    resolve(provider)
+                })
+            })
+        })
+    }
 
     /**
      * connect
      */
-    async connect(): Promise<_WalletProvider> {  
-        
-        if(this.selectedProviderName == null){
-            this.showModal();
-            return Promise.resolve(this)
-        }
+    async connect(): Promise<Status>{
 
-        let providerModule = await this.getProviderModule(this.selectedProviderName)
+        if(this.selectedProviderName == null){
+           this.selectedProviderName = await this.showModal();
+        }
+        
+        return this._proccessConnect(this.selectedProviderName);
+    }//end fun
+
+    /**
+     * _proccessConnect
+     */
+    private async _proccessConnect(providerName: string): Promise<Status> {  
+        
+        let providerModule = await this.getProviderModule(providerName)
 
         let providerInst = new providerModule()
 
@@ -345,7 +363,7 @@ import Status from "./Status"
 
         console.log(connectStatus)
 
-        return Promise.resolve(this)
+        return  Status.successPromise("")
     } //end fun
 
     /**

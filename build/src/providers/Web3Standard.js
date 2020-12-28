@@ -60,13 +60,26 @@ var Web3Standard = /** @class */ (function () {
         this._onConnectErrorCallback = function () { };
         this._accounts = [];
         this._provider = provider;
-    }
+        this.setUpProviderEvents();
+    } //end fun
     /**
-     * initialize the plugin
+     * set up provider events
      */
-    Web3Standard.prototype.initialize = function () {
-        return Status_1.default.success("");
-    };
+    Web3Standard.prototype.setUpProviderEvents = function () {
+        var _this = this;
+        if (typeof this._provider == 'undefined')
+            return;
+        //on connect
+        this._provider.on('connect', function (chainId) {
+            _this._onConnectCallback(chainId);
+        });
+        /**
+         * disconnect
+         */
+        this._provider.on('disconnect', function (err) {
+            _this._onConnectCallback(err);
+        });
+    }; //end fun
     /**
      * wether the provider is supported in the browser
      */
@@ -94,9 +107,6 @@ var Web3Standard = /** @class */ (function () {
                     case 2:
                         _a._accounts = _b.sent();
                         account = this._accounts[0];
-                        if (this._onConnectCallback != null && typeof this._onConnectCallback == "function") {
-                            this._onConnectCallback({ provider: this._provider, account: account });
-                        }
                         return [2 /*return*/, Status_1.default.successPromise("", {
                                 account: account,
                                 provider: this._provider

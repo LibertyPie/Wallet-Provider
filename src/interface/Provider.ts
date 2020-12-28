@@ -7,7 +7,7 @@
  import Status from "../classes/Status"
 
 interface Provider {
-    initialize(): Status;
+   
     connect(): any;
     disconnect(): any;
     getProvider(): any;
