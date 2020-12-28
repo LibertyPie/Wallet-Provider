@@ -17,6 +17,8 @@ interface Provider {
     onDisconnect(callback: Function): void;
     onPermissionRequest(callback: Function): void;
     onError(callback: Function): void;
+    onAccountChange(callback: Function): void;
+    onChainChange(callback: Function): void;
 
  }
 

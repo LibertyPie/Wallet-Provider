@@ -15,6 +15,25 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -58,12 +77,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var path = require("path");
 var micromodal_1 = __importDefault(require("micromodal"));
 var main_css_1 = __importDefault(require("../assets/styles/main.css"));
-var ErrorCodes_1 = __importDefault(require("./ErrorCodes"));
 var Exception_1 = __importDefault(require("./Exception"));
-var Status_1 = __importDefault(require("./Status"));
 var _WalletProvider = /** @class */ (function () {
     function _WalletProvider(options) {
-        var _this = this;
+        var _this_1 = this;
         if (options === void 0) { options = {}; }
         /**
          * default config
@@ -89,8 +106,21 @@ var _WalletProvider = /** @class */ (function () {
         this.isModalVisible = false;
         //provider cache name 
         this.providerCacheName = "__wallet_provider_cache";
+        //selected provider 
+        this.selectedProviderName = null;
         //  events
-        this.eventNames = ["modalOpen", "modalClose", "connect", "disconnect", "error"];
+        this.eventNames = [
+            "modalOpen",
+            "modalClose",
+            "connect",
+            "disconnect",
+            "accountChange",
+            "chainChange",
+            "error",
+            "providerSelected",
+            "permissionRequest",
+            "connectError"
+        ];
         this.registeredEvents = {};
         if (typeof options != 'object') {
             throw new Exception_1.default("options_must_be_object", "Options must be an object");
@@ -105,8 +135,8 @@ var _WalletProvider = /** @class */ (function () {
         //inject modal
         this._injectModalMarkup();
         micromodal_1.default.init({
-            onShow: function (modal) { return _this._onModalShow(modal); },
-            onClose: function (modal) { return _this._onModalClose(modal); },
+            onShow: function (modal) { return _this_1._onModalShow(modal); },
+            onClose: function (modal) { return _this_1._onModalClose(modal); },
             openClass: 'is-open',
             disableScroll: true,
             disableFocus: false,
@@ -115,12 +145,16 @@ var _WalletProvider = /** @class */ (function () {
         });
     }
     /**
-     * hasCachedProvider
+     * hasProviderCache
      */
-    _WalletProvider.prototype.hasCachedProvider = function () {
+    _WalletProvider.prototype.hasProviderCache = function () {
         var providerCache = this.getProviderCache();
         if (providerCache == null || typeof providerCache !== 'object')
             return false;
+        var providerName = providerCache.provider_name || "";
+        if (!this.providerModules.hasOwnProperty(providerName))
+            return false;
+        return true;
     }; //end fun 
     /**
      * getProviderCache
@@ -172,19 +206,19 @@ var _WalletProvider = /** @class */ (function () {
      * show the modal
      */
     _WalletProvider.prototype.showModal = function () {
-        var _this = this;
+        var _this_1 = this;
         micromodal_1.default.show(this.modalId, {
-            onShow: function (modal) { return _this._onModalShow(modal); },
-            onClose: function (modal) { return _this._onModalClose(modal); },
+            onShow: function (modal) { return _this_1._onModalShow(modal); },
+            onClose: function (modal) { return _this_1._onModalClose(modal); },
         });
     };
     /**
      * hide the modal
      */
     _WalletProvider.prototype.hideModal = function () {
-        var _this = this;
+        var _this_1 = this;
         micromodal_1.default.close(this.modalId, {
-            onClose: function (modal) { return _this._onModalClose(modal); },
+            onClose: function (modal) { return _this_1._onModalClose(modal); },
         });
     };
     /**
@@ -207,13 +241,15 @@ var _WalletProvider = /** @class */ (function () {
         if (!this.eventNames.includes(eventName)) {
             throw new Error("Unknown Event " + eventName);
         }
-        this.registeredEvents.eventName = callback;
+        this.registeredEvents[eventName] = callback;
+        console.log(this.registeredEvents);
     };
     /**
      * modalMarkup
      */
     _WalletProvider.prototype._injectModalMarkup = function () {
         var modalId = this.modalId;
+        var _this = this;
         //lets check if the class is created already
         var styleId = document.getElementById("wallet_provider__style");
         if (styleId == null) {
@@ -230,40 +266,83 @@ var _WalletProvider = /** @class */ (function () {
             if (provider == "web3_wallets") {
                 providerDescText = "\n                    <div class=\"flex flex_row supported_wallets flex_wrap\">\n                        <div class=\"flex flex_row\">\n                            <div class=\"sub_icon metamask_16\"></div>\n                            <div>MetaMask</div>\n                        </div>\n                        <div class=\"flex flex_row\">\n                            <div class=\"sub_icon brave_16\"></div>\n                            <div>Brave</div>\n                        </div>\n                        <div class=\"flex flex_row\">\n                            <div class=\"sub_icon trustwallet_16\"></div>\n                            <div>Trust Wallet</div>\n                        </div>\n                    </div>\n                ";
             }
-            providersMarkup += "\n                <a href=\"#\" class=\"col provider_item_btn\">\n                    <div class=\"provider_item\">\n                        <div class=\"icon " + provider + "_icon\"></div>\n                        <h1 class=\"title\">" + provider.replace(/(\_)+/g, " ") + "</h1>\n                        <div class=\"provider_info\">\n                            " + providerDescText + "\n                        </div>\n                    </div>\n                </a>\n            ";
-        }
+            providersMarkup += "\n                <a href=\"#\" data-provider=\"" + provider + "\" class=\"col provider_item_btn\">\n                    <div class=\"provider_item\">\n                        <div class=\"icon " + provider + "_icon\"></div>\n                        <h1 class=\"title\">" + provider.replace(/(\_)+/g, " ") + "</h1>\n                        <div class=\"provider_info\">\n                            " + providerDescText + "\n                        </div>\n                    </div>\n                </a>\n            ";
+        } //end for loop
         var modalMarkup = "\n            <div class=\"wallet_provider__wrapper\">\n                <div class=\"modal micromodal-slide\" id=\"" + modalId + "\" class=\"modal\" aria-hidden=\"true\">\n                    <div class=\"modal__overlay\" tabindex=\"-1\" data-micromodal-close>\n                        <div class=\"modal__container\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"" + modalId + "-title\">\n                            <header class=\"modal__header\">\n                                <h2 class=\"modal__title\" id=\"" + modalId + "-title\">\n                                    " + this.config.modalTitle + "\n                                </h2>\n                                <button class=\"modal__close\" aria-label=\"Close modal\" data-micromodal-close></button>\n                            </header>\n                            <main class=\"modal__content\" id=\"" + modalId + "-content\">\n                              <div class=\"row\">\n                                " + providersMarkup + "\n                              </div>\n                            </main>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
-        document.querySelectorAll(".modal_provider_item");
         var modalNode = document.createElement("div");
         modalNode.innerHTML = modalMarkup;
+        Array.from(modalNode.querySelectorAll(".provider_item_btn")).forEach(function (el) {
+            //provider 
+            var provider = el.dataset.provider || null;
+            if (provider == null)
+                return false;
+            el.addEventListener("click", function (e) {
+                e.preventDefault();
+                //selected or say clicked provider
+                _this.selectedProviderName = provider;
+                //lets connect 
+                _this.connect();
+            });
+        });
         document.body.appendChild(modalNode);
     };
-    /**
-     * handleProviderItemClick
-     * @param string providerId
-     */
-    _WalletProvider.prototype.handleProviderItemClick = function (providerId) {
-        alert("10000");
-    }; //end fun
     /**
      * connect
      */
     _WalletProvider.prototype.connect = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var enabledProviders, _i, _a, provider;
-            return __generator(this, function (_b) {
-                enabledProviders = this.config.providers;
-                for (_i = 0, _a = Object.keys(enabledProviders); _i < _a.length; _i++) {
-                    provider = _a[_i];
-                    if (provider in this.providerModules) {
-                        this.dispatchEvent("error", new Exception_1.default("unknown_provider", "Unknown provider name " + provider));
-                        return [2 /*return*/, Promise.resolve(Status_1.default.error("unknown_provider").setCode(ErrorCodes_1.default.unknown_provider))];
-                    }
+            var providerModule, providerInst, defaultFun, connectStatus;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (this.selectedProviderName == null) {
+                            this.showModal();
+                            return [2 /*return*/, Promise.resolve(this)];
+                        }
+                        return [4 /*yield*/, this.getProviderModule(this.selectedProviderName)];
+                    case 1:
+                        providerModule = _a.sent();
+                        providerInst = new providerModule();
+                        defaultFun = function () { };
+                        //lets now register  some events 
+                        providerInst.onConnect(this.registeredEvents.connect || defaultFun);
+                        providerInst.onDisconnect(this.registeredEvents.disconnect || defaultFun);
+                        providerInst.onPermissionRequest(this.registeredEvents.permissionRequest || defaultFun);
+                        providerInst.onError(this.registeredEvents.error || defaultFun);
+                        providerInst.onAccountChange(this.registeredEvents.accountChange || defaultFun);
+                        providerInst.onChainChange(this.registeredEvents.chainChange || defaultFun);
+                        providerInst.onConnectError(this.registeredEvents.connectError || defaultFun);
+                        return [4 /*yield*/, providerInst.connect()];
+                    case 2:
+                        connectStatus = _a.sent();
+                        console.log(connectStatus);
+                        return [2 /*return*/, Promise.resolve(this)];
                 }
-                return [2 /*return*/];
             });
         });
     }; //end fun
+    /**
+     * getProviderModule
+     */
+    _WalletProvider.prototype.getProviderModule = function (providerName) {
+        return __awaiter(this, void 0, void 0, function () {
+            var providerModule, err, module;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        providerModule = this.providerModules[providerName] || null;
+                        if (providerModule == null) {
+                            err = new Exception_1.default("unknown_provider", "Unknown provider name " + providerName);
+                            throw err;
+                        }
+                        return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require("../providers/" + providerModule)); })];
+                    case 1:
+                        module = _a.sent();
+                        return [2 /*return*/, module.default];
+                }
+            });
+        });
+    }; //end
     return _WalletProvider;
 }());
 exports.default = _WalletProvider;

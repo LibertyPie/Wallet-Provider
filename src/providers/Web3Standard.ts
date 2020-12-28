@@ -10,16 +10,20 @@
 
  class Web3Standard implements Provider {
 
-    _provider: any = null
-    windowObj = (window as any);
+    private _provider: any = null
+    private windowObj = (window as any);
 
     //events
-    _onConnectCallback: Function = () => {};
-    _onDisconnectCallback: Function = () => {};
-    _onPermissionRequestCallback: Function = () => {}
-    _onErrorCallback: Function = () => {}
+    private _onConnectCallback: Function = () => {};
+    private _onDisconnectCallback: Function = () => {};
+    private _onPermissionRequestCallback: Function = () => {}
+    private _onErrorCallback: Function = () => {}
+    private _onAccountChangeCallback: Function = () => {}
+    private _onChainChangeCallback: Function = () => {}
+    private _onConnectErrorCallback: Function = () => {}
 
-    _accounts: Array<any> = [];
+
+    private _accounts: Array<any> = [];
 
     constructor(provider: Object ){
         this._provider = provider;
@@ -68,6 +72,7 @@
             })
             
         } catch (e) {
+            this._onConnectErrorCallback(e)
             return Promise.resolve(Status.error(e.message).setCode(e.code));
         }
     }
@@ -103,11 +108,37 @@
     }
 
     /**
-     * onConnect
+     * onDisconnect
      */
     onDisconnect(callback: Function = () => {}){
         this._onDisconnectCallback = callback;
     }
+
+    /**
+     * on account change
+     * @param callback 
+     */
+    onAccountChange(callback: Function = () => {}){
+        this._onAccountChangeCallback = callback;
+    }
+
+    /**
+     * onConnectError
+     * @param callback 
+     */
+    onConnectError(callback: Function = () => {}){
+        this._onConnectErrorCallback = callback;
+    }
+
+     /**
+     * onChainChange
+     * @param callback 
+     */
+    onChainChange(callback: Function = () => {}){
+        this._onChainChangeCallback = callback;
+    }
+
+
 
     /** 
      * getProvider

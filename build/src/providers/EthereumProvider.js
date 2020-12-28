@@ -27,5 +27,9 @@ var EthereumProvider = /** @class */ (function (_super) {
     function EthereumProvider() {
         return _super.call(this, (window.ethereum || window.web3)) || this;
     }
+    EthereumProvider.getInstance = function () {
+        return new EthereumProvider();
+    };
     return EthereumProvider;
 }(Web3Standard_1.default));
+exports.default = EthereumProvider;

@@ -12,4 +12,9 @@ class EthereumProvider  extends Web3Standard {
         super(((window as any).ethereum || (window as any).web3))
     }
 
+    static getInstance(): EthereumProvider {
+        return new EthereumProvider();
+    }
 }    
+
+export default EthereumProvider;

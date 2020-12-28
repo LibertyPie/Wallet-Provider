@@ -42,8 +42,23 @@ import Status from "./Status"
     //provider cache name 
     private providerCacheName = "__wallet_provider_cache"
 
+    //selected provider 
+    selectedProviderName  = null;
+
     //  events
-    eventNames = ["modalOpen","modalClose","connect","disconnect","error"];
+    eventNames = [
+        "modalOpen",
+        "modalClose",
+        "connect",
+        "disconnect",
+        "accountChange",
+        "chainChange",
+        "error",
+        "providerSelected",
+        "permissionRequest",
+        "connectError"
+    ];
+
     registeredEvents: any = {};
 
     constructor(options = {}){
@@ -79,12 +94,19 @@ import Status from "./Status"
     }
 
     /**
-     * hasCachedProvider
+     * hasProviderCache
      */
-    hasCachedProvider(): boolean {
+    hasProviderCache(): boolean {
+
         let providerCache = this.getProviderCache()
+
         if(providerCache == null || typeof providerCache !== 'object') return false;
 
+        let providerName = providerCache.provider_name || ""
+
+        if(!this.providerModules.hasOwnProperty(providerName)) return false;
+
+        return true;
     } //end fun 
 
     /**
@@ -177,13 +199,15 @@ import Status from "./Status"
      * events
      * @param eventName 
      */
-    on(eventName: string, callback: Function = ()=>{}){
+    on(eventName: string, callback: Function = ()=>{}) {
         
         if(!this.eventNames.includes(eventName)){
             throw new Error(`Unknown Event ${eventName}`)
         }
 
-        (this.registeredEvents as any).eventName = callback;
+        (this.registeredEvents as any)[eventName] = callback;
+
+        console.log(this.registeredEvents)
     }
 
 
@@ -193,6 +217,8 @@ import Status from "./Status"
     private _injectModalMarkup(): void {
 
         let modalId = this.modalId;
+
+        let _this = this;
 
         //lets check if the class is created already
         let styleId = document.getElementById("wallet_provider__style")
@@ -231,7 +257,7 @@ import Status from "./Status"
             }
 
             providersMarkup  += `
-                <a href="#" class="col provider_item_btn">
+                <a href="#" data-provider="${provider}" class="col provider_item_btn">
                     <div class="provider_item">
                         <div class="icon ${provider}_icon"></div>
                         <h1 class="title">${provider.replace(/(\_)+/g," ")}</h1>
@@ -241,7 +267,7 @@ import Status from "./Status"
                     </div>
                 </a>
             `;
-        }
+        } //end for loop
 
         let modalMarkup = `
             <div class="wallet_provider__wrapper">
@@ -265,40 +291,79 @@ import Status from "./Status"
             </div>
         `;
 
-        document.querySelectorAll(".modal_provider_item")
-
         let modalNode = document.createElement("div");
         modalNode.innerHTML = modalMarkup;
+
+        Array.from(modalNode.querySelectorAll(".provider_item_btn")).forEach((el)=>{
+
+            //provider 
+            let provider = (el as any).dataset.provider || null;
+
+            if(provider  == null) return false;
+
+            el.addEventListener("click",(e)=>{
+                e.preventDefault()
+                
+                //selected or say clicked provider
+                _this.selectedProviderName = provider;
+
+                //lets connect 
+                _this.connect();
+            })
+        })
 
         document.body.appendChild(modalNode)
     }
 
-    /**
-     * handleProviderItemClick
-     * @param string providerId
-     */
-    handleProviderItemClick(providerId: string){
-        alert("10000")
-    }//end fun
 
     /**
      * connect
      */
-    async connect(): Promise<Status> {
-
-        //let check enabled providers 
-        let enabledProviders = this.config.providers;
-
-        for(let provider of Object.keys(enabledProviders)){
-            if(provider !in this.providerModules){
-                this.dispatchEvent("error",new Exception("unknown_provider",`Unknown provider name ${provider}`));
-                return Promise.resolve(Status.error("unknown_provider").setCode(ErrorCodes.unknown_provider));
-            }   
+    async connect(): Promise<_WalletProvider> {  
+        
+        if(this.selectedProviderName == null){
+            this.showModal();
+            return Promise.resolve(this)
         }
 
+        let providerModule = await this.getProviderModule(this.selectedProviderName)
 
+        let providerInst = new providerModule()
+
+        let defaultFun = () => {}
+
+        //lets now register  some events 
+        providerInst.onConnect(this.registeredEvents.connect || defaultFun)
+        providerInst.onDisconnect(this.registeredEvents.disconnect || defaultFun)
+        providerInst.onPermissionRequest(this.registeredEvents.permissionRequest || defaultFun)
+        providerInst.onError(this.registeredEvents.error || defaultFun)
+        providerInst.onAccountChange(this.registeredEvents.accountChange || defaultFun)
+        providerInst.onChainChange(this.registeredEvents.chainChange || defaultFun)
+        providerInst.onConnectError(this.registeredEvents.connectError || defaultFun)
+
+        let connectStatus = await providerInst.connect();
+
+        console.log(connectStatus)
+
+        return Promise.resolve(this)
     } //end fun
 
- }
+    /**
+     * getProviderModule
+     */
+    async getProviderModule(providerName: string): Promise<any> {
+        let providerModule = this.providerModules[providerName] || null;
+        
+        if(providerModule == null){
+            let err = new Exception("unknown_provider",`Unknown provider name ${providerName}`)
+            throw err; 
+        }
+
+        let module =  await import(`../providers/${providerModule}`);
+
+        return module.default;
+    } //end
+
+}
 
  export default _WalletProvider;

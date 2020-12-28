@@ -55,6 +55,9 @@ var Web3Standard = /** @class */ (function () {
         this._onDisconnectCallback = function () { };
         this._onPermissionRequestCallback = function () { };
         this._onErrorCallback = function () { };
+        this._onAccountChangeCallback = function () { };
+        this._onChainChangeCallback = function () { };
+        this._onConnectErrorCallback = function () { };
         this._accounts = [];
         this._provider = provider;
     }
@@ -100,6 +103,7 @@ var Web3Standard = /** @class */ (function () {
                             })];
                     case 3:
                         e_1 = _b.sent();
+                        this._onConnectErrorCallback(e_1);
                         return [2 /*return*/, Promise.resolve(Status_1.default.error(e_1.message).setCode(e_1.code))];
                     case 4: return [2 /*return*/];
                 }
@@ -136,11 +140,35 @@ var Web3Standard = /** @class */ (function () {
         this._onErrorCallback = callback;
     };
     /**
-     * onConnect
+     * onDisconnect
      */
     Web3Standard.prototype.onDisconnect = function (callback) {
         if (callback === void 0) { callback = function () { }; }
         this._onDisconnectCallback = callback;
+    };
+    /**
+     * on account change
+     * @param callback
+     */
+    Web3Standard.prototype.onAccountChange = function (callback) {
+        if (callback === void 0) { callback = function () { }; }
+        this._onAccountChangeCallback = callback;
+    };
+    /**
+     * onConnectError
+     * @param callback
+     */
+    Web3Standard.prototype.onConnectError = function (callback) {
+        if (callback === void 0) { callback = function () { }; }
+        this._onConnectErrorCallback = callback;
+    };
+    /**
+    * onChainChange
+    * @param callback
+    */
+    Web3Standard.prototype.onChainChange = function (callback) {
+        if (callback === void 0) { callback = function () { }; }
+        this._onChainChangeCallback = callback;
     };
     /**
      * getProvider

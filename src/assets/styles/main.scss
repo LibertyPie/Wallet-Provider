@@ -90,11 +90,14 @@
         .col {
             width: 100% !important;
             max-width: 100% !important;
-            height: auto;
+            height: auto !important;
+         
         }
 
         .provider_item{
             height: auto !important;
+            padding-top: 15px !important;
+            padding-bottom: 15px !important;
         }
     }
 
