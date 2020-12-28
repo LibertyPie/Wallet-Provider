@@ -98,7 +98,8 @@ var _WalletProvider = /** @class */ (function () {
          */
         this.providerModules = {
             "web3_wallets": "EthereumProvider",
-            "binance_chain_wallet": "BinanceChainProvider"
+            "binance_chain_wallet": "BinanceChainProvider",
+            "walletconnect": "WalletConnectProvider"
         };
         //modal
         this.modalId = "__wallet__provider";

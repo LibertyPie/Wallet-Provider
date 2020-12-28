@@ -30,7 +30,8 @@ import Status from "./Status"
      */
     providerModules: any = {
         "web3_wallets": "EthereumProvider",
-        "binance_chain_wallet": "BinanceChainProvider"
+        "binance_chain_wallet": "BinanceChainProvider",
+        "walletconnect": "WalletConnectProvider"
     }
 
     //modal
