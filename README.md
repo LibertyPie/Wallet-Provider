@@ -2,7 +2,7 @@
 Wallet Provider is a typescript & es6 library which provides a single api for Dapps to interact with various wallets. The main goal and purpose is to support all major blockchains & wallets.
 
 ## Code Repository
-[url=https://github.com/libertypie/Wallet-Provider]https://github.com/libertypie/Wallet-Provider[/url]
+https://github.com/libertypie/Wallet-Provider
 ## Installation 
 
 #### via npm 
