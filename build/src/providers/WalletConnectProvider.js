@@ -117,9 +117,14 @@ var WalletConnectProvider = /** @class */ (function (_super) {
      * getChainId
      */
     WalletConnectProvider.prototype.getChainId = function () {
-        var chainId = this._provider.chainId.toString(16);
-        this.chainId = "0x" + chainId;
-        return this.chainId;
+        return __awaiter(this, void 0, void 0, function () {
+            var chainId;
+            return __generator(this, function (_a) {
+                chainId = this._provider.chainId.toString(16);
+                this.chainId = "0x" + chainId;
+                return [2 /*return*/, Promise.resolve(this.chainId)];
+            });
+        });
     };
     return WalletConnectProvider;
 }(Web3Standard_1.default)); //end class

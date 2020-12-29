@@ -158,7 +158,6 @@ var Web3Standard = /** @class */ (function (_super) {
                     case 3:
                         resultObj = (_b.chainId = _c.sent(),
                             _b.provider = this._provider,
-                            _b.web3 = this._web3,
                             _b);
                         if (!this.isOnconnectEventTriggered && this.isConnected()) {
                             this._onConnectCallback(resultObj);
@@ -177,8 +176,12 @@ var Web3Standard = /** @class */ (function (_super) {
      * getChainId
      */
     Web3Standard.prototype.getChainId = function () {
-        this.chainId = this._provider.chainId;
-        return this.chainId;
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                this.chainId = this._provider.chainId;
+                return [2 /*return*/, Promise.resolve(this.chainId)];
+            });
+        });
     };
     /**
      * getAccounts

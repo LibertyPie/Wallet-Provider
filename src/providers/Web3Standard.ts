@@ -111,8 +111,7 @@
             let resultObj = {
                 account,
                 chainId: await this.getChainId(),
-                provider: this._provider,
-                web3: this._web3
+                provider: this._provider
             }
 
             if(!this.isOnconnectEventTriggered && this.isConnected()) {
@@ -130,9 +129,9 @@
     /**
      * getChainId
      */
-     getChainId(): string {
+    async getChainId(): Promise<string> {
        this.chainId = this._provider.chainId;
-       return this.chainId;
+       return Promise.resolve(this.chainId);
     }
 
     /**

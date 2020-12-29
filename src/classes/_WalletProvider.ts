@@ -32,7 +32,8 @@ import Status from "./Status"
         "web3_wallets": "EthereumProvider",
         "binance_chain_wallet": "BinanceChainProvider",
         "walletconnect": "WalletConnectProvider",
-        "portis":        "PortisProvider"
+        "portis":        "PortisProvider",
+        "frame":  "FrameProvider"
     }
 
     //modal

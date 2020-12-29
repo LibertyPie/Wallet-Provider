@@ -63,10 +63,10 @@ class WalletConnectProvider  extends Web3Standard {
     /**
      * getChainId
      */
-    getChainId(): string {
+    async getChainId(): Promise<string> {
         let chainId = this._provider.chainId.toString(16);
         this.chainId = `0x${chainId}`
-        return this.chainId;
+        return Promise.resolve(this.chainId);
     }
 
 

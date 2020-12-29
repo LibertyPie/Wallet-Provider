@@ -13,7 +13,7 @@ interface Provider {
     getProvider(): any;
     isSupported(): boolean;
     isConnected(): boolean;
-    getChainId(): string;
+    getChainId(): Promise<string>;
     
     onConnect(callback: Function): void;
     onDisconnect(callback: Function): void;

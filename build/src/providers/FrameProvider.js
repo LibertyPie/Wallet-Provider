@@ -59,65 +59,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Web3Standard_1 = __importDefault(require("./Web3Standard"));
 var Exception_1 = __importDefault(require("../classes/Exception"));
-var Status_1 = __importDefault(require("../classes/Status"));
-var PortisProvider = /** @class */ (function (_super) {
-    __extends(PortisProvider, _super);
-    function PortisProvider(opts) {
+var Utils_1 = __importDefault(require("../classes/Utils"));
+var FrameProvider = /** @class */ (function (_super) {
+    __extends(FrameProvider, _super);
+    function FrameProvider(opts) {
         var _this = this;
         //lets do validation
         var providerPackage = opts.package || null;
         if (typeof providerPackage != 'object') {
-            throw new Exception_1.default("portis_package_required", "Portis package is required");
+            throw new Exception_1.default("package_required", "FrameProvider package is required");
         }
-        _this = _super.call(this, providerPackage.provider) || this;
+        _this = _super.call(this, providerPackage) || this;
         return _this;
     }
     /**
-     * override the connect method
+ * isConnected
+ */
+    FrameProvider.prototype.isConnected = function () {
+        return this._provider.connected;
+    };
+    /**
+     * getChainId
      */
-    PortisProvider.prototype.connect = function () {
+    FrameProvider.prototype.getChainId = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, account, resultObj, e_1;
-            var _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        _c.trys.push([0, 3, , 4]);
-                        //enable wallet first
-                        _a = this;
-                        return [4 /*yield*/, this._provider.enable()];
-                    case 1:
-                        //enable wallet first
-                        _a._accounts = _c.sent();
-                        console.log(this._provider);
-                        account = this._accounts[0];
-                        _b = {
-                            account: account
-                        };
-                        return [4 /*yield*/, this.getChainId()];
-                    case 2:
-                        resultObj = (_b.chainId = _c.sent(),
-                            _b.provider = this._provider,
-                            _b);
-                        if (!this.isOnconnectEventTriggered && this.isConnected()) {
-                            this._onConnectCallback(resultObj);
-                        }
-                        return [2 /*return*/, Status_1.default.successPromise("", resultObj)];
-                    case 3:
-                        e_1 = _c.sent();
-                        this._onConnectErrorCallback(e_1);
-                        return [2 /*return*/, Promise.resolve(Status_1.default.error(e_1.message).setCode(e_1.code))];
-                    case 4: return [2 /*return*/];
-                }
+            return __generator(this, function (_a) {
+                return [2 /*return*/, Utils_1.default.getChainIdByRequest(this._provider)];
             });
         });
-    }; //end fun
-    /**
-     * override connected
-     */
-    PortisProvider.prototype.isConnected = function () {
-        return this._provider.isConnected();
     };
-    return PortisProvider;
+    return FrameProvider;
 }(Web3Standard_1.default)); //end class
-exports.default = PortisProvider;
+exports.default = FrameProvider;

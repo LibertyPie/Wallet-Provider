@@ -100,7 +100,8 @@ var _WalletProvider = /** @class */ (function () {
             "web3_wallets": "EthereumProvider",
             "binance_chain_wallet": "BinanceChainProvider",
             "walletconnect": "WalletConnectProvider",
-            "portis": "PortisProvider"
+            "portis": "PortisProvider",
+            "frame": "FrameProvider"
         };
         //modal
         this.modalId = "__wallet__provider";

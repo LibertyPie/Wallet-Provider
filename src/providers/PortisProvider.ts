@@ -35,11 +35,13 @@ class PortisProvider  extends Web3Standard  {
             //enable wallet first
             this._accounts = await this._provider.enable();
 
+            console.log(this._provider)
+
            let account = this._accounts[0];
 
             let resultObj = {
                 account,
-                chainId: this.getChainId(),
+                chainId: await this.getChainId(),
                 provider: this._provider
             }
 
@@ -64,6 +66,7 @@ class PortisProvider  extends Web3Standard  {
         return this._provider.isConnected();
     }
 
+    
 }  //end class
 
 export default PortisProvider;
