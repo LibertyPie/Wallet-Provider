@@ -153,10 +153,10 @@
      * disconnect
      * @param callback 
      */
-    disconnect(): Status {
+    async disconnect(): Promise<Status> {
         this._provider.disconnect();
         this._onDisconnectCallback()
-        return Status.success("")
+        return Status.successPromise("")
     }
 
     /**

@@ -200,9 +200,13 @@ var Web3Standard = /** @class */ (function (_super) {
      * @param callback
      */
     Web3Standard.prototype.disconnect = function () {
-        this._provider.disconnect();
-        this._onDisconnectCallback();
-        return Status_1.default.success("");
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                this._provider.disconnect();
+                this._onDisconnectCallback();
+                return [2 /*return*/, Status_1.default.successPromise("")];
+            });
+        });
     };
     /**
      * onConnect

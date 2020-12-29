@@ -10,5 +10,6 @@ export default {
     opts_must_be_object: 1100,
     wc_package_required: 1200,
     portis_package_required: 1250,
-    package_required: 1300
+    package_required: 1300,
+    disconnect_failed: 1350
 }

@@ -60,6 +60,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Web3Standard_1 = __importDefault(require("./Web3Standard"));
 var Exception_1 = __importDefault(require("../classes/Exception"));
 var Status_1 = __importDefault(require("../classes/Status"));
+var Utils_1 = __importDefault(require("../classes/Utils"));
 var PortisProvider = /** @class */ (function (_super) {
     __extends(PortisProvider, _super);
     function PortisProvider(opts) {
@@ -70,6 +71,7 @@ var PortisProvider = /** @class */ (function (_super) {
             throw new Exception_1.default("portis_package_required", "Portis package is required");
         }
         _this = _super.call(this, providerPackage.provider) || this;
+        _this.providerPackage = providerPackage;
         return _this;
     }
     /**
@@ -117,6 +119,52 @@ var PortisProvider = /** @class */ (function (_super) {
      */
     PortisProvider.prototype.isConnected = function () {
         return this._provider.isConnected();
+    };
+    /**
+     * getChainId
+     */
+    PortisProvider.prototype.getChainId = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, Utils_1.default.getChainIdByRequest(this._provider, "send")];
+            });
+        });
+    };
+    /**
+     * disconnect
+     */
+    PortisProvider.prototype.disconnect = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var e_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.providerPackage.logout()];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, Status_1.default.successPromise("")];
+                    case 2:
+                        e_2 = _a.sent();
+                        this._onErrorCallback(e_2);
+                        return [2 /*return*/, Status_1.default.errorPromise("disconnection_failed")];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    PortisProvider.prototype.initialize = function () {
+        var _this = this;
+        _super.prototype.initialize.call(this);
+        this.providerPackage.onError(function (error) {
+            _this._onErrorCallback(error);
+        });
+        this.providerPackage.onActiveWalletChanged(function (walletAddress) {
+            _this._onAccountsChangedCallback([walletAddress]);
+        });
+        this.providerPackage.onLogout(function () {
+            _this._onDisconnectCallback();
+        });
     };
     return PortisProvider;
 }(Web3Standard_1.default)); //end class

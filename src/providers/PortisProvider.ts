@@ -9,8 +9,12 @@ import Exception from '../classes/Exception';
 import Status from "../classes/Status";
 import Provider from "../interface/Provider"
 import ProviderEventRegistry from "../classes/ProviderEventRegistry"
+import Utils from "../classes/Utils";
+import ErrorCodes from "../classes/ErrorCodes";
 
 class PortisProvider  extends Web3Standard  {
+
+    providerPackage: any;
 
     constructor(opts: any){
 
@@ -22,6 +26,8 @@ class PortisProvider  extends Web3Standard  {
         }
 
         super(providerPackage.provider)
+
+        this.providerPackage = providerPackage;
     }
 
    
@@ -66,7 +72,45 @@ class PortisProvider  extends Web3Standard  {
         return this._provider.isConnected();
     }
 
-    
+
+    /**
+     * getChainId
+     */
+    async getChainId(): Promise<string> {
+        return Utils.getChainIdByRequest(this._provider,"send");     
+    }
+
+    /**
+     * disconnect
+     */
+    async disconnect(): Promise<Status>{
+        try{
+            await this.providerPackage.logout();
+            
+            return Status.successPromise("");
+        } catch(e){
+            this._onErrorCallback(e)
+            return Status.errorPromise("disconnection_failed")
+        }
+    }
+
+    initialize(){
+
+        super.initialize();
+
+        this.providerPackage.onError(error => {
+           this._onErrorCallback(error)
+        });
+
+        this.providerPackage.onActiveWalletChanged(walletAddress => {
+            this._onAccountsChangedCallback([walletAddress])
+        });
+
+        this.providerPackage.onLogout(() => {
+            this._onDisconnectCallback()
+        });
+          
+    }
 }  //end class
 
 export default PortisProvider;

@@ -9,7 +9,7 @@
 interface Provider {
    
     connect(): any;
-    disconnect(): any;
+    disconnect(): Promise<Status>;
     getProvider(): any;
     isSupported(): boolean;
     isConnected(): boolean;
