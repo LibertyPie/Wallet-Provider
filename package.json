@@ -1,5 +1,5 @@
 {
-  "name": "@libertypie/web3providers",
+  "name": "@libertypie/wallet-provider",
   "main": "./dist/src/index.js",
   "version": "1.0.0",
   "description": "A unified api for web3 wallet  connections",
@@ -12,27 +12,38 @@
     "compile-style": "npx node-sass --include-path scss ./src/assets/styles/main.scss  ./src/assets/styles/main.css --output-style compressed",
     "build": "npm run compile-style && npx tsc --project tsconfig.json && npm run copy-assets"
   },
+  "publishConfig": {
+    "access": "public"
+  },
+
   "keywords": [
+    "Wallet provider",
     "Web3",
     "ethersjs",
     "ethereum",
     "binance",
     "smart",
     "chain",
-    "trustwallet",
+    "Trust Wallet",
     "metamask",
     "binance chain",
-    "coinbase wallet"
+    "coinbase wallet",
+    "sync wallet",
+    "Dapp",
+    "Wallet"
   ],
 
   "private": false,
 
   "repository": {
     "type" : "git",
-    "url" : "https://github.com/libertypie/walletProvider"
+    "url" : "git+https://github.com/libertypie/wallet-Provider.git"
   },
   "homepage": "https://wallet-provider.libertypie.com",
-  "author": "LibertyPie",
+   "author": {
+    "name": "LibertyPie",
+    "email": "hello@libertypie.com"
+  },
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^14.14.16",
