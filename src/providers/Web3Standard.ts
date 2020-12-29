@@ -7,26 +7,16 @@
  import Provider from "../interface/Provider";
  import NetworkCodes from "../classes/ErrorCodes"
  import Status from "../classes/Status"
- import { providers as ethersProviders } from "ethers";
+ import ProviderEventRegistry from "../classes/ProviderEventRegistry"
 
- class Web3Standard implements Provider {
+ class Web3Standard  extends ProviderEventRegistry implements Provider {
 
     protected _provider: any = null
-    //private windowObj = (window as any);
 
     protected _web3: any;
 
-    protected  chainId: null;
+    protected  chainId: string = null;
 
-    //events
-    protected _onConnectCallback: Function = () => {};
-    protected _onDisconnectCallback: Function = () => {};
-    protected _onPermissionRequestCallback: Function = () => {}
-    protected _onErrorCallback: Function = () => {}
-    protected _onAccountsChangedCallback: Function = () => {}
-    protected _onChainChangedCallback: Function = () => {}
-    protected _onConnectErrorCallback: Function = () => {}
-    protected _onMessageCallback: Function = () => {}
 
     /**
      * isOnconnectEventTriggered
@@ -40,20 +30,24 @@
 
 
     constructor(provider: Object){
-        
+        super()
+
         this._provider = provider;
 
         this.initialize();
+
     } //end fun
 
     /**
      * set up provider events
      */
-    private initialize(){
+    protected initialize(){
 
         if(typeof this._provider == 'undefined') return
 
         this._provider.autoRefreshOnNetworkChange = false;
+
+        //console.log(this._provider)
 
         //on connect
         this._provider.on('connect', (chainId: string)=>{
@@ -114,11 +108,9 @@
 
             let account = this._accounts[0]
 
-            this._web3 = new  ethersProviders.Web3Provider(this._provider)
-
             let resultObj = {
                 account,
-                chainId: this.getChainId(),
+                chainId: await this.getChainId(),
                 provider: this._provider,
                 web3: this._web3
             }
@@ -138,35 +130,18 @@
     /**
      * getChainId
      */
-    getChainId(): string {
-      if(this.chainId ==  null) { this.chainId = this._provider.chainId; }
-      return this.chainId;
+     getChainId(): string {
+       this.chainId = this._provider.chainId;
+       return this.chainId;
     }
 
     /**
      * getAccounts
      */
-    async getAccounts(): Promise<Status> {
-        try{
-          
-            this._accounts = await this._web3.listAccounts()
-
-            console.log("this._accounts ", this._accounts )
-
-            return Status.successPromise("",this._accounts);
-    
-        } catch (e){
-            this._onErrorCallback(e)
-            return Status.error(e.message).setCode(e.code);
-        }
+     getAccounts(): Array<string> {
+        return this._accounts || [];
     } //end fun 
 
-    /**
-     * getWeb3
-     */
-    getWeb3(): any {
-        return this._web3;
-    }
 
     /**
      * isConnected
@@ -192,59 +167,6 @@
         this._onConnectCallback = callback;
     }
 
-    /**
-     * onPermission
-     * @param callback 
-     */
-    onPermissionRequest(callback: Function = () => {}){
-        this._onPermissionRequestCallback = callback;
-    }
-
-    /**
-     * on error
-     */
-    onError(callback: Function = () => {}): void {
-        this._onErrorCallback = callback
-    }
-
-    /**
-     * onDisconnect
-     */
-    onDisconnect(callback: Function = () => {}){
-        this._onDisconnectCallback = callback;
-    }
-
-    /**
-     * on account change
-     * @param callback 
-     */
-    onAccountsChanged(callback: Function = () => {}){
-        this._onAccountsChangedCallback = callback;
-    }
-
-    /**
-     * onConnectError
-     * @param callback 
-     */
-    onConnectError(callback: Function = () => {}){
-        this._onConnectErrorCallback = callback;
-    }
-
-     /**
-     * onChainChange
-     * @param callback 
-     */
-    onChainChanged(callback: Function = () => {}){
-        this._onChainChangedCallback = callback;
-    }
-
-    /**
-     * onMessage
-     * @param callback 
-     */
-    onMessage(callback: Function = () => {}){
-        this._onMessageCallback = callback;
-    }
 
     /** 
      * getProvider

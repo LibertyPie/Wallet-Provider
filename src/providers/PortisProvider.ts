@@ -7,21 +7,24 @@
 import Web3Standard from "./Web3Standard";
 import Exception from '../classes/Exception';
 import Status from "../classes/Status";
+import Provider from "../interface/Provider"
+import ProviderEventRegistry from "../classes/ProviderEventRegistry"
 
-class WalletConnectProvider  extends Web3Standard {
+class PortisProvider  extends Web3Standard  {
 
     constructor(opts: any){
-    
+
         //lets do validation
         let providerPackage = opts.package || null;
 
         if(typeof providerPackage != 'object'){
-            throw new Exception("wc_package_required","WalletConnect package is required")
+            throw new Exception("portis_package_required","Portis package is required")
         }
 
-        super(providerPackage)
+        super(providerPackage.provider)
     }
 
+   
     /**
      * override the connect method
      */
@@ -52,24 +55,15 @@ class WalletConnectProvider  extends Web3Standard {
             return Promise.resolve(Status.error(e.message).setCode(e.code));
         }
     } //end fun
+    
 
     /**
      * override connected 
      */
     isConnected(): boolean {
-        return this._provider.connected;
+        return this._provider.isConnected();
     }
-
-    /**
-     * getChainId
-     */
-    getChainId(): string {
-        let chainId = this._provider.chainId.toString(16);
-        this.chainId = `0x${chainId}`
-        return this.chainId;
-    }
-
 
 }  //end class
 
-export default WalletConnectProvider;
+export default PortisProvider;

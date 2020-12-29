@@ -4,6 +4,19 @@
  * @license MIT
  * @author https://github.com/libertypie
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -46,29 +59,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var ErrorCodes_1 = __importDefault(require("../classes/ErrorCodes"));
 var Status_1 = __importDefault(require("../classes/Status"));
-var ethers_1 = require("ethers");
-var Web3Standard = /** @class */ (function () {
+var ProviderEventRegistry_1 = __importDefault(require("../classes/ProviderEventRegistry"));
+var Web3Standard = /** @class */ (function (_super) {
+    __extends(Web3Standard, _super);
     function Web3Standard(provider) {
-        this._provider = null;
-        //events
-        this._onConnectCallback = function () { };
-        this._onDisconnectCallback = function () { };
-        this._onPermissionRequestCallback = function () { };
-        this._onErrorCallback = function () { };
-        this._onAccountsChangedCallback = function () { };
-        this._onChainChangedCallback = function () { };
-        this._onConnectErrorCallback = function () { };
-        this._onMessageCallback = function () { };
+        var _this = _super.call(this) || this;
+        _this._provider = null;
+        _this.chainId = null;
         /**
          * isOnconnectEventTriggered
          * This will track if onconnect event was called or not, because on page
          * reopen, we will need to retrigger the event
          * this will prevent multiple events
          */
-        this.isOnconnectEventTriggered = false;
-        this._accounts = [];
-        this._provider = provider;
-        this.initialize();
+        _this.isOnconnectEventTriggered = false;
+        _this._accounts = [];
+        _this._provider = provider;
+        _this.initialize();
+        return _this;
     } //end fun
     /**
      * set up provider events
@@ -78,6 +86,7 @@ var Web3Standard = /** @class */ (function () {
         if (typeof this._provider == 'undefined')
             return;
         this._provider.autoRefreshOnNetworkChange = false;
+        //console.log(this._provider)
         //on connect
         this._provider.on('connect', function (chainId) {
             if (!_this.isOnconnectEventTriggered)
@@ -126,37 +135,40 @@ var Web3Standard = /** @class */ (function () {
     Web3Standard.prototype.connect = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _a, account, resultObj, e_1;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
                         if (!this.isSupported()) {
                             return [2 /*return*/, Status_1.default.error("wallet_not_found")
                                     .setCode(ErrorCodes_1.default.wallet_not_found)];
                         }
-                        _b.label = 1;
+                        _c.label = 1;
                     case 1:
-                        _b.trys.push([1, 3, , 4]);
+                        _c.trys.push([1, 4, , 5]);
                         _a = this;
                         return [4 /*yield*/, this._provider.request({ method: 'eth_requestAccounts' })];
                     case 2:
-                        _a._accounts = _b.sent();
+                        _a._accounts = _c.sent();
                         account = this._accounts[0];
-                        this._web3 = new ethers_1.providers.Web3Provider(this._provider);
-                        resultObj = {
-                            account: account,
-                            chainId: this.getChainId(),
-                            provider: this._provider,
-                            web3: this._web3
+                        _b = {
+                            account: account
                         };
+                        return [4 /*yield*/, this.getChainId()];
+                    case 3:
+                        resultObj = (_b.chainId = _c.sent(),
+                            _b.provider = this._provider,
+                            _b.web3 = this._web3,
+                            _b);
                         if (!this.isOnconnectEventTriggered && this.isConnected()) {
                             this._onConnectCallback(resultObj);
                         }
                         return [2 /*return*/, Status_1.default.successPromise("", resultObj)];
-                    case 3:
-                        e_1 = _b.sent();
+                    case 4:
+                        e_1 = _c.sent();
                         this._onConnectErrorCallback(e_1);
                         return [2 /*return*/, Promise.resolve(Status_1.default.error(e_1.message).setCode(e_1.code))];
-                    case 4: return [2 /*return*/];
+                    case 5: return [2 /*return*/];
                 }
             });
         });
@@ -165,42 +177,15 @@ var Web3Standard = /** @class */ (function () {
      * getChainId
      */
     Web3Standard.prototype.getChainId = function () {
-        if (this.chainId == null) {
-            this.chainId = this._provider.chainId;
-        }
+        this.chainId = this._provider.chainId;
         return this.chainId;
     };
     /**
      * getAccounts
      */
     Web3Standard.prototype.getAccounts = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var _a, e_2;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _b.trys.push([0, 2, , 3]);
-                        _a = this;
-                        return [4 /*yield*/, this._web3.listAccounts()];
-                    case 1:
-                        _a._accounts = _b.sent();
-                        console.log("this._accounts ", this._accounts);
-                        return [2 /*return*/, Status_1.default.successPromise("", this._accounts)];
-                    case 2:
-                        e_2 = _b.sent();
-                        this._onErrorCallback(e_2);
-                        return [2 /*return*/, Status_1.default.error(e_2.message).setCode(e_2.code)];
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
+        return this._accounts || [];
     }; //end fun 
-    /**
-     * getWeb3
-     */
-    Web3Standard.prototype.getWeb3 = function () {
-        return this._web3;
-    };
     /**
      * isConnected
      */
@@ -224,65 +209,11 @@ var Web3Standard = /** @class */ (function () {
         this._onConnectCallback = callback;
     };
     /**
-     * onPermission
-     * @param callback
-     */
-    Web3Standard.prototype.onPermissionRequest = function (callback) {
-        if (callback === void 0) { callback = function () { }; }
-        this._onPermissionRequestCallback = callback;
-    };
-    /**
-     * on error
-     */
-    Web3Standard.prototype.onError = function (callback) {
-        if (callback === void 0) { callback = function () { }; }
-        this._onErrorCallback = callback;
-    };
-    /**
-     * onDisconnect
-     */
-    Web3Standard.prototype.onDisconnect = function (callback) {
-        if (callback === void 0) { callback = function () { }; }
-        this._onDisconnectCallback = callback;
-    };
-    /**
-     * on account change
-     * @param callback
-     */
-    Web3Standard.prototype.onAccountsChanged = function (callback) {
-        if (callback === void 0) { callback = function () { }; }
-        this._onAccountsChangedCallback = callback;
-    };
-    /**
-     * onConnectError
-     * @param callback
-     */
-    Web3Standard.prototype.onConnectError = function (callback) {
-        if (callback === void 0) { callback = function () { }; }
-        this._onConnectErrorCallback = callback;
-    };
-    /**
-    * onChainChange
-    * @param callback
-    */
-    Web3Standard.prototype.onChainChanged = function (callback) {
-        if (callback === void 0) { callback = function () { }; }
-        this._onChainChangedCallback = callback;
-    };
-    /**
-     * onMessage
-     * @param callback
-     */
-    Web3Standard.prototype.onMessage = function (callback) {
-        if (callback === void 0) { callback = function () { }; }
-        this._onMessageCallback = callback;
-    };
-    /**
      * getProvider
      */
     Web3Standard.prototype.getProvider = function () {
         return this._provider;
     };
     return Web3Standard;
-}());
+}(ProviderEventRegistry_1.default));
 exports.default = Web3Standard;

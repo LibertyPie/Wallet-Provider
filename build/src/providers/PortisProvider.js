@@ -60,22 +60,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Web3Standard_1 = __importDefault(require("./Web3Standard"));
 var Exception_1 = __importDefault(require("../classes/Exception"));
 var Status_1 = __importDefault(require("../classes/Status"));
-var WalletConnectProvider = /** @class */ (function (_super) {
-    __extends(WalletConnectProvider, _super);
-    function WalletConnectProvider(opts) {
+var PortisProvider = /** @class */ (function (_super) {
+    __extends(PortisProvider, _super);
+    function PortisProvider(opts) {
         var _this = this;
         //lets do validation
         var providerPackage = opts.package || null;
         if (typeof providerPackage != 'object') {
-            throw new Exception_1.default("wc_package_required", "WalletConnect package is required");
+            throw new Exception_1.default("portis_package_required", "Portis package is required");
         }
-        _this = _super.call(this, providerPackage) || this;
+        _this = _super.call(this, providerPackage.provider) || this;
         return _this;
     }
     /**
      * override the connect method
      */
-    WalletConnectProvider.prototype.connect = function () {
+    PortisProvider.prototype.connect = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _a, account, resultObj, e_1;
             return __generator(this, function (_b) {
@@ -110,17 +110,9 @@ var WalletConnectProvider = /** @class */ (function (_super) {
     /**
      * override connected
      */
-    WalletConnectProvider.prototype.isConnected = function () {
-        return this._provider.connected;
+    PortisProvider.prototype.isConnected = function () {
+        return this._provider.isConnected();
     };
-    /**
-     * getChainId
-     */
-    WalletConnectProvider.prototype.getChainId = function () {
-        var chainId = this._provider.chainId.toString(16);
-        this.chainId = "0x" + chainId;
-        return this.chainId;
-    };
-    return WalletConnectProvider;
+    return PortisProvider;
 }(Web3Standard_1.default)); //end class
-exports.default = WalletConnectProvider;
+exports.default = PortisProvider;

@@ -31,7 +31,8 @@ import Status from "./Status"
     providerModules: any = {
         "web3_wallets": "EthereumProvider",
         "binance_chain_wallet": "BinanceChainProvider",
-        "walletconnect": "WalletConnectProvider"
+        "walletconnect": "WalletConnectProvider",
+        "portis":        "PortisProvider"
     }
 
     //modal
@@ -172,12 +173,17 @@ import Status from "./Status"
      */
     async showModal(): Promise<string>{
         
-        MicroModal.show(this.modalId,{
-            onShow: modal => this._onModalShow(modal), 
-            onClose: modal => this._onModalClose(modal),    
-        })
+        if(!this.isModalVisible){
+            MicroModal.show(this.modalId,{
+                onShow: modal => this._onModalShow(modal), 
+                onClose: modal => this._onModalClose(modal),    
+            })
+        }
 
         this.selectedProviderName = await this.handleProviderItemClick();
+
+        this.handleDisableProviderItemClickEvent();
+
 
         return this.selectedProviderName;
     }
@@ -185,7 +191,7 @@ import Status from "./Status"
     /**
      * hide the modal
      */
-    hideModal(){
+    closeModal(){
         MicroModal.close(this.modalId,{
             onClose: modal => this._onModalClose(modal),   
         })
@@ -329,6 +335,13 @@ import Status from "./Status"
         })
     }
 
+    //disable click event
+    handleDisableProviderItemClickEvent(){
+        Array.from(document.querySelectorAll(".provider_item_btn")).forEach((el)=>{
+            el.removeEventListener("click",()=>{})
+        });
+    }
+
     /**
      * connect
      */
@@ -338,7 +351,13 @@ import Status from "./Status"
            this.selectedProviderName = await this.showModal();
         }
         
-        return this._proccessConnect(this.selectedProviderName);
+        let resultStatus = await this._proccessConnect(this.selectedProviderName);
+
+        this.selectedProviderName = null;
+
+        this.closeModal();
+
+        return resultStatus;
     }//end fun
 
     /**
@@ -358,7 +377,7 @@ import Status from "./Status"
         //lets now register  some events 
         providerInst.onConnect(this.registeredEvents.connect || defaultFun)
         providerInst.onDisconnect(this.registeredEvents.disconnect || defaultFun)
-        providerInst.onPermissionRequest(this.registeredEvents.permissionRequest || defaultFun)
+        //providerInst.onPermissionRequest(this.registeredEvents.permissionRequest || defaultFun)
         providerInst.onError(this.registeredEvents.error || defaultFun)
         providerInst.onAccountsChanged(this.registeredEvents.accountChange || defaultFun)
         providerInst.onChainChanged(this.registeredEvents.chainChange || defaultFun)

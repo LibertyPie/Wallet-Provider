@@ -99,7 +99,8 @@ var _WalletProvider = /** @class */ (function () {
         this.providerModules = {
             "web3_wallets": "EthereumProvider",
             "binance_chain_wallet": "BinanceChainProvider",
-            "walletconnect": "WalletConnectProvider"
+            "walletconnect": "WalletConnectProvider",
+            "portis": "PortisProvider"
         };
         //modal
         this.modalId = "__wallet__provider";
@@ -214,14 +215,17 @@ var _WalletProvider = /** @class */ (function () {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        micromodal_1.default.show(this.modalId, {
-                            onShow: function (modal) { return _this_1._onModalShow(modal); },
-                            onClose: function (modal) { return _this_1._onModalClose(modal); },
-                        });
+                        if (!this.isModalVisible) {
+                            micromodal_1.default.show(this.modalId, {
+                                onShow: function (modal) { return _this_1._onModalShow(modal); },
+                                onClose: function (modal) { return _this_1._onModalClose(modal); },
+                            });
+                        }
                         _a = this;
                         return [4 /*yield*/, this.handleProviderItemClick()];
                     case 1:
                         _a.selectedProviderName = _b.sent();
+                        this.handleDisableProviderItemClickEvent();
                         return [2 /*return*/, this.selectedProviderName];
                 }
             });
@@ -230,7 +234,7 @@ var _WalletProvider = /** @class */ (function () {
     /**
      * hide the modal
      */
-    _WalletProvider.prototype.hideModal = function () {
+    _WalletProvider.prototype.closeModal = function () {
         var _this_1 = this;
         micromodal_1.default.close(this.modalId, {
             onClose: function (modal) { return _this_1._onModalClose(modal); },
@@ -312,12 +316,18 @@ var _WalletProvider = /** @class */ (function () {
             });
         });
     };
+    //disable click event
+    _WalletProvider.prototype.handleDisableProviderItemClickEvent = function () {
+        Array.from(document.querySelectorAll(".provider_item_btn")).forEach(function (el) {
+            el.removeEventListener("click", function () { });
+        });
+    };
     /**
      * connect
      */
     _WalletProvider.prototype.connect = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a;
+            var _a, resultStatus;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -327,7 +337,12 @@ var _WalletProvider = /** @class */ (function () {
                     case 1:
                         _a.selectedProviderName = _b.sent();
                         _b.label = 2;
-                    case 2: return [2 /*return*/, this._proccessConnect(this.selectedProviderName)];
+                    case 2: return [4 /*yield*/, this._proccessConnect(this.selectedProviderName)];
+                    case 3:
+                        resultStatus = _b.sent();
+                        this.selectedProviderName = null;
+                        this.closeModal();
+                        return [2 /*return*/, resultStatus];
                 }
             });
         });
@@ -351,7 +366,7 @@ var _WalletProvider = /** @class */ (function () {
                         //lets now register  some events 
                         providerInst.onConnect(this.registeredEvents.connect || defaultFun);
                         providerInst.onDisconnect(this.registeredEvents.disconnect || defaultFun);
-                        providerInst.onPermissionRequest(this.registeredEvents.permissionRequest || defaultFun);
+                        //providerInst.onPermissionRequest(this.registeredEvents.permissionRequest || defaultFun)
                         providerInst.onError(this.registeredEvents.error || defaultFun);
                         providerInst.onAccountsChanged(this.registeredEvents.accountChange || defaultFun);
                         providerInst.onChainChanged(this.registeredEvents.chainChange || defaultFun);
