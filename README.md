@@ -16,8 +16,6 @@ yarn add @libertypie/wallet-provider
 ```
 
 ## Usage
-
-
 #### ES6
 ```js
 import WalletProvider from "@libertypie/wallet-provider"
@@ -25,4 +23,23 @@ import WalletProvider from "@libertypie/wallet-provider"
 #### Typescript
 ```js
 import WalletProvider from "@libertypie/wallet-provider/src/index"
+```
+
+
+```js
+
+    let providers = {
+        "web3_wallets": {
+             connect_text: "Connect with Metamask or Brave"
+        },
+        "binance_chain_wallet": {
+            connect_text: "Connect with Binance Chain Wallet"
+        },
+    };
+
+    let walletProvider = new WalletProvider({
+        cacheProvider: true,
+        providers,
+        debug: true
+    });
 ```
