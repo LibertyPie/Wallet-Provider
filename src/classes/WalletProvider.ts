@@ -100,7 +100,7 @@ import Status from "./Status"
     /**
      * hasProviderCache
      */
-    hasProviderCache(): boolean {
+    isProviderCached(): boolean {
 
         let providerCache = this.getProviderCache()
 
@@ -119,6 +119,10 @@ import Status from "./Status"
     private getProviderCache(): any {
         return (window as any).localStorage.getItem(this.providerCacheName) || null 
     }//end 
+
+    private saveProviderCache(providerName: string) {
+
+    }//end fun 
 
     /**
      * process provider configs
@@ -385,7 +389,19 @@ import Status from "./Status"
         providerInst.onConnectError(this.registeredEvents.connectError || defaultFun)
         providerInst.onMessage(this.registeredEvents.message || defaultFun)
 
-        return  providerInst.connect();
+
+        let connectStatus = await providerInst.connect() as Status;
+
+        //if success, and provider cache is enabled, lets cache the provider
+        if(connectStatus.isError()){
+            return Promise.resolve(connectStatus)
+        }
+
+        let cacheProvider = this.config.cacheProvider || true;
+
+        if(cacheProvider){
+
+        }
     } //end fun
 
     /**
@@ -400,6 +416,7 @@ import Status from "./Status"
         }
 
         let module =  await import(`../providers/${providerModule}`);
+import Status from './Status';
 
         return module.default;
     } //end

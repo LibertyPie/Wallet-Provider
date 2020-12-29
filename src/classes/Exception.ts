@@ -1,6 +1,5 @@
 
 import ErrorCodes from "./ErrorCodes";
-import ErroCodes from "./ErrorCodes"
 
 class Exception extends Error {
 
