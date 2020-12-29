@@ -92,7 +92,8 @@ var WalletProvider = /** @class */ (function () {
             },
             modalClass: "",
             modalTitle: "Select Wallet",
-            cacheProvider: true
+            cacheProvider: true,
+            debug: false
         };
         /**
          * providers
@@ -132,9 +133,11 @@ var WalletProvider = /** @class */ (function () {
             return;
         }
         this.config = Object.assign(this.config, options);
-        if (!this.config.providers.hasOwnProperty("web_wallets")) {
+        var hasWeb3Support = window.ethereum || window.web3;
+        if (!this.config.providers.hasOwnProperty("web_wallets") && hasWeb3Support) {
             this.config.providers = __assign({ web3_wallets: {} }, this.config.providers);
         }
+        //lets make 
         //process and validate enabled providers 
         this.validateEnabledProviders();
         //inject modal
@@ -147,26 +150,46 @@ var WalletProvider = /** @class */ (function () {
             disableFocus: false,
             awaitOpenAnimation: false,
             awaitCloseAnimation: false,
+            debugMode: false
         });
-    }
+        //check for provider cache
+        if (this.isProviderCached()) {
+            var cachedProviderName = this.getProviderCache();
+            this.selectedProviderName = cachedProviderName;
+        }
+    } //end fun 
     /**
      * hasProviderCache
      */
-    WalletProvider.prototype.hasProviderCache = function () {
-        var providerCache = this.getProviderCache();
-        if (providerCache == null || typeof providerCache !== 'object')
+    WalletProvider.prototype.isProviderCached = function () {
+        var providerNameCache = this.getProviderCache();
+        if (providerNameCache == null)
             return false;
-        var providerName = providerCache.provider_name || "";
-        if (!this.providerModules.hasOwnProperty(providerName))
+        if (!this.providerModules.hasOwnProperty(providerNameCache))
             return false;
         return true;
     }; //end fun 
     /**
      * getProviderCache
+     * @return string
      */
     WalletProvider.prototype.getProviderCache = function () {
         return window.localStorage.getItem(this.providerCacheName) || null;
     }; //end 
+    /**
+     * save provider name in cache
+     * @param string the provider name
+     */
+    WalletProvider.prototype.cacheProviderName = function (providerName) {
+        window.localStorage.setItem(this.providerCacheName, providerName);
+    }; //end fun 
+    /**
+     * removeProviderCache
+     */
+    WalletProvider.prototype.removeProviderCache = function () {
+        window.localStorage.removeItem(this.providerCacheName);
+        return true;
+    };
     /**
      * process provider configs
      */
@@ -263,8 +286,7 @@ var WalletProvider = /** @class */ (function () {
             throw new Error("Unknown Event " + eventName);
         }
         this.registeredEvents[eventName] = callback;
-        console.log(this.registeredEvents);
-    };
+    }; //end fun
     /**
      * modalMarkup
      */
@@ -354,7 +376,7 @@ var WalletProvider = /** @class */ (function () {
      */
     WalletProvider.prototype._proccessConnect = function (providerName) {
         return __awaiter(this, void 0, void 0, function () {
-            var providerModule, providerOpts, providerInst, defaultFun;
+            var providerModule, providerOpts, providerInst, defaultFun, connectStatus, cacheProvider;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.getProviderModule(providerName)
@@ -374,7 +396,19 @@ var WalletProvider = /** @class */ (function () {
                         providerInst.onChainChanged(this.registeredEvents.chainChange || defaultFun);
                         providerInst.onConnectError(this.registeredEvents.connectError || defaultFun);
                         providerInst.onMessage(this.registeredEvents.message || defaultFun);
-                        return [2 /*return*/, providerInst.connect()];
+                        return [4 /*yield*/, providerInst.connect()];
+                    case 2:
+                        connectStatus = _a.sent();
+                        //console.log("connectStatus ===>>>",connectStatus)
+                        //if success, and provider cache is enabled, lets cache the provider
+                        if (connectStatus.isError()) {
+                            return [2 /*return*/, Promise.resolve(connectStatus)];
+                        }
+                        cacheProvider = this.config.cacheProvider || true;
+                        if (cacheProvider) {
+                            this.cacheProviderName(providerName);
+                        }
+                        return [2 /*return*/, Promise.resolve(connectStatus)];
                 }
             });
         });
@@ -402,5 +436,5 @@ var WalletProvider = /** @class */ (function () {
         });
     }; //end
     return WalletProvider;
-}());
+}()); //end class
 exports.default = WalletProvider;

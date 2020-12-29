@@ -22,7 +22,8 @@ import Status from "./Status"
         },
         modalClass: "",
         modalTitle: "Select Wallet",
-        cacheProvider: true
+        cacheProvider: true,
+        debug: false
     }
 
     /**
@@ -31,9 +32,9 @@ import Status from "./Status"
     providerModules: any = {
         "web3_wallets": "EthereumProvider",
         "binance_chain_wallet": "BinanceChainProvider",
-        "walletconnect": "WalletConnectProvider",
-        "portis":        "PortisProvider",
-        "frame":  "FrameProvider"
+        "walletconnect":        "WalletConnectProvider",
+        "portis":               "PortisProvider",
+        "frame":                "FrameProvider"
     }
 
     //modal
@@ -74,9 +75,13 @@ import Status from "./Status"
 
         this.config = Object.assign(this.config,options);
 
-        if(!this.config.providers.hasOwnProperty("web_wallets")){
+        let hasWeb3Support = (window as any).ethereum ||  (window as any).web3; 
+
+        if(!this.config.providers.hasOwnProperty("web_wallets") && hasWeb3Support){
             this.config.providers = {...{web3_wallets: {}}, ...this.config.providers}
         }
+
+        //lets make 
 
         //process and validate enabled providers 
         this.validateEnabledProviders();
@@ -92,37 +97,54 @@ import Status from "./Status"
             disableFocus: false,
             awaitOpenAnimation: false, 
             awaitCloseAnimation: false,
-            //debugMode: true
+            debugMode: false
         });
-       
-    }
+        
+        //check for provider cache
+        if(this.isProviderCached()){
+            let cachedProviderName = this.getProviderCache()
+            this.selectedProviderName = cachedProviderName;    
+        }
+
+    } //end fun 
 
     /**
      * hasProviderCache
      */
     isProviderCached(): boolean {
 
-        let providerCache = this.getProviderCache()
+        let providerNameCache = this.getProviderCache()
 
-        if(providerCache == null || typeof providerCache !== 'object') return false;
+        if(providerNameCache == null) return false;
 
-        let providerName = providerCache.provider_name || ""
-
-        if(!this.providerModules.hasOwnProperty(providerName)) return false;
+        if(!this.providerModules.hasOwnProperty(providerNameCache)) return false;
 
         return true;
     } //end fun 
 
     /**
      * getProviderCache
+     * @return string 
      */
     private getProviderCache(): any {
         return (window as any).localStorage.getItem(this.providerCacheName) || null 
     }//end 
 
-    private saveProviderCache(providerName: string) {
-
+    /**
+     * save provider name in cache
+     * @param string the provider name 
+     */
+    private cacheProviderName(providerName: string) {
+        (window as any).localStorage.setItem(this.providerCacheName, providerName) 
     }//end fun 
+
+    /**
+     * removeProviderCache
+     */
+    removeProviderCache(): boolean {
+        (window as any).localStorage.removeItem(this.providerCacheName)
+        return true;
+    }
 
     /**
      * process provider configs
@@ -224,9 +246,7 @@ import Status from "./Status"
         }
 
         (this.registeredEvents as any)[eventName] = callback;
-
-        console.log(this.registeredEvents)
-    }
+    } //end fun
 
 
     /**
@@ -392,16 +412,21 @@ import Status from "./Status"
 
         let connectStatus = await providerInst.connect() as Status;
 
+        //console.log("connectStatus ===>>>",connectStatus)
+       
         //if success, and provider cache is enabled, lets cache the provider
         if(connectStatus.isError()){
-            return Promise.resolve(connectStatus)
+            return Promise.resolve(connectStatus);
         }
+
 
         let cacheProvider = this.config.cacheProvider || true;
 
         if(cacheProvider){
-
+            this.cacheProviderName(providerName)
         }
+
+        return  Promise.resolve(connectStatus);
     } //end fun
 
     /**
@@ -416,10 +441,9 @@ import Status from "./Status"
         }
 
         let module =  await import(`../providers/${providerModule}`);
-import Status from './Status';
 
         return module.default;
     } //end
 
-}
+} //end class
 
