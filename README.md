@@ -3,3 +3,7 @@ Wallet Provider is a typescript & es6 module library which provides a single api
 
 # Installation 
 
+### Using npm 
+```sh
+npm i --save @libertypie/wallet-provider
+```
