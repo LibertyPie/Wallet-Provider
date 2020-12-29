@@ -78,31 +78,35 @@ var WalletConnectProvider = /** @class */ (function (_super) {
     WalletConnectProvider.prototype.connect = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _a, account, resultObj, e_1;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
-                        _b.trys.push([0, 2, , 3]);
+                        _c.trys.push([0, 3, , 4]);
                         //enable wallet first
                         _a = this;
                         return [4 /*yield*/, this._provider.enable()];
                     case 1:
                         //enable wallet first
-                        _a._accounts = _b.sent();
+                        _a._accounts = _c.sent();
                         account = this._accounts[0];
-                        resultObj = {
-                            account: account,
-                            chainId: this.getChainId(),
-                            provider: this._provider
+                        _b = {
+                            account: account
                         };
+                        return [4 /*yield*/, this.getChainId()];
+                    case 2:
+                        resultObj = (_b.chainId = _c.sent(),
+                            _b.provider = this._provider,
+                            _b);
                         if (!this.isOnconnectEventTriggered && this.isConnected()) {
                             this._onConnectCallback(resultObj);
                         }
                         return [2 /*return*/, Status_1.default.successPromise("", resultObj)];
-                    case 2:
-                        e_1 = _b.sent();
+                    case 3:
+                        e_1 = _c.sent();
                         this._onConnectErrorCallback(e_1);
                         return [2 /*return*/, Promise.resolve(Status_1.default.error(e_1.message).setCode(e_1.code))];
-                    case 3: return [2 /*return*/];
+                    case 4: return [2 /*return*/];
                 }
             });
         });

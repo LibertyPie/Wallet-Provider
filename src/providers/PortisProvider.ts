@@ -92,6 +92,9 @@ class PortisProvider  extends Web3Standard  {
 
     initialize(){
 
+        //add request method to make it act as metamask api
+        this._provider.__proto__.request = this._provider.sendAsync;
+
         super.initialize();
 
         this._providerPackage.onError(error => {

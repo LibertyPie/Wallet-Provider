@@ -1,5 +1,5 @@
 {
-  "name": "web3providers",
+  "name": "@libertypie/web3providers",
   "version": "1.0.0",
   "description": "A unified api for web3 wallet  connections",
   "scripts": {
@@ -23,6 +23,14 @@
     "binance chain",
     "coinbase wallet"
   ],
+
+  "private": false,
+  
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/libertypie/walletProvider"
+  },
+  "homepage": "https://wallet-provider.libertypie.com",
   "author": "LibertyPie",
   "license": "MIT",
   "devDependencies": {

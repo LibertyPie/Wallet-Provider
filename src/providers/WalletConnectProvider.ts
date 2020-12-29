@@ -34,9 +34,11 @@ class WalletConnectProvider  extends Web3Standard {
 
            let account = this._accounts[0];
 
+           //console.log(this._provider)
+
             let resultObj = {
                 account,
-                chainId: this.getChainId(),
+                chainId: await this.getChainId(),
                 provider: this._provider
             }
 

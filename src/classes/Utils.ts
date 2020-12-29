@@ -19,4 +19,5 @@ export default class Utils {
             return Promise.resolve(null);
         }  
     }
+
 }

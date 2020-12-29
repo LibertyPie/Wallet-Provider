@@ -155,6 +155,8 @@ var PortisProvider = /** @class */ (function (_super) {
     };
     PortisProvider.prototype.initialize = function () {
         var _this = this;
+        //add request method to make it act as metamask api
+        this._provider.__proto__.request = this._provider.sendAsync;
         _super.prototype.initialize.call(this);
         this._providerPackage.onError(function (error) {
             _this._onErrorCallback(error);
