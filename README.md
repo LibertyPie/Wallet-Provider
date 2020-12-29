@@ -17,12 +17,12 @@ yarn add @libertypie/wallet-provider
 
 ## Usage
 
-#### Typescript
-```js
-import WalletProvider from "@libertypie/wallet-provider/src/index"
-```
 
 #### ES6
 ```js
 import WalletProvider from "@libertypie/wallet-provider"
+```
+#### Typescript
+```js
+import WalletProvider from "@libertypie/wallet-provider/src/index"
 ```
