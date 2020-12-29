@@ -28,11 +28,13 @@
 
     protected _accounts: Array<string> = [];
 
+    protected _providerPackage: any = null;
 
-    constructor(provider: Object){
+    constructor(provider: Object, providerPackage: any = null){
         super()
 
         this._provider = provider;
+        this._providerPackage = providerPackage;
 
         this.initialize();
 

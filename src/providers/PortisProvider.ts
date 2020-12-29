@@ -14,8 +14,6 @@ import ErrorCodes from "../classes/ErrorCodes";
 
 class PortisProvider  extends Web3Standard  {
 
-    providerPackage: any;
-
     constructor(opts: any){
 
         //lets do validation
@@ -25,9 +23,7 @@ class PortisProvider  extends Web3Standard  {
             throw new Exception("portis_package_required","Portis package is required")
         }
 
-        super(providerPackage.provider)
-
-        this.providerPackage = providerPackage;
+        super(providerPackage.provider, providerPackage)
     }
 
    
@@ -40,8 +36,6 @@ class PortisProvider  extends Web3Standard  {
 
             //enable wallet first
             this._accounts = await this._provider.enable();
-
-            console.log(this._provider)
 
            let account = this._accounts[0];
 
@@ -77,18 +71,9 @@ class PortisProvider  extends Web3Standard  {
      * getChainId
      */
     async getChainId(): Promise<string> {
-        try{
-
-            let queryChainId = this._provider.send({
-                method: 'eth_chainId',
-                params: [],
-            })
-             return Promise.resolve(queryChainId);
-         } catch(e){
-             console.log(e,e.stack)
-            return Promise.resolve(null);
-        }  
-    }
+        let chainIdInt = this._providerPackage.config.network.chainId;
+        this.chainId = "0x"+chainIdInt.toString(16);
+        return Promise.resolve(this.chainId);
     }
 
     /**
@@ -96,7 +81,7 @@ class PortisProvider  extends Web3Standard  {
      */
     async disconnect(): Promise<Status>{
         try{
-            await this.providerPackage.logout();
+            await this._providerPackage.logout();
             
             return Status.successPromise("");
         } catch(e){
@@ -109,15 +94,15 @@ class PortisProvider  extends Web3Standard  {
 
         super.initialize();
 
-        this.providerPackage.onError(error => {
+        this._providerPackage.onError(error => {
            this._onErrorCallback(error)
         });
 
-        this.providerPackage.onActiveWalletChanged(walletAddress => {
+        this._providerPackage.onActiveWalletChanged(walletAddress => {
             this._onAccountsChangedCallback([walletAddress])
         });
 
-        this.providerPackage.onLogout(() => {
+        this._providerPackage.onLogout(() => {
             this._onDisconnectCallback()
         });
           

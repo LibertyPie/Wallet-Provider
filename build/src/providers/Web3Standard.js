@@ -62,7 +62,8 @@ var Status_1 = __importDefault(require("../classes/Status"));
 var ProviderEventRegistry_1 = __importDefault(require("../classes/ProviderEventRegistry"));
 var Web3Standard = /** @class */ (function (_super) {
     __extends(Web3Standard, _super);
-    function Web3Standard(provider) {
+    function Web3Standard(provider, providerPackage) {
+        if (providerPackage === void 0) { providerPackage = null; }
         var _this = _super.call(this) || this;
         _this._provider = null;
         _this.chainId = null;
@@ -74,7 +75,9 @@ var Web3Standard = /** @class */ (function (_super) {
          */
         _this.isOnconnectEventTriggered = false;
         _this._accounts = [];
+        _this._providerPackage = null;
         _this._provider = provider;
+        _this._providerPackage = providerPackage;
         _this.initialize();
         return _this;
     } //end fun

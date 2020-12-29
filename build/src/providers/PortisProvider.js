@@ -56,7 +56,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var Web3Standard_1 = __importDefault(require("./Web3Standard"));
 var Exception_1 = __importDefault(require("../classes/Exception"));
@@ -70,8 +69,7 @@ var PortisProvider = /** @class */ (function (_super) {
         if (typeof providerPackage != 'object') {
             throw new Exception_1.default("portis_package_required", "Portis package is required");
         }
-        _this = _super.call(this, providerPackage.provider) || this;
-        _this.providerPackage = providerPackage;
+        _this = _super.call(this, providerPackage.provider, providerPackage) || this;
         return _this;
     }
     /**
@@ -91,7 +89,6 @@ var PortisProvider = /** @class */ (function (_super) {
                     case 1:
                         //enable wallet first
                         _a._accounts = _c.sent();
-                        console.log(this._provider);
                         account = this._accounts[0];
                         _b = {
                             account: account
@@ -125,51 +122,50 @@ var PortisProvider = /** @class */ (function (_super) {
      */
     PortisProvider.prototype.getChainId = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var queryChainId;
+            var chainIdInt;
             return __generator(this, function (_a) {
-                try {
-                    queryChainId = this._provider.send({
-                        method: 'eth_chainId',
-                        params: [],
-                    });
-                    return [2 /*return*/, Promise.resolve(queryChainId)];
-                }
-                catch (e) {
-                    console.log(e, e.stack);
-                    return [2 /*return*/, Promise.resolve(null)];
-                }
-                return [2 /*return*/];
+                chainIdInt = this._providerPackage.config.network.chainId;
+                this.chainId = "0x" + chainIdInt.toString(16);
+                return [2 /*return*/, Promise.resolve(this.chainId)];
             });
         });
     };
+    /**
+     * disconnect
+     */
+    PortisProvider.prototype.disconnect = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var e_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this._providerPackage.logout()];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, Status_1.default.successPromise("")];
+                    case 2:
+                        e_2 = _a.sent();
+                        this._onErrorCallback(e_2);
+                        return [2 /*return*/, Status_1.default.errorPromise("disconnection_failed")];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    PortisProvider.prototype.initialize = function () {
+        var _this = this;
+        _super.prototype.initialize.call(this);
+        this._providerPackage.onError(function (error) {
+            _this._onErrorCallback(error);
+        });
+        this._providerPackage.onActiveWalletChanged(function (walletAddress) {
+            _this._onAccountsChangedCallback([walletAddress]);
+        });
+        this._providerPackage.onLogout(function () {
+            _this._onDisconnectCallback();
+        });
+    };
     return PortisProvider;
-}(Web3Standard_1.default));
-/**
- * disconnect
- */
-async;
-disconnect();
-Promise < Status_1.default > {
-    try: {
-        await: this.providerPackage.logout(),
-        return: Status_1.default.successPromise("")
-    },
-    catch: function (e) {
-        this._onErrorCallback(e);
-        return Status_1.default.errorPromise("disconnection_failed");
-    }
-};
-initialize();
-{
-    _super.initialize.call(this);
-    this.providerPackage.onError(function (error) {
-        _this._onErrorCallback(error);
-    });
-    this.providerPackage.onActiveWalletChanged(function (walletAddress) {
-        _this._onAccountsChangedCallback([walletAddress]);
-    });
-    this.providerPackage.onLogout(function () {
-        _this._onDisconnectCallback();
-    });
-}
+}(Web3Standard_1.default)); //end class
 exports.default = PortisProvider;
