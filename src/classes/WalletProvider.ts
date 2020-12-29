@@ -7,11 +7,11 @@
  const  path = require("path")
 import MicroModal from 'micromodal'; 
 import MainCssStyles from "../assets/styles/main.css";
-import ErrorCodes from './ErrorCodes';
+//import ErrorCodes from './ErrorCodes';
 import Exception from "./Exception"
 import Status from "./Status"
 
- class _WalletProvider {
+ export default class WalletProvider {
 
     /**
      * default config 
@@ -203,7 +203,7 @@ import Status from "./Status"
      */
     toggleModal(){
         if(this.isModalVisible){
-            this.hideModal()
+            this.closeModal()
         } else {
             this.showModal()
         }
@@ -406,4 +406,3 @@ import Status from "./Status"
 
 }
 
- export default _WalletProvider;

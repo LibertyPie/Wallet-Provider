@@ -4,8 +4,6 @@
  * @author https://github.com/libertypie
  */
 
-import _WalletProvider from "./classes/_WalletProvider";
-
- class WalletProvider extends _WalletProvider {}
+import WalletProvider from "./classes/WalletProvider";
 
  export default WalletProvider;

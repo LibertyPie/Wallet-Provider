@@ -77,9 +77,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var path = require("path");
 var micromodal_1 = __importDefault(require("micromodal"));
 var main_css_1 = __importDefault(require("../assets/styles/main.css"));
+//import ErrorCodes from './ErrorCodes';
 var Exception_1 = __importDefault(require("./Exception"));
-var _WalletProvider = /** @class */ (function () {
-    function _WalletProvider(options) {
+var WalletProvider = /** @class */ (function () {
+    function WalletProvider(options) {
         var _this_1 = this;
         if (options === void 0) { options = {}; }
         /**
@@ -151,7 +152,7 @@ var _WalletProvider = /** @class */ (function () {
     /**
      * hasProviderCache
      */
-    _WalletProvider.prototype.hasProviderCache = function () {
+    WalletProvider.prototype.hasProviderCache = function () {
         var providerCache = this.getProviderCache();
         if (providerCache == null || typeof providerCache !== 'object')
             return false;
@@ -163,13 +164,13 @@ var _WalletProvider = /** @class */ (function () {
     /**
      * getProviderCache
      */
-    _WalletProvider.prototype.getProviderCache = function () {
+    WalletProvider.prototype.getProviderCache = function () {
         return window.localStorage.getItem(this.providerCacheName) || null;
     }; //end 
     /**
      * process provider configs
      */
-    _WalletProvider.prototype.validateEnabledProviders = function () {
+    WalletProvider.prototype.validateEnabledProviders = function () {
         //let check enabled providers 
         var enabledProviders = this.config.providers;
         for (var _i = 0, _a = Object.keys(enabledProviders); _i < _a.length; _i++) {
@@ -185,7 +186,7 @@ var _WalletProvider = /** @class */ (function () {
      * trigger  onError Event
      * @param string
      */
-    _WalletProvider.prototype.dispatchEvent = function (eventName, data) {
+    WalletProvider.prototype.dispatchEvent = function (eventName, data) {
         var eventCallback = this.registeredEvents[eventName] || null;
         if (typeof eventCallback == 'function') {
             eventCallback(data);
@@ -194,7 +195,7 @@ var _WalletProvider = /** @class */ (function () {
     /**
      * on Modal show event
      */
-    _WalletProvider.prototype._onModalShow = function (modal) {
+    WalletProvider.prototype._onModalShow = function (modal) {
         this.isModalVisible = true;
         this.dispatchEvent("modalOpen", modal);
     };
@@ -202,14 +203,14 @@ var _WalletProvider = /** @class */ (function () {
      * on modal close  event
      * @param any
      */
-    _WalletProvider.prototype._onModalClose = function (modal) {
+    WalletProvider.prototype._onModalClose = function (modal) {
         this.isModalVisible = false;
         this.dispatchEvent("modalClose", modal);
     };
     /**
      * show the modal
      */
-    _WalletProvider.prototype.showModal = function () {
+    WalletProvider.prototype.showModal = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _a;
             var _this_1 = this;
@@ -235,7 +236,7 @@ var _WalletProvider = /** @class */ (function () {
     /**
      * hide the modal
      */
-    _WalletProvider.prototype.closeModal = function () {
+    WalletProvider.prototype.closeModal = function () {
         var _this_1 = this;
         micromodal_1.default.close(this.modalId, {
             onClose: function (modal) { return _this_1._onModalClose(modal); },
@@ -244,9 +245,9 @@ var _WalletProvider = /** @class */ (function () {
     /**
      * toggle modal
      */
-    _WalletProvider.prototype.toggleModal = function () {
+    WalletProvider.prototype.toggleModal = function () {
         if (this.isModalVisible) {
-            this.hideModal();
+            this.closeModal();
         }
         else {
             this.showModal();
@@ -256,7 +257,7 @@ var _WalletProvider = /** @class */ (function () {
      * events
      * @param eventName
      */
-    _WalletProvider.prototype.on = function (eventName, callback) {
+    WalletProvider.prototype.on = function (eventName, callback) {
         if (callback === void 0) { callback = function () { }; }
         if (!this.eventNames.includes(eventName)) {
             throw new Error("Unknown Event " + eventName);
@@ -267,7 +268,7 @@ var _WalletProvider = /** @class */ (function () {
     /**
      * modalMarkup
      */
-    _WalletProvider.prototype._injectModalMarkup = function () {
+    WalletProvider.prototype._injectModalMarkup = function () {
         var modalId = this.modalId;
         var _this = this;
         //lets check if the class is created already
@@ -296,7 +297,7 @@ var _WalletProvider = /** @class */ (function () {
     /**
      * handleProviderItemClick
      */
-    _WalletProvider.prototype.handleProviderItemClick = function () {
+    WalletProvider.prototype.handleProviderItemClick = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _this;
             return __generator(this, function (_a) {
@@ -318,7 +319,7 @@ var _WalletProvider = /** @class */ (function () {
         });
     };
     //disable click event
-    _WalletProvider.prototype.handleDisableProviderItemClickEvent = function () {
+    WalletProvider.prototype.handleDisableProviderItemClickEvent = function () {
         Array.from(document.querySelectorAll(".provider_item_btn")).forEach(function (el) {
             el.removeEventListener("click", function () { });
         });
@@ -326,7 +327,7 @@ var _WalletProvider = /** @class */ (function () {
     /**
      * connect
      */
-    _WalletProvider.prototype.connect = function () {
+    WalletProvider.prototype.connect = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _a, resultStatus;
             return __generator(this, function (_b) {
@@ -351,7 +352,7 @@ var _WalletProvider = /** @class */ (function () {
     /**
      * _proccessConnect
      */
-    _WalletProvider.prototype._proccessConnect = function (providerName) {
+    WalletProvider.prototype._proccessConnect = function (providerName) {
         return __awaiter(this, void 0, void 0, function () {
             var providerModule, providerOpts, providerInst, defaultFun;
             return __generator(this, function (_a) {
@@ -381,7 +382,7 @@ var _WalletProvider = /** @class */ (function () {
     /**
      * getProviderModule
      */
-    _WalletProvider.prototype.getProviderModule = function (providerName) {
+    WalletProvider.prototype.getProviderModule = function (providerName) {
         return __awaiter(this, void 0, void 0, function () {
             var providerModule, err, module;
             return __generator(this, function (_a) {
@@ -400,6 +401,6 @@ var _WalletProvider = /** @class */ (function () {
             });
         });
     }; //end
-    return _WalletProvider;
+    return WalletProvider;
 }());
-exports.default = _WalletProvider;
+exports.default = WalletProvider;
