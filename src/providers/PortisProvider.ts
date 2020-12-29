@@ -77,7 +77,18 @@ class PortisProvider  extends Web3Standard  {
      * getChainId
      */
     async getChainId(): Promise<string> {
-        return Utils.getChainIdByRequest(this._provider,"send");     
+        try{
+
+            let queryChainId = this._provider.send({
+                method: 'eth_chainId',
+                params: [],
+            })
+             return Promise.resolve(queryChainId);
+         } catch(e){
+             console.log(e,e.stack)
+            return Promise.resolve(null);
+        }  
+    }
     }
 
     /**
