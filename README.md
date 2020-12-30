@@ -66,6 +66,13 @@ import WalletProvider from "@libertypie/wallet-provider/src/index"
 ```
 
 ##### Events
+There are two ways to listen to events, 
+1. on the provider
+2. from Wallet Provider object it self
+
+Wallet Provider events are the same as the provider's event but with support for custom provider events.
+Example Portis event onActiveWalletChanged(walletAddress,()=>{}) is mapped to walletProvider.on("accountsChanged",()=>{})
+
 ```js
 
 ```
