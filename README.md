@@ -42,4 +42,25 @@ import WalletProvider from "@libertypie/wallet-provider/src/index"
         providers,
         debug: true
     });
+
+    let connectStatus = walletProvider.connect();
+
+    if(connectStatus.isError()){
+        //some error info
+        return;
+    }
+
+    //lets retrieve the connection info object
+    // {provider, chainId, account}
+    let resultInfo = connectStatus.getData();
+
+    let provider = resultInfo.provider;
+    let account = resultInfo.account;
+    let chainId = resultInfo.chainId;
+
+```
+
+##### Events
+```js
+
 ```
