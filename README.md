@@ -75,4 +75,51 @@ Example Portis event onActiveWalletChanged(walletAddress,()=>{}) is mapped to wa
 
 ```js
 
+    //listen to modal open
+    walletProvider.on("modalOpen",(modal)=>{
+        console.log(`Modal ${modal.id} opened`)
+    })
+
+    //modal close event
+    walletProvider.on("modalClose",(modal)=>{
+        console.log(`Modal ${modal.id} closed`)
+    })
+
+    //wallet connected successful event
+    walletProvider.on("connect",({provider,chainId,account})=>{
+        console.log("Wallet Connection Successful")
+    })  
+
+    //wallet connection failed
+    walletProvider.on("connectError",(error: Error)=>{
+        console.log("Wallet Connection Error")
+    })
+
+    //wallet's current account is changed
+    //@param Array<string> accounts
+    walletProvider.on("accountsChanged",(accountsArray)=>{
+        console.log("Accounts is changed")
+        console.log(`new account ${accountsArray[0]}`)
+    })
+
+    //wallet's current chain is changed
+    //@param Array<string> accounts
+    walletProvider.on("chainChanged",(chainId)=>{
+        console.log("Chain is changed")
+        console.log(`new chain id ${chainId}`)
+    })
+
+
+    //wallet or web3 disconnected
+    walletProvider.on("disconnect",(error)=>{
+        console.log("Disconnected")
+        console.log(error.message,error.code)
+    })  
+
+
+    //listen to general errors
+    walletProvider.on("error",(error)=>{
+        console.log("an Error occurred")
+        console.log(error.message,error.code)
+    })  
 ```

@@ -30,7 +30,7 @@ import Status from "./Status"
      * providers 
      */
     providerModules: any = {
-        "web3_wallets": "EthereumProvider",
+        "web3_wallets":         "EthereumProvider",
         "binance_chain_wallet": "BinanceChainProvider",
         "walletconnect":        "WalletConnectProvider",
         "portis":               "PortisProvider",
@@ -56,11 +56,9 @@ import Status from "./Status"
         "modalClose",
         "connect",
         "disconnect",
-        "accountChange",
-        "chainChange",
+        "accountsChanged",
+        "chainChanged",
         "error",
-        "providerSelected",
-        "permissionRequest",
         "connectError"
     ];
 
