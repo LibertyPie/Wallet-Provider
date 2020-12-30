@@ -48,7 +48,7 @@ import WalletProvider from "@libertypie/wallet-provider/src/index"
         debug: true
     });
 
-    let connectStatus = walletProvider.connect();
+    let connectStatus = await walletProvider.connect();
 
     if(connectStatus.isError()){
         //some error info
@@ -65,13 +65,50 @@ import WalletProvider from "@libertypie/wallet-provider/src/index"
 
 ```
 
+#### Methods
+##### connect():
+Establish a connection between the dApp and the wallet, if providerCache was enabled on previous connection and a cache exists,
+the previously connected provider will be used, otherwise a modal will be opened for user to select a provider.
+
+```js 
+    //returns a Status object.
+    let connectResult = await  walletProvider.connect();
+
+    if(connectStatus.isError()){
+        //some error info
+        return;
+    }
+
+    //lets retrieve the connection info object
+    // {provider, chainId, account}
+    let resultInfo = connectStatus.getData();
+
+    let provider = resultInfo.provider;
+    let account = resultInfo.account;
+    let chainId = resultInfo.chainId;
+```
+
+
+##### showModal():
+manually open the modal, this method returns selected provider id
+```js 
+let selectedProviderId = await walletProvider.showModal();
+```
+##### closeModal():
+manually close the modal, returns void 
+```js 
+ await walletProvider.closeModal();
+```
+
 #### Events
 There are two ways to listen to events, 
-1. on the provider
-2. from Wallet Provider object it self
+    1. on the provider\
+    2. from Wallet Provider object it self\
 
-Wallet Provider events are the same as the provider's event but with support for custom provider events.
-Example Portis event onActiveWalletChanged(walletAddress,()=>{}) is mapped to walletProvider.on("accountsChanged",()=>{})
+Wallet Provider events are the same as the provider's event but with support for custom provider events.\
+Example:\
+ Portis custom event mapping\ 
+ onActiveWalletChanged(walletAddress,()=>{}) =>  walletProvider.on("accountsChanged",()=>{})
 
 ```js
 
