@@ -93,6 +93,7 @@ var WalletProvider = /** @class */ (function () {
             modalClass: "",
             modalTitle: "Select Wallet",
             cacheProvider: true,
+            showLoader: true,
             debug: false
         };
         /**
@@ -103,7 +104,8 @@ var WalletProvider = /** @class */ (function () {
             "binance_chain_wallet": "BinanceChainProvider",
             "walletconnect": "WalletConnectProvider",
             "portis": "PortisProvider",
-            "frame": "FrameProvider"
+            "frame": "FrameProvider",
+            "authereum": "AuthereumProvider"
         };
         //modal
         this.modalId = "__wallet__provider";
@@ -148,7 +150,7 @@ var WalletProvider = /** @class */ (function () {
             disableFocus: false,
             awaitOpenAnimation: false,
             awaitCloseAnimation: false,
-            debugMode: false
+            debugMode: this.config.debug
         });
         //check for provider cache
         if (this.isProviderCached()) {
@@ -304,15 +306,43 @@ var WalletProvider = /** @class */ (function () {
             var provider = _a[_i];
             var enabledProviderInfo = this.config.providers[provider];
             var providerDescText = enabledProviderInfo.connect_text || "";
+            var providerName = enabledProviderInfo.name || provider.replace(/(\_)+/g, " ");
             if (provider == "web3_wallets") {
                 providerDescText = "\n                    <div class=\"flex flex_row supported_wallets flex_wrap\">\n                        <div class=\"flex flex_row\">\n                            <div class=\"sub_icon metamask_16\"></div>\n                            <div>MetaMask</div>\n                        </div>\n                        <div class=\"flex flex_row\">\n                            <div class=\"sub_icon brave_16\"></div>\n                            <div>Brave</div>\n                        </div>\n                        <div class=\"flex flex_row\">\n                            <div class=\"sub_icon trustwallet_16\"></div>\n                            <div>Trust Wallet</div>\n                        </div>\n                    </div>\n                ";
             }
-            providersMarkup += "\n                <a href=\"#\" data-provider=\"" + provider + "\" class=\"m__col provider_item_btn\">\n                    <div class=\"provider_item\">\n                        <div class=\"icon " + provider + "_icon\"></div>\n                        <h1 class=\"title\">" + provider.replace(/(\_)+/g, " ") + "</h1>\n                        <div class=\"provider_info\">\n                            " + providerDescText + "\n                        </div>\n                    </div>\n                </a>\n            ";
+            providersMarkup += "\n                <a href=\"#\" data-provider=\"" + provider + "\" class=\"m__col provider_item_btn\">\n                    <div class=\"provider_item\">\n                        <div class=\"icon " + provider + "_icon\"></div>\n                        <h1 class=\"title\">" + providerName + "</h1>\n                        <div class=\"provider_info\">\n                            " + providerDescText + "\n                        </div>\n                    </div>\n                </a>\n            ";
         } //end for loop
-        var modalMarkup = "\n            <div class=\"wallet_provider__wrapper\">\n                <div class=\"modal micromodal-slide\" id=\"" + modalId + "\" class=\"modal\" aria-hidden=\"true\">\n                    <div class=\"modal__overlay\" tabindex=\"-1\" data-micromodal-close>\n                        <div class=\"modal__container\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"" + modalId + "-title\">\n                            <header class=\"modal__header\">\n                                <h2 class=\"modal__title\" id=\"" + modalId + "-title\">\n                                    " + this.config.modalTitle + "\n                                </h2>\n                                <button class=\"modal__close\" aria-label=\"Close modal\" data-micromodal-close></button>\n                            </header>\n                            <main class=\"modal__content\" id=\"" + modalId + "-content\">\n                              <div class=\"m__row\">\n                                " + providersMarkup + "\n                              </div>\n                            </main>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
+        var modalMarkup = "\n            <div class=\"wallet_provider__wrapper\">\n                <div class=\"modal micromodal-slide\" id=\"" + modalId + "\" class=\"modal\" aria-hidden=\"true\">\n                    <div class=\"modal__overlay\" tabindex=\"-1\" data-micromodal-close>\n                        <div class=\"modal__container\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"" + modalId + "-title\">\n                            <header class=\"modal__header\">\n                                <h2 class=\"modal__title\" id=\"" + modalId + "-title\">\n                                    " + this.config.modalTitle + "\n                                </h2>\n                                <button class=\"modal__close\" aria-label=\"Close modal\" data-micromodal-close></button>\n                            </header>\n                            <main class=\"modal__content\" id=\"" + modalId + "-content\">\n                              <div class=\"m__row\">\n                                " + providersMarkup + "\n                              </div>\n                              <div class=\"spinner_overlay hide\">\n                               <div class=\"spinner_wrapper\">\n                                    <div class=\"spinner\">\n                                        <div class=\"double-bounce1\"></div>\n                                        <div class=\"double-bounce2\"></div>\n                                    </div>\n                                </div>\n                              </div>\n                            </main>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         var modalNode = document.createElement("div");
         modalNode.innerHTML = modalMarkup;
         document.body.appendChild(modalNode);
+        if (this.config.showLoader) {
+            window.addEventListener("keydown", function (event) {
+                console.log(event);
+            });
+        }
+    };
+    /**
+     * showLoader
+     */
+    WalletProvider.prototype.showLoader = function () {
+        if (!this.config.showLoader)
+            return;
+        var wpc = document.querySelector(".wallet_provider__wrapper");
+        wpc.querySelector(".modal__close").classList.add("hide");
+        wpc.querySelector(".spinner_overlay").classList.remove('hide');
+        wpc.querySelector(".modal__container").classList.add("no_scroll");
+    };
+    /**
+     * hide the loader
+     */
+    WalletProvider.prototype.hideLoader = function () {
+        if (!this.config.showLoader)
+            return;
+        var wpc = document.querySelector(".wallet_provider__wrapper");
+        wpc.querySelector(".modal__close").classList.remove("hide");
+        wpc.querySelector(".spinner_overlay").classList.add('hide');
+        wpc.querySelector(".modal__container").classList.remove("no_scroll");
     };
     /**
      * handleProviderItemClick
@@ -394,9 +424,12 @@ var WalletProvider = /** @class */ (function () {
                         providerInst.onChainChanged(this.registeredEvents.chainChange || defaultFun);
                         providerInst.onConnectError(this.registeredEvents.connectError || defaultFun);
                         providerInst.onMessage(this.registeredEvents.message || defaultFun);
+                        //show the loader 
+                        this.showLoader();
                         return [4 /*yield*/, providerInst.connect()];
                     case 2:
                         connectStatus = _a.sent();
+                        this.hideLoader();
                         //console.log("connectStatus ===>>>",connectStatus)
                         //if success, and provider cache is enabled, lets cache the provider
                         if (connectStatus.isError()) {

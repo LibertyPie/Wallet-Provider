@@ -57,9 +57,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Web3Standard_1 = __importDefault(require("./Web3Standard"));
 var Exception_1 = __importDefault(require("../classes/Exception"));
 var Status_1 = __importDefault(require("../classes/Status"));
+var _PlatformWallets_1 = __importDefault(require("./_PlatformWallets"));
 var PortisProvider = /** @class */ (function (_super) {
     __extends(PortisProvider, _super);
     function PortisProvider(opts) {
@@ -73,45 +73,6 @@ var PortisProvider = /** @class */ (function (_super) {
         return _this;
     }
     /**
-     * override the connect method
-     */
-    PortisProvider.prototype.connect = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var _a, account, resultObj, e_1;
-            var _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        _c.trys.push([0, 3, , 4]);
-                        //enable wallet first
-                        _a = this;
-                        return [4 /*yield*/, this._provider.enable()];
-                    case 1:
-                        //enable wallet first
-                        _a._accounts = _c.sent();
-                        account = this._accounts[0];
-                        _b = {
-                            account: account
-                        };
-                        return [4 /*yield*/, this.getChainId()];
-                    case 2:
-                        resultObj = (_b.chainId = _c.sent(),
-                            _b.provider = this._provider,
-                            _b);
-                        if (!this.isOnconnectEventTriggered && this.isConnected()) {
-                            this._onConnectCallback(resultObj);
-                        }
-                        return [2 /*return*/, Status_1.default.successPromise("", resultObj)];
-                    case 3:
-                        e_1 = _c.sent();
-                        this._onConnectErrorCallback(e_1);
-                        return [2 /*return*/, Promise.resolve(Status_1.default.error(e_1.message).setCode(e_1.code))];
-                    case 4: return [2 /*return*/];
-                }
-            });
-        });
-    }; //end fun
-    /**
      * override connected
      */
     PortisProvider.prototype.isConnected = function () {
@@ -122,10 +83,8 @@ var PortisProvider = /** @class */ (function (_super) {
      */
     PortisProvider.prototype.getChainId = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var chainIdInt;
             return __generator(this, function (_a) {
-                chainIdInt = this._providerPackage.config.network.chainId;
-                this.chainId = "0x" + chainIdInt.toString(16);
+                this.chainId = "0x" + this._providerPackage.config.network.chainId.toString(16);
                 return [2 /*return*/, Promise.resolve(this.chainId)];
             });
         });
@@ -135,7 +94,7 @@ var PortisProvider = /** @class */ (function (_super) {
      */
     PortisProvider.prototype.disconnect = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var e_2;
+            var e_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -145,8 +104,8 @@ var PortisProvider = /** @class */ (function (_super) {
                         _a.sent();
                         return [2 /*return*/, Status_1.default.successPromise("")];
                     case 2:
-                        e_2 = _a.sent();
-                        this._onErrorCallback(e_2);
+                        e_1 = _a.sent();
+                        this._onErrorCallback(e_1);
                         return [2 /*return*/, Status_1.default.errorPromise("disconnection_failed")];
                     case 3: return [2 /*return*/];
                 }
@@ -169,5 +128,5 @@ var PortisProvider = /** @class */ (function (_super) {
         });
     };
     return PortisProvider;
-}(Web3Standard_1.default)); //end class
+}(_PlatformWallets_1.default)); //end class
 exports.default = PortisProvider;

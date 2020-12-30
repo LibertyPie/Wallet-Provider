@@ -58,36 +58,52 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Web3Standard_1 = __importDefault(require("./Web3Standard"));
-var Exception_1 = __importDefault(require("../classes/Exception"));
-var Utils_1 = __importDefault(require("../classes/Utils"));
-var FrameProvider = /** @class */ (function (_super) {
-    __extends(FrameProvider, _super);
-    function FrameProvider(opts) {
-        var _this = this;
-        //lets do validation
-        var provider = opts.package || null;
-        if (typeof provider != 'object') {
-            throw new Exception_1.default("package_required", "FrameProvider package is required");
-        }
-        _this = _super.call(this, provider) || this;
-        return _this;
+var Status_1 = __importDefault(require("../classes/Status"));
+var _PlatformWallets = /** @class */ (function (_super) {
+    __extends(_PlatformWallets, _super);
+    function _PlatformWallets(provider, providerPackage) {
+        if (providerPackage === void 0) { providerPackage = null; }
+        return _super.call(this, provider, providerPackage) || this;
     }
     /**
- * isConnected
- */
-    FrameProvider.prototype.isConnected = function () {
-        return this._provider.connected;
-    };
-    /**
-     * getChainId
-     */
-    FrameProvider.prototype.getChainId = function () {
+   * override the connect method
+   */
+    _PlatformWallets.prototype.connect = function () {
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, Utils_1.default.getChainIdByRequest(this._provider)];
+            var _a, account, resultObj, e_1;
+            var _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        _c.trys.push([0, 3, , 4]);
+                        //enable wallet first
+                        _a = this;
+                        return [4 /*yield*/, this._provider.enable()];
+                    case 1:
+                        //enable wallet first
+                        _a._accounts = _c.sent();
+                        account = this._accounts[0];
+                        _b = {
+                            account: account
+                        };
+                        return [4 /*yield*/, this.getChainId()];
+                    case 2:
+                        resultObj = (_b.chainId = _c.sent(),
+                            _b.provider = this._provider,
+                            _b);
+                        if (!this.isOnconnectEventTriggered && this.isConnected()) {
+                            this._onConnectCallback(resultObj);
+                        }
+                        return [2 /*return*/, Status_1.default.successPromise("", resultObj)];
+                    case 3:
+                        e_1 = _c.sent();
+                        this._onConnectErrorCallback(e_1);
+                        return [2 /*return*/, Promise.resolve(Status_1.default.error(e_1.message).setCode(e_1.code))];
+                    case 4: return [2 /*return*/];
+                }
             });
         });
-    };
-    return FrameProvider;
-}(Web3Standard_1.default)); //end class
-exports.default = FrameProvider;
+    }; //end fun
+    return _PlatformWallets;
+}(Web3Standard_1.default)); //end fun 
+exports.default = _PlatformWallets;

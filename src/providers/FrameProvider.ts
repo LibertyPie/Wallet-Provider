@@ -13,13 +13,13 @@ class FrameProvider  extends Web3Standard {
     constructor(opts: any){
     
         //lets do validation
-        let providerPackage = opts.package || null;
+        let provider = opts.package || null;
 
-        if(typeof providerPackage != 'object'){
+        if(typeof provider != 'object'){
             throw new Exception("package_required","FrameProvider package is required")
         }
 
-        super(providerPackage)
+        super(provider)
     }
 
         /**

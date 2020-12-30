@@ -23,6 +23,7 @@ import Status from "./Status"
         modalClass: "",
         modalTitle: "Select Wallet",
         cacheProvider: true,
+        showLoader: true,
         debug: false
     }
 
@@ -34,7 +35,8 @@ import Status from "./Status"
         "binance_chain_wallet": "BinanceChainProvider",
         "walletconnect":        "WalletConnectProvider",
         "portis":               "PortisProvider",
-        "frame":                "FrameProvider"
+        "frame":                "FrameProvider",
+        "authereum":            "AuthereumProvider"
     }
 
     //modal
@@ -95,7 +97,7 @@ import Status from "./Status"
             disableFocus: false,
             awaitOpenAnimation: false, 
             awaitCloseAnimation: false,
-            debugMode: false
+            debugMode: this.config.debug
         });
         
         //check for provider cache
@@ -209,7 +211,6 @@ import Status from "./Status"
 
         this.handleDisableProviderItemClickEvent();
 
-
         return this.selectedProviderName;
     }
 
@@ -272,6 +273,7 @@ import Status from "./Status"
 
             let enabledProviderInfo = this.config.providers[provider];
             let providerDescText = enabledProviderInfo.connect_text || "";
+            let providerName = enabledProviderInfo.name || provider.replace(/(\_)+/g," ");
 
             if(provider == "web3_wallets"){
                 providerDescText = `
@@ -296,7 +298,7 @@ import Status from "./Status"
                 <a href="#" data-provider="${provider}" class="m__col provider_item_btn">
                     <div class="provider_item">
                         <div class="icon ${provider}_icon"></div>
-                        <h1 class="title">${provider.replace(/(\_)+/g," ")}</h1>
+                        <h1 class="title">${providerName}</h1>
                         <div class="provider_info">
                             ${providerDescText}
                         </div>
@@ -320,6 +322,14 @@ import Status from "./Status"
                               <div class="m__row">
                                 ${providersMarkup}
                               </div>
+                              <div class="spinner_overlay hide">
+                               <div class="spinner_wrapper">
+                                    <div class="spinner">
+                                        <div class="double-bounce1"></div>
+                                        <div class="double-bounce2"></div>
+                                    </div>
+                                </div>
+                              </div>
                             </main>
                         </div>
                     </div>
@@ -331,6 +341,34 @@ import Status from "./Status"
         modalNode.innerHTML = modalMarkup;
 
         document.body.appendChild(modalNode)
+
+        if(this.config.showLoader){
+            window.addEventListener("keydown", event => {
+                console.log(event)
+             });
+        }
+    }
+
+    /**
+     * showLoader
+     */
+    showLoader(){
+        if(!this.config.showLoader) return;
+        let wpc = document.querySelector(".wallet_provider__wrapper");
+        wpc.querySelector(".modal__close").classList.add("hide")
+        wpc.querySelector(".spinner_overlay").classList.remove('hide')
+        wpc.querySelector(".modal__container").classList.add("no_scroll");
+    }
+
+    /**
+     * hide the loader
+     */
+    hideLoader(){
+        if(!this.config.showLoader) return;
+        let wpc = document.querySelector(".wallet_provider__wrapper");
+        wpc.querySelector(".modal__close").classList.remove("hide")
+        wpc.querySelector(".spinner_overlay").classList.add('hide')
+        wpc.querySelector(".modal__container").classList.remove("no_scroll");
     }
 
     /**
@@ -407,9 +445,12 @@ import Status from "./Status"
         providerInst.onConnectError(this.registeredEvents.connectError || defaultFun)
         providerInst.onMessage(this.registeredEvents.message || defaultFun)
 
+        //show the loader 
+        this.showLoader();
 
         let connectStatus = await providerInst.connect() as Status;
 
+        this.hideLoader();
         //console.log("connectStatus ===>>>",connectStatus)
        
         //if success, and provider cache is enabled, lets cache the provider

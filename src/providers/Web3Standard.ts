@@ -101,7 +101,7 @@
             return Status.error("wallet_not_found")
                          .setCode(NetworkCodes.wallet_not_found)
         }
-
+ 
      
         //lets request access 
         try {
