@@ -1,7 +1,7 @@
 {
   "name": "@libertypie/wallet-provider",
   "main": "./dist/src/index.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A unified api for web3 wallet  connections",
   "scripts": {
     "copy-assets": "npx copy-and-watch src/**/*.{css,json,svg,png,scss} dist/src",
@@ -15,7 +15,6 @@
   "publishConfig": {
     "access": "public"
   },
-
   "keywords": [
     "Wallet provider",
     "Web3",
@@ -32,15 +31,13 @@
     "Dapp",
     "Wallet"
   ],
-
   "private": false,
-
   "repository": {
-    "type" : "git",
-    "url" : "git+https://github.com/libertypie/wallet-Provider.git"
+    "type": "git",
+    "url": "git+https://github.com/libertypie/wallet-Provider.git"
   },
   "homepage": "https://wallet-provider.libertypie.com",
-   "author": {
+  "author": {
     "name": "LibertyPie",
     "email": "hello@libertypie.com"
   },
