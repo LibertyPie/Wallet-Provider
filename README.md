@@ -65,7 +65,7 @@ import WalletProvider from "@libertypie/wallet-provider/src/index"
 
 ```
 
-##### Events
+#### Events
 There are two ways to listen to events, 
 1. on the provider
 2. from Wallet Provider object it self
