@@ -52,8 +52,18 @@
         //console.log(this._provider)
 
         //on connect
-        this._provider.on('connect', (chainId: string)=>{
-            if(!this.isOnconnectEventTriggered) this._onConnectCallback(chainId)
+        this._provider.on('connect', async (chainIdObj: any)=>{
+
+            if(!this.isOnconnectEventTriggered){
+                let accounts = await this.getAccounts()
+                this._onConnectCallback({
+                    chainId: chainIdObj.chainId,
+                    account: accounts[0],
+                    provider: this._provider
+                })
+            }
+
+            this.isOnconnectEventTriggered = true;
         });
 
         /**
@@ -68,7 +78,7 @@
         });
 
         this._provider.on('chainChanged', async (chainId) => {
-            await this.getAccounts();
+            this._accounts = await this.getAccounts();
             this._onChainChangedCallback(chainId)
         });
 
@@ -118,6 +128,7 @@
 
             if(!this.isOnconnectEventTriggered && this.isConnected()) {
                  this._onConnectCallback(resultObj)
+                 this.isOnconnectEventTriggered = true;
             }
             
             return Status.successPromise("",resultObj)
@@ -139,8 +150,15 @@
     /**
      * getAccounts
      */
-     getAccounts(): Array<string> {
-        return this._accounts || [];
+     async getAccounts(): Promise<Array<string>> {
+        
+        if(this._accounts.length > 0){
+            return this._accounts;
+        }
+
+        let accounts = await this._provider.request({ method: 'eth_requestAccounts' });
+
+        return accounts;
     } //end fun 
 
 

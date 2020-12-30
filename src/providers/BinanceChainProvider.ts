@@ -6,7 +6,7 @@
 
 import Web3Standard from "./Web3Standard";
 class BinanceChainProvider extends Web3Standard{
-    constructor(opts: any){
+    constructor(providerInfo: any){
         super((window as any).BinanceChain)
     }
 

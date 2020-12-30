@@ -25,14 +25,16 @@ var Exception_1 = __importDefault(require("../classes/Exception"));
 var _PlatformWallets_1 = __importDefault(require("./_PlatformWallets"));
 var AuthereumProvider = /** @class */ (function (_super) {
     __extends(AuthereumProvider, _super);
-    function AuthereumProvider(opts) {
+    function AuthereumProvider(providerInfo) {
         var _this = this;
         //lets do validation
-        var providerPackage = opts.package || null;
-        if (typeof providerPackage != 'object') {
+        var providerPackage = providerInfo.package || null;
+        if (typeof providerPackage == null) {
             throw new Exception_1.default("package_required", "Authereum package is required");
         }
-        _this = _super.call(this, providerPackage.getProvider(), providerPackage) || this;
+        var packageOpts = providerInfo.options || {};
+        var packageInst = new providerPackage(packageOpts.network);
+        _this = _super.call(this, packageInst.getProvider(), providerPackage) || this;
         return _this;
     }
     return AuthereumProvider;

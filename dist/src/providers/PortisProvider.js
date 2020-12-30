@@ -62,14 +62,16 @@ var Status_1 = __importDefault(require("../classes/Status"));
 var _PlatformWallets_1 = __importDefault(require("./_PlatformWallets"));
 var PortisProvider = /** @class */ (function (_super) {
     __extends(PortisProvider, _super);
-    function PortisProvider(opts) {
+    function PortisProvider(providerInfo) {
         var _this = this;
         //lets do validation
-        var providerPackage = opts.package || null;
-        if (typeof providerPackage != 'object') {
+        var providerPackage = providerInfo.package || null;
+        if (providerPackage == null) {
             throw new Exception_1.default("portis_package_required", "Portis package is required");
         }
-        _this = _super.call(this, providerPackage.provider, providerPackage) || this;
+        var packageOpts = providerInfo.options || {};
+        var packageInst = new providerPackage(packageOpts.dappId, packageOpts.network);
+        _this = _super.call(this, packageInst.provider, packageInst) || this;
         return _this;
     }
     /**

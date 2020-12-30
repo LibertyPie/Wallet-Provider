@@ -10,14 +10,16 @@ import Status from "../classes/Status";
 import _PlatformWallets  from "./_PlatformWallets"
 class WalletConnectProvider  extends _PlatformWallets {
 
-    constructor(opts: any){
-    
-        //lets do validation
-        let provider = opts.package || null;
+    constructor(providerInfo: any){
 
-        if(typeof provider != 'object'){
+        //lets do validation
+        let providerPackage = providerInfo.package || null;
+
+        if(typeof providerPackage == null){
             throw new Exception("wc_package_required","WalletConnect package is required")
         }
+
+        let provider = new providerPackage(providerInfo.options || {});
 
         //provider is same as package
         super(provider)

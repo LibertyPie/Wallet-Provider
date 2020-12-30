@@ -280,7 +280,7 @@
    /* css spinner */
 
    .spinner_overlay{
-        position: absolute;
+        position: fixed;
         left: 0;
         right: 0;
         top:0;
@@ -301,7 +301,7 @@
 
   .hide{display: none !important;}
    
-  .no_scroll{overflow: hidden !important;}
+  .no_scroll{}
 
   .spinner {
     width: 40px;

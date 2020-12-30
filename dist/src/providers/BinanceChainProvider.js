@@ -24,7 +24,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Web3Standard_1 = __importDefault(require("./Web3Standard"));
 var BinanceChainProvider = /** @class */ (function (_super) {
     __extends(BinanceChainProvider, _super);
-    function BinanceChainProvider(opts) {
+    function BinanceChainProvider(providerInfo) {
         return _super.call(this, window.BinanceChain) || this;
     }
     return BinanceChainProvider;

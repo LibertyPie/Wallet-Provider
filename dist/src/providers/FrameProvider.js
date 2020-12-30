@@ -62,13 +62,14 @@ var Exception_1 = __importDefault(require("../classes/Exception"));
 var Utils_1 = __importDefault(require("../classes/Utils"));
 var FrameProvider = /** @class */ (function (_super) {
     __extends(FrameProvider, _super);
-    function FrameProvider(opts) {
+    function FrameProvider(providerInfo) {
         var _this = this;
         //lets do validation
-        var provider = opts.package || null;
-        if (typeof provider != 'object') {
+        var providerPackage = providerInfo.package || null;
+        if (typeof providerPackage == null) {
             throw new Exception_1.default("package_required", "FrameProvider package is required");
         }
+        var provider = providerPackage();
         _this = _super.call(this, provider) || this;
         return _this;
     }

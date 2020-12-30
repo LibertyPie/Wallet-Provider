@@ -142,18 +142,34 @@ var WalletProvider = /** @class */ (function () {
         this.validateEnabledProviders();
         //inject modal
         this._injectModalMarkup();
+        if (this.config.showLoader) {
+            window.addEventListener("keydown", function (event) {
+                var isEscape = (event.keyCode || null) == 27 ||
+                    (event.which || null) == 27 ||
+                    (event.key || "") == "Escape" ||
+                    (event.code || "") == "Escape";
+                if (isEscape) {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                }
+            });
+            document.querySelector(".modal__overlay").addEventListener("click", function (event) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+            });
+        }
         micromodal_1.default.init({
             onShow: function (modal) { return _this_1._onModalShow(modal); },
             onClose: function (modal) { return _this_1._onModalClose(modal); },
             openClass: 'is-open',
-            disableScroll: true,
+            disableScroll: false,
             disableFocus: false,
             awaitOpenAnimation: false,
             awaitCloseAnimation: false,
             debugMode: this.config.debug
         });
         //check for provider cache
-        if (this.isProviderCached()) {
+        if (this.config.cacheProvider && this.isProviderCached()) {
             var cachedProviderName = this.getProviderCache();
             this.selectedProviderName = cachedProviderName;
         }
@@ -229,6 +245,7 @@ var WalletProvider = /** @class */ (function () {
     WalletProvider.prototype._onModalClose = function (modal) {
         this.isModalVisible = false;
         this.dispatchEvent("modalClose", modal);
+        this.hideLoader();
     };
     /**
      * show the modal
@@ -316,11 +333,6 @@ var WalletProvider = /** @class */ (function () {
         var modalNode = document.createElement("div");
         modalNode.innerHTML = modalMarkup;
         document.body.appendChild(modalNode);
-        if (this.config.showLoader) {
-            window.addEventListener("keydown", function (event) {
-                console.log(event);
-            });
-        }
     };
     /**
      * showLoader
@@ -329,9 +341,11 @@ var WalletProvider = /** @class */ (function () {
         if (!this.config.showLoader)
             return;
         var wpc = document.querySelector(".wallet_provider__wrapper");
+        var spo = wpc.querySelector(".spinner_overlay");
+        var mc = wpc.querySelector(".modal__container");
         wpc.querySelector(".modal__close").classList.add("hide");
-        wpc.querySelector(".spinner_overlay").classList.remove('hide');
-        wpc.querySelector(".modal__container").classList.add("no_scroll");
+        spo.classList.remove('hide');
+        spo.setAttribute("style", "height:" + mc.scrollHeight + "px");
     };
     /**
      * hide the loader
@@ -340,8 +354,9 @@ var WalletProvider = /** @class */ (function () {
         if (!this.config.showLoader)
             return;
         var wpc = document.querySelector(".wallet_provider__wrapper");
+        var spo = wpc.querySelector(".spinner_overlay");
         wpc.querySelector(".modal__close").classList.remove("hide");
-        wpc.querySelector(".spinner_overlay").classList.add('hide');
+        spo.classList.add('hide');
         wpc.querySelector(".modal__container").classList.remove("no_scroll");
     };
     /**
@@ -404,7 +419,7 @@ var WalletProvider = /** @class */ (function () {
      */
     WalletProvider.prototype._proccessConnect = function (providerName) {
         return __awaiter(this, void 0, void 0, function () {
-            var providerModule, providerOpts, providerInst, defaultFun, connectStatus, cacheProvider;
+            var providerModule, providerInfo, providerInst, defaultFun, connectStatus, cacheProvider, e_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.getProviderModule(providerName)
@@ -412,8 +427,8 @@ var WalletProvider = /** @class */ (function () {
                     ];
                     case 1:
                         providerModule = _a.sent();
-                        providerOpts = this.config.providers[providerName] || {};
-                        providerInst = new providerModule(providerOpts);
+                        providerInfo = this.config.providers[providerName] || {};
+                        providerInst = new providerModule(providerInfo);
                         defaultFun = function () { };
                         //lets now register  some events 
                         providerInst.onConnect(this.registeredEvents.connect || defaultFun);
@@ -426,11 +441,12 @@ var WalletProvider = /** @class */ (function () {
                         providerInst.onMessage(this.registeredEvents.message || defaultFun);
                         //show the loader 
                         this.showLoader();
-                        return [4 /*yield*/, providerInst.connect()];
+                        _a.label = 2;
                     case 2:
+                        _a.trys.push([2, 4, 5, 6]);
+                        return [4 /*yield*/, providerInst.connect()];
+                    case 3:
                         connectStatus = _a.sent();
-                        this.hideLoader();
-                        //console.log("connectStatus ===>>>",connectStatus)
                         //if success, and provider cache is enabled, lets cache the provider
                         if (connectStatus.isError()) {
                             return [2 /*return*/, Promise.resolve(connectStatus)];
@@ -440,6 +456,17 @@ var WalletProvider = /** @class */ (function () {
                             this.cacheProviderName(providerName);
                         }
                         return [2 /*return*/, Promise.resolve(connectStatus)];
+                    case 4:
+                        e_1 = _a.sent();
+                        if (this.config.debug) {
+                            console.log("Connect Error", e_1, e_1.stack);
+                        }
+                        throw e_1;
+                    case 5:
+                        this.closeModal();
+                        this.hideLoader();
+                        return [7 /*endfinally*/];
+                    case 6: return [2 /*return*/];
                 }
             });
         });

@@ -9,16 +9,21 @@ import Exception from "../classes/Exception"
 import _PlatformWallets from './_PlatformWallets';
 
 class AuthereumProvider  extends _PlatformWallets {
+ 
+    constructor(providerInfo: any){
 
-    constructor(opts: any){
         //lets do validation
-        let providerPackage = opts.package || null;
+        let providerPackage = providerInfo.package || null;
 
-        if(typeof providerPackage != 'object'){
+        if(typeof providerPackage == null){
             throw new Exception("package_required","Authereum package is required")
         }
 
-        super(providerPackage.getProvider(),providerPackage);
+        let packageOpts = providerInfo.options || {};  
+
+        let packageInst= new providerPackage(packageOpts.network);
+
+        super(packageInst.getProvider(),providerPackage);
     }
 }    
 

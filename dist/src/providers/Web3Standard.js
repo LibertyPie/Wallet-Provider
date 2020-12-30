@@ -91,10 +91,27 @@ var Web3Standard = /** @class */ (function (_super) {
         this._provider.autoRefreshOnNetworkChange = false;
         //console.log(this._provider)
         //on connect
-        this._provider.on('connect', function (chainId) {
-            if (!_this.isOnconnectEventTriggered)
-                _this._onConnectCallback(chainId);
-        });
+        this._provider.on('connect', function (chainIdObj) { return __awaiter(_this, void 0, void 0, function () {
+            var accounts;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!!this.isOnconnectEventTriggered) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.getAccounts()];
+                    case 1:
+                        accounts = _a.sent();
+                        this._onConnectCallback({
+                            chainId: chainIdObj.chainId,
+                            account: accounts[0],
+                            provider: this._provider
+                        });
+                        _a.label = 2;
+                    case 2:
+                        this.isOnconnectEventTriggered = true;
+                        return [2 /*return*/];
+                }
+            });
+        }); });
         /**
          * disconnect
          */
@@ -105,11 +122,14 @@ var Web3Standard = /** @class */ (function (_super) {
             _this._onErrorCallback(error);
         });
         this._provider.on('chainChanged', function (chainId) { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.getAccounts()];
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = this;
+                        return [4 /*yield*/, this.getAccounts()];
                     case 1:
-                        _a.sent();
+                        _a._accounts = _b.sent();
                         this._onChainChangedCallback(chainId);
                         return [2 /*return*/];
                 }
@@ -164,6 +184,7 @@ var Web3Standard = /** @class */ (function (_super) {
                             _b);
                         if (!this.isOnconnectEventTriggered && this.isConnected()) {
                             this._onConnectCallback(resultObj);
+                            this.isOnconnectEventTriggered = true;
                         }
                         return [2 /*return*/, Status_1.default.successPromise("", resultObj)];
                     case 4:
@@ -190,7 +211,21 @@ var Web3Standard = /** @class */ (function (_super) {
      * getAccounts
      */
     Web3Standard.prototype.getAccounts = function () {
-        return this._accounts || [];
+        return __awaiter(this, void 0, void 0, function () {
+            var accounts;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (this._accounts.length > 0) {
+                            return [2 /*return*/, this._accounts];
+                        }
+                        return [4 /*yield*/, this._provider.request({ method: 'eth_requestAccounts' })];
+                    case 1:
+                        accounts = _a.sent();
+                        return [2 /*return*/, accounts];
+                }
+            });
+        });
     }; //end fun 
     /**
      * isConnected

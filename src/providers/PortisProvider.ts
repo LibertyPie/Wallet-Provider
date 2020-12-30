@@ -15,16 +15,19 @@ import _PlatformWallets from './_PlatformWallets';
 
 class PortisProvider  extends _PlatformWallets  {
 
-    constructor(opts: any){
+    constructor(providerInfo: any){
 
         //lets do validation
-        let providerPackage = opts.package || null;
+        let providerPackage = providerInfo.package || null;
 
-        if(typeof providerPackage != 'object'){
+        if(providerPackage == null){
             throw new Exception("portis_package_required","Portis package is required")
         }
 
-        super(providerPackage.provider, providerPackage)
+        let packageOpts = providerInfo.options || {};  
+        let packageInst = new providerPackage(packageOpts.dappId,packageOpts.network)
+        
+        super(packageInst.provider, packageInst)
     }
 
     /**

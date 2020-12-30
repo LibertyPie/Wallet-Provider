@@ -10,14 +10,17 @@ import Utils from "../classes/Utils"
 
 class FrameProvider  extends Web3Standard {
 
-    constructor(opts: any){
-    
-        //lets do validation
-        let provider = opts.package || null;
+    constructor(providerInfo: any){
 
-        if(typeof provider != 'object'){
+
+        //lets do validation
+        let providerPackage = providerInfo.package || null;
+
+        if(typeof providerPackage == null){
             throw new Exception("package_required","FrameProvider package is required")
         }
+
+        let provider =  providerPackage();
 
         super(provider)
     }

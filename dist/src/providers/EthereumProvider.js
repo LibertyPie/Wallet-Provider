@@ -24,7 +24,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Web3Standard_1 = __importDefault(require("./Web3Standard"));
 var EthereumProvider = /** @class */ (function (_super) {
     __extends(EthereumProvider, _super);
-    function EthereumProvider(opts) {
+    function EthereumProvider(config) {
         return _super.call(this, (window.ethereum || window.web3)) || this;
     }
     return EthereumProvider;

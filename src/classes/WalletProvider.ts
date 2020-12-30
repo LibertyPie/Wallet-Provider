@@ -86,14 +86,33 @@ import Status from "./Status"
         //process and validate enabled providers 
         this.validateEnabledProviders();
 
+
         //inject modal
         this._injectModalMarkup();
+
+        if(this.config.showLoader){
+            window.addEventListener("keydown", event => {
+                let isEscape = (event.keyCode || null) == 27 || 
+                               (event.which || null) == 27 ||
+                               (event.key || "") == "Escape" ||
+                               (event.code || "") == "Escape" 
+                if(isEscape){
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                }
+             });
+
+             document.querySelector(".modal__overlay").addEventListener("click",(event)=>{
+                 event.preventDefault()
+                 event.stopImmediatePropagation();
+             })
+        }
 
         MicroModal.init({       
             onShow: modal => this._onModalShow(modal), 
             onClose: modal => this._onModalClose(modal),   
             openClass: 'is-open',
-            disableScroll: true,
+            disableScroll: false,
             disableFocus: false,
             awaitOpenAnimation: false, 
             awaitCloseAnimation: false,
@@ -101,7 +120,7 @@ import Status from "./Status"
         });
         
         //check for provider cache
-        if(this.isProviderCached()){
+        if(this.config.cacheProvider && this.isProviderCached()){
             let cachedProviderName = this.getProviderCache()
             this.selectedProviderName = cachedProviderName;    
         }
@@ -193,6 +212,7 @@ import Status from "./Status"
     private _onModalClose(modal: any){
         this.isModalVisible = false;
         this.dispatchEvent("modalClose",modal);
+        this.hideLoader()
     }
 
     /**
@@ -341,12 +361,6 @@ import Status from "./Status"
         modalNode.innerHTML = modalMarkup;
 
         document.body.appendChild(modalNode)
-
-        if(this.config.showLoader){
-            window.addEventListener("keydown", event => {
-                console.log(event)
-             });
-        }
     }
 
     /**
@@ -355,9 +369,11 @@ import Status from "./Status"
     showLoader(){
         if(!this.config.showLoader) return;
         let wpc = document.querySelector(".wallet_provider__wrapper");
+        let spo = wpc.querySelector(".spinner_overlay");
+        let mc =  wpc.querySelector(".modal__container");
         wpc.querySelector(".modal__close").classList.add("hide")
-        wpc.querySelector(".spinner_overlay").classList.remove('hide')
-        wpc.querySelector(".modal__container").classList.add("no_scroll");
+        spo.classList.remove('hide')
+        spo.setAttribute("style","height:"+mc.scrollHeight+"px")
     }
 
     /**
@@ -366,8 +382,9 @@ import Status from "./Status"
     hideLoader(){
         if(!this.config.showLoader) return;
         let wpc = document.querySelector(".wallet_provider__wrapper");
+        let spo = wpc.querySelector(".spinner_overlay");
         wpc.querySelector(".modal__close").classList.remove("hide")
-        wpc.querySelector(".spinner_overlay").classList.add('hide')
+        spo.classList.add('hide')
         wpc.querySelector(".modal__container").classList.remove("no_scroll");
     }
 
@@ -429,9 +446,9 @@ import Status from "./Status"
         let providerModule = await this.getProviderModule(providerName)
 
         //lets  add options
-        let providerOpts = this.config.providers[providerName] || {}
+        let providerInfo = this.config.providers[providerName] || {}
 
-        let providerInst = new providerModule(providerOpts)
+        let providerInst = new providerModule(providerInfo)
 
         let defaultFun = () => {}
 
@@ -447,25 +464,34 @@ import Status from "./Status"
 
         //show the loader 
         this.showLoader();
+        try{
 
-        let connectStatus = await providerInst.connect() as Status;
+            let connectStatus = await providerInst.connect() as Status;
 
-        this.hideLoader();
-        //console.log("connectStatus ===>>>",connectStatus)
-       
-        //if success, and provider cache is enabled, lets cache the provider
-        if(connectStatus.isError()){
-            return Promise.resolve(connectStatus);
-        }
+            //if success, and provider cache is enabled, lets cache the provider
+            if(connectStatus.isError()){
+                return Promise.resolve(connectStatus);
+            }
 
+            let cacheProvider = this.config.cacheProvider || true;
 
-        let cacheProvider = this.config.cacheProvider || true;
+            if(cacheProvider){
+                this.cacheProviderName(providerName)
+            }
 
-        if(cacheProvider){
-            this.cacheProviderName(providerName)
-        }
+            return  Promise.resolve(connectStatus);
+        } catch(e){
 
-        return  Promise.resolve(connectStatus);
+            if(this.config.debug){
+                console.log("Connect Error", e, e.stack)
+            }
+
+            throw e;
+        } finally {
+            this.closeModal()
+            this.hideLoader();
+        }       
+   
     } //end fun
 
     /**
