@@ -120,11 +120,9 @@ var WalletProvider = /** @class */ (function () {
             "modalClose",
             "connect",
             "disconnect",
-            "accountChange",
-            "chainChange",
+            "accountsChanged",
+            "chainChanged",
             "error",
-            "providerSelected",
-            "permissionRequest",
             "connectError"
         ];
         this.registeredEvents = {};
