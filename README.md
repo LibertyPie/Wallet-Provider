@@ -4,6 +4,8 @@ Wallet Provider is a lightweight library which provides a single api for Dapps t
 Any library meant for frontend use should be light-weight enough. 
 Wallet provider is only 6.8kB minified & gzipped.
 
+![LibertyPie Wallet Provider](wallet_provider.png)
+
 ## Code Repository
 https://github.com/libertypie/Wallet-Provider
 ## Installation 
