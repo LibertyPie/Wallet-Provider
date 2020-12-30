@@ -1,7 +1,7 @@
 {
   "name": "@libertypie/wallet-provider",
   "main": "./dist/src/index.js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A unified api for web3 wallet  connections",
   "scripts": {
     "copy-assets": "npx copy-and-watch src/**/*.{css,json,svg,png,scss} dist/src",
