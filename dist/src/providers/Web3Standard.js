@@ -95,6 +95,7 @@ var Web3Standard = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 this._provider = provider;
                 this._providerPackage = pakageInst;
+                console.log(this._provider);
                 if (typeof this._provider == 'undefined') {
                     throw new Exception_1.default("undefined_provider", "Provider is required");
                 }
@@ -192,6 +193,7 @@ var Web3Standard = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._provider.request({ method: 'eth_requestAccounts' })];
                     case 2:
                         _a._accounts = _c.sent();
+                        console.log(this._provider);
                         account = this._accounts[0];
                         _b = {
                             account: account

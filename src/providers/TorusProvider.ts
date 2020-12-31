@@ -8,8 +8,9 @@ import Exception from '../classes/Exception';
 import Status from "../classes/Status";
 import _PlatformWallets from './_PlatformWallets';
 import Provider from '../interface/Provider';
+import Web3Standard from './Web3Standard';
 
-export default class PortisProvider  extends _PlatformWallets implements Provider  {
+export default class TorusProvider  extends Web3Standard implements Provider  {
 
     /**
      * torusInit
@@ -22,28 +23,30 @@ export default class PortisProvider  extends _PlatformWallets implements Provide
         if(providerPackage == null){
             throw new Exception("package_required","Torus package is required")
         }
-    
-        let packageInst = new providerPackage()
-        await packageInst.init(providerInfo.options || {});
+        
+        try{
 
-        await packageInst.login();
+            let packageInst = new providerPackage()
+            await packageInst.init(providerInfo.options || {});
 
-        this.setProvider(packageInst.provider(),packageInst)
+            await packageInst.login();
+
+            this.setProvider(packageInst.provider,packageInst)
+
+        } catch (e){
+            this._onConnectErrorCallback(e)
+            throw e;
+        }
+
+        //add request method to make it act as metamask api
+        this._provider.__proto__.request = this._provider.sendAsync;
     }
-
-    /**
-     * override connected 
-     */
-    isConnected(): boolean {
-        return this._provider.isConnected();
-    }
-
 
     /**
      * getChainId
      */
     async getChainId(): Promise<string> {
-        this.chainId = "0x"+this._providerPackage.config.network.chainId.toString(16);
+        this.chainId = "0x"+parseInt((await super.getChainId())).toString(16)
         return Promise.resolve(this.chainId);
     }
     
@@ -62,25 +65,5 @@ export default class PortisProvider  extends _PlatformWallets implements Provide
         }
     }
 
-    initialize(){
-
-        //add request method to make it act as metamask api
-        this._provider.__proto__.request = this._provider.sendAsync;
-
-        super.initialize();
-
-        this._providerPackage.onError(error => {
-           this._onErrorCallback(error)
-        });
-
-        this._providerPackage.onActiveWalletChanged(walletAddress => {
-            this._onAccountsChangedCallback([walletAddress])
-        });
-
-        this._providerPackage.onLogout(() => {
-            this._onDisconnectCallback()
-        });
-          
-    }
 }  //end class
 

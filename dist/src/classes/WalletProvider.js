@@ -79,6 +79,7 @@ var micromodal_1 = __importDefault(require("micromodal"));
 var main_css_1 = __importDefault(require("../assets/styles/main.css"));
 //import ErrorCodes from './ErrorCodes';
 var Exception_1 = __importDefault(require("./Exception"));
+var Status_1 = __importDefault(require("./Status"));
 var WalletProvider = /** @class */ (function () {
     function WalletProvider(options) {
         var _this_1 = this;
@@ -102,11 +103,11 @@ var WalletProvider = /** @class */ (function () {
         this.providerModules = {
             "web3_wallets": "EthereumProvider",
             "binance_chain_wallet": "BinanceChainProvider",
-            "wallet_connect": "WalletConnectProvider",
+            "walletconnect": "WalletConnectProvider",
             "portis": "PortisProvider",
             "frame": "FrameProvider",
             "authereum": "AuthereumProvider",
-            "wallet_link": "WalletLinkProvider",
+            "walletlink": "WalletLinkProvider",
             "torus": "TorusProvider"
         };
         //modal
@@ -145,16 +146,6 @@ var WalletProvider = /** @class */ (function () {
         //inject modal
         this._injectModalMarkup();
         if (this.config.showLoader) {
-            window.addEventListener("keydown", function (event) {
-                var isEscape = (event.keyCode || null) == 27 ||
-                    (event.which || null) == 27 ||
-                    (event.key || "") == "Escape" ||
-                    (event.code || "") == "Escape";
-                if (isEscape) {
-                    event.preventDefault();
-                    event.stopImmediatePropagation();
-                }
-            });
             document.querySelector(".modal__overlay").addEventListener("click", function (event) {
                 event.preventDefault();
                 event.stopImmediatePropagation();
@@ -430,7 +421,7 @@ var WalletProvider = /** @class */ (function () {
                     case 1:
                         providerModule = _a.sent();
                         providerInfo = this.config.providers[providerName] || {};
-                        providerInst = new providerModule(providerInfo);
+                        providerInst = new providerModule();
                         defaultFun = function () { };
                         //lets now register  some events 
                         providerInst.onConnect(this.registeredEvents.connect || defaultFun);
@@ -447,7 +438,7 @@ var WalletProvider = /** @class */ (function () {
                     case 2:
                         _a.trys.push([2, 5, 6, 7]);
                         //initialize 
-                        return [4 /*yield*/, providerInst._initialize()];
+                        return [4 /*yield*/, providerInst._initialize(providerInfo)];
                     case 3:
                         //initialize 
                         _a.sent();
@@ -468,7 +459,7 @@ var WalletProvider = /** @class */ (function () {
                         if (this.config.debug) {
                             console.log("Connect Error", e_1, e_1.stack);
                         }
-                        throw e_1;
+                        return [2 /*return*/, Status_1.default.error(e_1.message || "connect_failed")];
                     case 6:
                         this.closeModal();
                         this.hideLoader();

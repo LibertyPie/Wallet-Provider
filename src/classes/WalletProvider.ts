@@ -33,11 +33,11 @@ import Status from "./Status"
     providerModules: any = {
         "web3_wallets":         "EthereumProvider",
         "binance_chain_wallet": "BinanceChainProvider",
-        "wallet_connect":       "WalletConnectProvider",
+        "walletconnect":        "WalletConnectProvider",
         "portis":               "PortisProvider",
         "frame":                "FrameProvider",
         "authereum":            "AuthereumProvider",
-        "wallet_link":          "WalletLinkProvider",
+        "walletlink":           "WalletLinkProvider",
         "torus":                "TorusProvider"
     }
 
@@ -92,18 +92,7 @@ import Status from "./Status"
         //inject modal
         this._injectModalMarkup();
 
-        if(this.config.showLoader){
-            window.addEventListener("keydown", event => {
-                let isEscape = (event.keyCode || null) == 27 || 
-                               (event.which || null) == 27 ||
-                               (event.key || "") == "Escape" ||
-                               (event.code || "") == "Escape" 
-                if(isEscape){
-                    event.preventDefault();
-                    event.stopImmediatePropagation();
-                }
-             });
-
+        if(this.config.showLoader){           
              document.querySelector(".modal__overlay").addEventListener("click",(event)=>{
                  event.preventDefault()
                  event.stopImmediatePropagation();
@@ -450,7 +439,7 @@ import Status from "./Status"
         //lets  add options
         let providerInfo = this.config.providers[providerName] || {}
 
-        let providerInst = new providerModule(providerInfo)
+        let providerInst = new providerModule()
 
         let defaultFun = () => {}
 
@@ -469,7 +458,7 @@ import Status from "./Status"
         try{
 
             //initialize 
-            await providerInst._initialize();
+            await providerInst._initialize(providerInfo);
             let connectStatus = await providerInst.connect() as Status;
 
             //if success, and provider cache is enabled, lets cache the provider
@@ -490,7 +479,7 @@ import Status from "./Status"
                 console.log("Connect Error", e, e.stack)
             }
 
-            throw e;
+            return Status.error(e.message || "connect_failed")
         } finally {
             this.closeModal()
             this.hideLoader();

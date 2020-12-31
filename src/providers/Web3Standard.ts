@@ -55,6 +55,7 @@ import Exception from '../classes/Exception';
         this._provider = provider;
         this._providerPackage = pakageInst;
 
+        console.log(this._provider)
         if(typeof this._provider == 'undefined'){
             throw new Exception("undefined_provider","Provider is required")
         }
@@ -71,7 +72,6 @@ import Exception from '../classes/Exception';
 
         //on connect
         this._provider.on('connect', async (chainIdObj: any)=>{
-
             if(!this.isOnconnectEventTriggered){
                 let accounts = await this.getAccounts()
                 this._onConnectCallback({
@@ -132,7 +132,7 @@ import Exception from '../classes/Exception';
         try {
 
              this._accounts = await  this._provider.request({ method: 'eth_requestAccounts' });
-
+            console.log(this._provider)
             let account = this._accounts[0]
 
             let resultObj = {

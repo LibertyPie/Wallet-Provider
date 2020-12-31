@@ -59,6 +59,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Exception_1 = __importDefault(require("../classes/Exception"));
 var _PlatformWallets_1 = __importDefault(require("./_PlatformWallets"));
+var Status_1 = __importDefault(require("../classes/Status"));
 var WalletLinkProvider = /** @class */ (function (_super) {
     __extends(WalletLinkProvider, _super);
     function WalletLinkProvider() {
@@ -75,11 +76,63 @@ var WalletLinkProvider = /** @class */ (function (_super) {
                 packageOpts = providerInfo.options || {};
                 appConfig = packageOpts.app || {};
                 network = packageOpts.network || {};
-                packageInst = new providerPackage(appConfig);
-                provider = packageInst.makeWeb3Provider(network.rpc, network.chainId);
-                this._provider.__proto__.request = this._provider.sendAsync;
-                //provider is same as package
-                this.setProvider(provider, packageInst);
+                try {
+                    packageInst = new providerPackage(appConfig);
+                    provider = packageInst.makeWeb3Provider(network.rpc, network.chainId);
+                    //provider is same as package
+                    this.setProvider(provider, packageInst);
+                }
+                catch (e) {
+                    this._onConnectErrorCallback(e);
+                    throw e;
+                }
+                return [2 /*return*/];
+            });
+        });
+    };
+    /**
+     * handleEvents
+     */
+    WalletLinkProvider.prototype.handlerEventLiteners = function () {
+        var _this = this;
+        //lets inject .on to web3 provider
+        this._provider.__proto__.on = function (_event, _callback) {
+            switch (_event) {
+                case "connected":
+                    _this._onAccountsChangedCallback = _callback;
+                    break;
+                case "disconnect":
+                    _this._onDisconnectCallback = _callback;
+                    break;
+                case "chainChanged":
+                    _this._onChainChangedCallback = _callback;
+                    break;
+                case "accountsChanged":
+                    _this._onAccountsChangedCallback = _callback;
+                    break;
+                case "error":
+                    _this._onErrorCallback = _callback;
+                    break;
+            }
+        };
+        _super.prototype.handlerEventLiteners.call(this);
+    };
+    /**
+     * disconnect
+     */
+    WalletLinkProvider.prototype.disconnect = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                try {
+                    this._providerPackage.disconnect();
+                    this._provider.close();
+                    this._onDisconnectCallback();
+                    return [2 /*return*/, Status_1.default.successPromise("")];
+                }
+                catch (e) {
+                    this._onErrorCallback(e);
+                    return [2 /*return*/, Status_1.default.errorPromise(e.message, e)];
+                }
                 return [2 /*return*/];
             });
         });

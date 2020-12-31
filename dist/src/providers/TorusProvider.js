@@ -59,46 +59,75 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Exception_1 = __importDefault(require("../classes/Exception"));
 var Status_1 = __importDefault(require("../classes/Status"));
-var _PlatformWallets_1 = __importDefault(require("./_PlatformWallets"));
-var PortisProvider = /** @class */ (function (_super) {
-    __extends(PortisProvider, _super);
-    function PortisProvider() {
+var Web3Standard_1 = __importDefault(require("./Web3Standard"));
+var TorusProvider = /** @class */ (function (_super) {
+    __extends(TorusProvider, _super);
+    function TorusProvider() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    PortisProvider.prototype._initialize = function (providerInfo) {
+    /**
+     * torusInit
+     */
+    TorusProvider.prototype._initialize = function (providerInfo) {
         return __awaiter(this, void 0, void 0, function () {
-            var providerPackage, packageOpts, packageInst;
+            var providerPackage, packageInst, e_1;
             return __generator(this, function (_a) {
-                providerPackage = providerInfo.package || null;
-                if (providerPackage == null) {
-                    throw new Exception_1.default("portis_package_required", "Portis package is required");
+                switch (_a.label) {
+                    case 0:
+                        providerPackage = providerInfo.package || null;
+                        if (providerPackage == null) {
+                            throw new Exception_1.default("package_required", "Torus package is required");
+                        }
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 4, , 5]);
+                        packageInst = new providerPackage();
+                        return [4 /*yield*/, packageInst.init(providerInfo.options || {})];
+                    case 2:
+                        _a.sent();
+                        return [4 /*yield*/, packageInst.login()];
+                    case 3:
+                        _a.sent();
+                        this.setProvider(packageInst.provider, packageInst);
+                        return [3 /*break*/, 5];
+                    case 4:
+                        e_1 = _a.sent();
+                        this._onConnectErrorCallback(e_1);
+                        throw e_1;
+                    case 5:
+                        //add request method to make it act as metamask api
+                        this._provider.__proto__.request = this._provider.sendAsync;
+                        return [2 /*return*/];
                 }
-                packageOpts = providerInfo.options || {};
-                packageInst = new providerPackage(packageOpts.dappId, packageOpts.network);
-                this.setProvider(packageInst.provider, packageInst);
-                //add request method to make it act as metamask api
-                this._provider.__proto__.request = this._provider.sendAsync;
-                return [2 /*return*/];
             });
         });
     };
     /**
      * getChainId
      */
-    PortisProvider.prototype.getChainId = function () {
+    TorusProvider.prototype.getChainId = function () {
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                this.chainId = "0x" + this._providerPackage.config.network.chainId.toString(16);
-                return [2 /*return*/, Promise.resolve(this.chainId)];
+            var _a, _b, _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        _a = this;
+                        _b = "0x";
+                        _c = parseInt;
+                        return [4 /*yield*/, _super.prototype.getChainId.call(this)];
+                    case 1:
+                        _a.chainId = _b + _c.apply(void 0, [(_d.sent())]).toString(16);
+                        return [2 /*return*/, Promise.resolve(this.chainId)];
+                }
             });
         });
     };
     /**
      * disconnect
      */
-    PortisProvider.prototype.disconnect = function () {
+    TorusProvider.prototype.disconnect = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var e_1;
+            var e_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -108,27 +137,14 @@ var PortisProvider = /** @class */ (function (_super) {
                         _a.sent();
                         return [2 /*return*/, Status_1.default.successPromise("")];
                     case 2:
-                        e_1 = _a.sent();
-                        this._onErrorCallback(e_1);
+                        e_2 = _a.sent();
+                        this._onErrorCallback(e_2);
                         return [2 /*return*/, Status_1.default.errorPromise("disconnection_failed")];
                     case 3: return [2 /*return*/];
                 }
             });
         });
     };
-    PortisProvider.prototype.handlerEventLiteners = function () {
-        var _this = this;
-        _super.prototype.handlerEventLiteners.call(this);
-        this._providerPackage.onError(function (error) {
-            _this._onErrorCallback(error);
-        });
-        this._providerPackage.onActiveWalletChanged(function (walletAddress) {
-            _this._onAccountsChangedCallback([walletAddress]);
-        });
-        this._providerPackage.onLogout(function () {
-            _this._onDisconnectCallback();
-        });
-    };
-    return PortisProvider;
-}(_PlatformWallets_1.default)); //end class
-exports.default = PortisProvider;
+    return TorusProvider;
+}(Web3Standard_1.default)); //end class
+exports.default = TorusProvider;
