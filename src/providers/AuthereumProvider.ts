@@ -4,13 +4,14 @@
  * @author https://github.com/libertypie
  */
 
-import Web3Standard from "./Web3Standard";
 import Exception from "../classes/Exception"
 import _PlatformWallets from './_PlatformWallets';
 
-class AuthereumProvider  extends _PlatformWallets {
+export default class AuthereumProvider  extends _PlatformWallets implements Provider {
  
     constructor(providerInfo: any){
+
+        super();
 
         //lets do validation
         let providerPackage = providerInfo.package || null;
@@ -23,8 +24,6 @@ class AuthereumProvider  extends _PlatformWallets {
 
         let packageInst= new providerPackage(packageOpts.network);
 
-        super(packageInst.getProvider(),providerPackage);
+        this.init(packageInst.getProvider(),providerPackage)
     }
 }    
-
-export default AuthereumProvider;

@@ -8,6 +8,7 @@
  import NetworkCodes from "../classes/ErrorCodes"
  import Status from "../classes/Status"
  import ProviderEventRegistry from "../classes/ProviderEventRegistry"
+import Exception from '../classes/Exception';
 
  class Web3Standard  extends ProviderEventRegistry implements Provider {
 
@@ -30,26 +31,43 @@
 
     protected _providerPackage: any = null;
 
-    constructor(provider: Object, providerPackage: any = null){
-        super()
-
-        this._provider = provider;
-        this._providerPackage = providerPackage;
-
-        this.initialize();
-
+    constructor(){
+      super()
     } //end fun
 
     /**
-     * set up provider events
+     * _initialize
      */
-    protected initialize(){
+    _initialize(providerInfo: any){
+        this.setProvider(providerInfo.provider)
+    }
 
-        if(typeof this._provider == 'undefined') return
+    /**
+     * set up provider 
+     * @param any provider 
+     * @param any package Instance
+     */
+     async  setProvider(
+        provider: any, 
+        pakageInst: any = null
+    ){
+
+        this._provider = provider;
+        this._providerPackage = pakageInst;
+
+        if(typeof this._provider == 'undefined'){
+            throw new Exception("undefined_provider","Provider is required")
+        }
 
         this._provider.autoRefreshOnNetworkChange = false;
 
-        //console.log(this._provider)
+        this.handlerEventLiteners();
+    } //end fun
+    
+    /**
+     * handleEventListeners
+     */
+    handlerEventLiteners(){
 
         //on connect
         this._provider.on('connect', async (chainIdObj: any)=>{
@@ -90,10 +108,7 @@
         this._provider.on('message', (message: string) => {
             this._onMessageCallback(message);
         });
-
-    } //end fun
-    
-
+    }
 
     /**
      * wether the provider is supported in the browser

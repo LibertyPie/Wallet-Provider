@@ -4,13 +4,12 @@
  * @author https://github.com/libertypie
  */
 
-import Web3Standard from "./Web3Standard";
 import Exception from '../classes/Exception';
-import Status from "../classes/Status";
 import _PlatformWallets  from "./_PlatformWallets"
-class WalletConnectProvider  extends _PlatformWallets {
+import Provider from '../interface/Provider';
+export default class WalletConnectProvider  extends _PlatformWallets   implements Provider {
 
-    constructor(providerInfo: any){
+    async _initialize(providerInfo: any){
 
         //lets do validation
         let providerPackage = providerInfo.package || null;
@@ -22,7 +21,7 @@ class WalletConnectProvider  extends _PlatformWallets {
         let provider = new providerPackage(providerInfo.options || {});
 
         //provider is same as package
-        super(provider)
+        this.setProvider(provider)
     }
 
 
@@ -42,5 +41,3 @@ class WalletConnectProvider  extends _PlatformWallets {
     }
 
 }  //end class
-
-export default WalletConnectProvider;

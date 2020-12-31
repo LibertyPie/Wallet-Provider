@@ -60,10 +60,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var ErrorCodes_1 = __importDefault(require("../classes/ErrorCodes"));
 var Status_1 = __importDefault(require("../classes/Status"));
 var ProviderEventRegistry_1 = __importDefault(require("../classes/ProviderEventRegistry"));
+var Exception_1 = __importDefault(require("../classes/Exception"));
 var Web3Standard = /** @class */ (function (_super) {
     __extends(Web3Standard, _super);
-    function Web3Standard(provider, providerPackage) {
-        if (providerPackage === void 0) { providerPackage = null; }
+    function Web3Standard() {
         var _this = _super.call(this) || this;
         _this._provider = null;
         _this.chainId = null;
@@ -76,20 +76,39 @@ var Web3Standard = /** @class */ (function (_super) {
         _this.isOnconnectEventTriggered = false;
         _this._accounts = [];
         _this._providerPackage = null;
-        _this._provider = provider;
-        _this._providerPackage = providerPackage;
-        _this.initialize();
         return _this;
     } //end fun
     /**
-     * set up provider events
+     * _initialize
      */
-    Web3Standard.prototype.initialize = function () {
+    Web3Standard.prototype._initialize = function (providerInfo) {
+        this.setProvider(providerInfo.provider);
+    };
+    /**
+     * set up provider
+     * @param any provider
+     * @param any package Instance
+     */
+    Web3Standard.prototype.setProvider = function (provider, pakageInst) {
+        if (pakageInst === void 0) { pakageInst = null; }
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                this._provider = provider;
+                this._providerPackage = pakageInst;
+                if (typeof this._provider == 'undefined') {
+                    throw new Exception_1.default("undefined_provider", "Provider is required");
+                }
+                this._provider.autoRefreshOnNetworkChange = false;
+                this.handlerEventLiteners();
+                return [2 /*return*/];
+            });
+        });
+    }; //end fun
+    /**
+     * handleEventListeners
+     */
+    Web3Standard.prototype.handlerEventLiteners = function () {
         var _this = this;
-        if (typeof this._provider == 'undefined')
-            return;
-        this._provider.autoRefreshOnNetworkChange = false;
-        //console.log(this._provider)
         //on connect
         this._provider.on('connect', function (chainIdObj) { return __awaiter(_this, void 0, void 0, function () {
             var accounts;
@@ -145,7 +164,7 @@ var Web3Standard = /** @class */ (function (_super) {
         this._provider.on('message', function (message) {
             _this._onMessageCallback(message);
         });
-    }; //end fun
+    };
     /**
      * wether the provider is supported in the browser
      */

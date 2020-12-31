@@ -62,17 +62,23 @@ var Exception_1 = __importDefault(require("../classes/Exception"));
 var Utils_1 = __importDefault(require("../classes/Utils"));
 var FrameProvider = /** @class */ (function (_super) {
     __extends(FrameProvider, _super);
-    function FrameProvider(providerInfo) {
-        var _this = this;
-        //lets do validation
-        var providerPackage = providerInfo.package || null;
-        if (typeof providerPackage == null) {
-            throw new Exception_1.default("package_required", "FrameProvider package is required");
-        }
-        var provider = providerPackage();
-        _this = _super.call(this, provider) || this;
-        return _this;
+    function FrameProvider() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
+    FrameProvider.prototype._initialize = function (providerInfo) {
+        return __awaiter(this, void 0, void 0, function () {
+            var providerPackage, provider;
+            return __generator(this, function (_a) {
+                providerPackage = providerInfo.package || null;
+                if (typeof providerPackage == null) {
+                    throw new Exception_1.default("package_required", "FrameProvider package is required");
+                }
+                provider = providerPackage();
+                this.setProvider(provider);
+                return [2 /*return*/];
+            });
+        });
+    };
     /**
  * isConnected
  */

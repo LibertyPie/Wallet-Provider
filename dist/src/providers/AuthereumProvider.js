@@ -26,7 +26,7 @@ var _PlatformWallets_1 = __importDefault(require("./_PlatformWallets"));
 var AuthereumProvider = /** @class */ (function (_super) {
     __extends(AuthereumProvider, _super);
     function AuthereumProvider(providerInfo) {
-        var _this = this;
+        var _this = _super.call(this) || this;
         //lets do validation
         var providerPackage = providerInfo.package || null;
         if (typeof providerPackage == null) {
@@ -34,7 +34,7 @@ var AuthereumProvider = /** @class */ (function (_super) {
         }
         var packageOpts = providerInfo.options || {};
         var packageInst = new providerPackage(packageOpts.network);
-        _this = _super.call(this, packageInst.getProvider(), providerPackage) || this;
+        _this.init(packageInst.getProvider(), providerPackage);
         return _this;
     }
     return AuthereumProvider;

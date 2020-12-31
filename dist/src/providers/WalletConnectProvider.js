@@ -61,18 +61,24 @@ var Exception_1 = __importDefault(require("../classes/Exception"));
 var _PlatformWallets_1 = __importDefault(require("./_PlatformWallets"));
 var WalletConnectProvider = /** @class */ (function (_super) {
     __extends(WalletConnectProvider, _super);
-    function WalletConnectProvider(providerInfo) {
-        var _this = this;
-        //lets do validation
-        var providerPackage = providerInfo.package || null;
-        if (typeof providerPackage == null) {
-            throw new Exception_1.default("wc_package_required", "WalletConnect package is required");
-        }
-        var provider = new providerPackage(providerInfo.options || {});
-        //provider is same as package
-        _this = _super.call(this, provider) || this;
-        return _this;
+    function WalletConnectProvider() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
+    WalletConnectProvider.prototype._initialize = function (providerInfo) {
+        return __awaiter(this, void 0, void 0, function () {
+            var providerPackage, provider;
+            return __generator(this, function (_a) {
+                providerPackage = providerInfo.package || null;
+                if (typeof providerPackage == null) {
+                    throw new Exception_1.default("wc_package_required", "WalletConnect package is required");
+                }
+                provider = new providerPackage(providerInfo.options || {});
+                //provider is same as package
+                this.setProvider(provider);
+                return [2 /*return*/];
+            });
+        });
+    };
     /**
      * override connected
      */

@@ -10,11 +10,15 @@ import Status from '../classes/Status';
 
 export default class _PlatformWallets  extends Web3Standard  {
 
-    constructor(provider: any, providerPackage: any = null){
-        super(provider,providerPackage)
+    constructor(){
+        super()
     }
 
-      /**
+    async init(provider,packageInst){
+        this.init(provider,packageInst)
+    }
+
+    /**
      * override the connect method
      */
     async connect(): Promise<Status> {

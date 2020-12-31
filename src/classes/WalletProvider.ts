@@ -33,10 +33,12 @@ import Status from "./Status"
     providerModules: any = {
         "web3_wallets":         "EthereumProvider",
         "binance_chain_wallet": "BinanceChainProvider",
-        "walletconnect":        "WalletConnectProvider",
+        "wallet_connect":       "WalletConnectProvider",
         "portis":               "PortisProvider",
         "frame":                "FrameProvider",
-        "authereum":            "AuthereumProvider"
+        "authereum":            "AuthereumProvider",
+        "wallet_link":          "WalletLinkProvider",
+        "torus":                "TorusProvider"
     }
 
     //modal
@@ -466,6 +468,8 @@ import Status from "./Status"
         this.showLoader();
         try{
 
+            //initialize 
+            await providerInst._initialize();
             let connectStatus = await providerInst.connect() as Status;
 
             //if success, and provider cache is enabled, lets cache the provider

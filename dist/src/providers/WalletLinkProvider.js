@@ -57,20 +57,44 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Web3Standard_1 = __importDefault(require("./Web3Standard"));
-var BinanceChainProvider = /** @class */ (function (_super) {
-    __extends(BinanceChainProvider, _super);
-    function BinanceChainProvider() {
+var Exception_1 = __importDefault(require("../classes/Exception"));
+var _PlatformWallets_1 = __importDefault(require("./_PlatformWallets"));
+var WalletLinkProvider = /** @class */ (function (_super) {
+    __extends(WalletLinkProvider, _super);
+    function WalletLinkProvider() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    BinanceChainProvider.prototype._initialize = function (providerInfo) {
+    WalletLinkProvider.prototype._initialize = function (providerInfo) {
         return __awaiter(this, void 0, void 0, function () {
+            var providerPackage, packageOpts, appConfig, network, packageInst, provider;
             return __generator(this, function (_a) {
-                this.setProvider(window.BinanceChain);
+                providerPackage = providerInfo.package || null;
+                if (typeof providerPackage == null) {
+                    throw new Exception_1.default("package_required", "WalletLink package is required");
+                }
+                packageOpts = providerInfo.options || {};
+                appConfig = packageOpts.app || {};
+                network = packageOpts.network || {};
+                packageInst = new providerPackage(appConfig);
+                provider = packageInst.makeWeb3Provider(network.rpc, network.chainId);
+                this._provider.__proto__.request = this._provider.sendAsync;
+                //provider is same as package
+                this.setProvider(provider, packageInst);
                 return [2 /*return*/];
             });
         });
     };
-    return BinanceChainProvider;
-}(Web3Standard_1.default));
-exports.default = BinanceChainProvider;
+    /**
+     * getChainId
+     */
+    WalletLinkProvider.prototype.getChainId = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                this.chainId = "0x" + this._provider._chainId.toString(16);
+                return [2 /*return*/, this.chainId];
+            });
+        });
+    };
+    return WalletLinkProvider;
+}(_PlatformWallets_1.default));
+exports.default = WalletLinkProvider;

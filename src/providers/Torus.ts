@@ -8,21 +8,27 @@ import Exception from '../classes/Exception';
 import Status from "../classes/Status";
 import _PlatformWallets from './_PlatformWallets';
 import Provider from '../interface/Provider';
+
 export default class PortisProvider  extends _PlatformWallets implements Provider  {
 
-    async _initialize(providerInfo: any){
+    /**
+     * torusInit
+     */
+    async _initialize(providerInfo:any){
 
         //lets do validation
         let providerPackage = providerInfo.package || null;
 
         if(providerPackage == null){
-            throw new Exception("portis_package_required","Portis package is required")
+            throw new Exception("package_required","Torus package is required")
         }
+    
+        let packageInst = new providerPackage()
+        await packageInst.init(providerInfo.options || {});
 
-        let packageOpts = providerInfo.options || {};  
-        let packageInst = new providerPackage(packageOpts.dappId,packageOpts.network)
-        
-        this.setProvider(packageInst.provider, packageInst)
+        await packageInst.login();
+
+        this.setProvider(packageInst.provider(),packageInst)
     }
 
     /**

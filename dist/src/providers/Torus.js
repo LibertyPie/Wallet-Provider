@@ -57,20 +57,95 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Web3Standard_1 = __importDefault(require("./Web3Standard"));
-var BinanceChainProvider = /** @class */ (function (_super) {
-    __extends(BinanceChainProvider, _super);
-    function BinanceChainProvider() {
+var Exception_1 = __importDefault(require("../classes/Exception"));
+var Status_1 = __importDefault(require("../classes/Status"));
+var _PlatformWallets_1 = __importDefault(require("./_PlatformWallets"));
+var PortisProvider = /** @class */ (function (_super) {
+    __extends(PortisProvider, _super);
+    function PortisProvider() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    BinanceChainProvider.prototype._initialize = function (providerInfo) {
+    /**
+     * torusInit
+     */
+    PortisProvider.prototype._initialize = function (providerInfo) {
         return __awaiter(this, void 0, void 0, function () {
+            var providerPackage, packageInst;
             return __generator(this, function (_a) {
-                this.setProvider(window.BinanceChain);
-                return [2 /*return*/];
+                switch (_a.label) {
+                    case 0:
+                        providerPackage = providerInfo.package || null;
+                        if (providerPackage == null) {
+                            throw new Exception_1.default("package_required", "Torus package is required");
+                        }
+                        packageInst = new providerPackage();
+                        return [4 /*yield*/, packageInst.init(providerInfo.options || {})];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, packageInst.login()];
+                    case 2:
+                        _a.sent();
+                        this.setProvider(packageInst.provider(), packageInst);
+                        return [2 /*return*/];
+                }
             });
         });
     };
-    return BinanceChainProvider;
-}(Web3Standard_1.default));
-exports.default = BinanceChainProvider;
+    /**
+     * override connected
+     */
+    PortisProvider.prototype.isConnected = function () {
+        return this._provider.isConnected();
+    };
+    /**
+     * getChainId
+     */
+    PortisProvider.prototype.getChainId = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                this.chainId = "0x" + this._providerPackage.config.network.chainId.toString(16);
+                return [2 /*return*/, Promise.resolve(this.chainId)];
+            });
+        });
+    };
+    /**
+     * disconnect
+     */
+    PortisProvider.prototype.disconnect = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var e_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this._providerPackage.logout()];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, Status_1.default.successPromise("")];
+                    case 2:
+                        e_1 = _a.sent();
+                        this._onErrorCallback(e_1);
+                        return [2 /*return*/, Status_1.default.errorPromise("disconnection_failed")];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    PortisProvider.prototype.initialize = function () {
+        var _this = this;
+        //add request method to make it act as metamask api
+        this._provider.__proto__.request = this._provider.sendAsync;
+        _super.prototype.initialize.call(this);
+        this._providerPackage.onError(function (error) {
+            _this._onErrorCallback(error);
+        });
+        this._providerPackage.onActiveWalletChanged(function (walletAddress) {
+            _this._onAccountsChangedCallback([walletAddress]);
+        });
+        this._providerPackage.onLogout(function () {
+            _this._onDisconnectCallback();
+        });
+    };
+    return PortisProvider;
+}(_PlatformWallets_1.default)); //end class
+exports.default = PortisProvider;

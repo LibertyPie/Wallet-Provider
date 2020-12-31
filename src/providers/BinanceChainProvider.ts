@@ -5,11 +5,11 @@
  */
 
 import Web3Standard from "./Web3Standard";
-class BinanceChainProvider extends Web3Standard{
-    constructor(providerInfo: any){
-        super((window as any).BinanceChain)
+import Provider from '../interface/Provider';
+class BinanceChainProvider extends Web3Standard implements Provider{
+    async _initialize(providerInfo: any){
+        this.setProvider((window as any).BinanceChain)
     }
-
 }   
 
 export default BinanceChainProvider;

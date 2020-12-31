@@ -13,5 +13,6 @@ exports.default = {
     wc_package_required: 1200,
     portis_package_required: 1250,
     package_required: 1300,
-    disconnect_failed: 1350
+    disconnect_failed: 1350,
+    undefined_provider: 1400
 };

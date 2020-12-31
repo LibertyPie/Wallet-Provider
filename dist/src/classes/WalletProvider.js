@@ -102,10 +102,12 @@ var WalletProvider = /** @class */ (function () {
         this.providerModules = {
             "web3_wallets": "EthereumProvider",
             "binance_chain_wallet": "BinanceChainProvider",
-            "walletconnect": "WalletConnectProvider",
+            "wallet_connect": "WalletConnectProvider",
             "portis": "PortisProvider",
             "frame": "FrameProvider",
-            "authereum": "AuthereumProvider"
+            "authereum": "AuthereumProvider",
+            "wallet_link": "WalletLinkProvider",
+            "torus": "TorusProvider"
         };
         //modal
         this.modalId = "__wallet__provider";
@@ -443,9 +445,14 @@ var WalletProvider = /** @class */ (function () {
                         this.showLoader();
                         _a.label = 2;
                     case 2:
-                        _a.trys.push([2, 4, 5, 6]);
-                        return [4 /*yield*/, providerInst.connect()];
+                        _a.trys.push([2, 5, 6, 7]);
+                        //initialize 
+                        return [4 /*yield*/, providerInst._initialize()];
                     case 3:
+                        //initialize 
+                        _a.sent();
+                        return [4 /*yield*/, providerInst.connect()];
+                    case 4:
                         connectStatus = _a.sent();
                         //if success, and provider cache is enabled, lets cache the provider
                         if (connectStatus.isError()) {
@@ -456,17 +463,17 @@ var WalletProvider = /** @class */ (function () {
                             this.cacheProviderName(providerName);
                         }
                         return [2 /*return*/, Promise.resolve(connectStatus)];
-                    case 4:
+                    case 5:
                         e_1 = _a.sent();
                         if (this.config.debug) {
                             console.log("Connect Error", e_1, e_1.stack);
                         }
                         throw e_1;
-                    case 5:
+                    case 6:
                         this.closeModal();
                         this.hideLoader();
                         return [7 /*endfinally*/];
-                    case 6: return [2 /*return*/];
+                    case 7: return [2 /*return*/];
                 }
             });
         });

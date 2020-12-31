@@ -7,11 +7,11 @@
 import Web3Standard from "./Web3Standard";
 import Exception from '../classes/Exception';
 import Utils from "../classes/Utils"
+import Provider from '../interface/Provider';
 
-class FrameProvider  extends Web3Standard {
+class FrameProvider  extends Web3Standard implements Provider {
 
-    constructor(providerInfo: any){
-
+    async _initialize(providerInfo: any){
 
         //lets do validation
         let providerPackage = providerInfo.package || null;
@@ -22,7 +22,7 @@ class FrameProvider  extends Web3Standard {
 
         let provider =  providerPackage();
 
-        super(provider)
+       this.setProvider(provider)
     }
 
         /**

@@ -61,13 +61,20 @@ var Web3Standard_1 = __importDefault(require("./Web3Standard"));
 var Status_1 = __importDefault(require("../classes/Status"));
 var _PlatformWallets = /** @class */ (function (_super) {
     __extends(_PlatformWallets, _super);
-    function _PlatformWallets(provider, providerPackage) {
-        if (providerPackage === void 0) { providerPackage = null; }
-        return _super.call(this, provider, providerPackage) || this;
+    function _PlatformWallets() {
+        return _super.call(this) || this;
     }
+    _PlatformWallets.prototype.init = function (provider, packageInst) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                this.init(provider, packageInst);
+                return [2 /*return*/];
+            });
+        });
+    };
     /**
-   * override the connect method
-   */
+     * override the connect method
+     */
     _PlatformWallets.prototype.connect = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _a, account, resultObj, e_1;
