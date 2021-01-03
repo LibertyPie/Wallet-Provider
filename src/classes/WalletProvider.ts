@@ -4,13 +4,11 @@
  * @author https://github.com/libertypie
  */
 
- const  path = require("path")
-import MicroModal from 'micromodal'; 
-import MainCssStyles from "../assets/styles/main.css";
-//import ErrorCodes from './ErrorCodes';
+//import ErrorCodes from './ErrorCodes'; 
 import Exception from "./Exception"
 import Status from "./Status"
 
+const _window = window as any;
  export default class WalletProvider {
 
     /**
@@ -38,7 +36,8 @@ import Status from "./Status"
         "frame":                "FrameProvider",
         "authereum":            "AuthereumProvider",
         "walletlink":           "WalletLinkProvider",
-        "torus":                "TorusProvider"
+        "torus":                "TorusProvider",
+        "fortmatic":             "FortmaticProvider"
     }
 
     //modal
@@ -77,13 +76,14 @@ import Status from "./Status"
 
         this.config = Object.assign(this.config,options);
 
-        let hasWeb3Support = (window as any).ethereum ||  (window as any).web3; 
+        let hasWeb3 = _window.ethereum ||  _window.web3; 
 
-        if(!this.config.providers.hasOwnProperty("web_wallets") && hasWeb3Support){
+        if(!this.config.providers.hasOwnProperty("web_wallets") && hasWeb3){
             this.config.providers = {...{web3_wallets: {}}, ...this.config.providers}
         }
 
         //lets make 
+        _window._debug_wallet_provider = this.config.debug;
 
         //process and validate enabled providers 
         this.validateEnabledProviders();
@@ -92,24 +92,7 @@ import Status from "./Status"
         //inject modal
         this._injectModalMarkup();
 
-        if(this.config.showLoader){           
-             document.querySelector(".modal__overlay").addEventListener("click",(event)=>{
-                 event.preventDefault()
-                 event.stopImmediatePropagation();
-             })
-        }
-
-        MicroModal.init({       
-            onShow: modal => this._onModalShow(modal), 
-            onClose: modal => this._onModalClose(modal),   
-            openClass: 'is-open',
-            disableScroll: false,
-            disableFocus: false,
-            awaitOpenAnimation: false, 
-            awaitCloseAnimation: false,
-            debugMode: this.config.debug
-        });
-        
+     
         //check for provider cache
         if(this.config.cacheProvider && this.isProviderCached()){
             let cachedProviderName = this.getProviderCache()
@@ -137,7 +120,7 @@ import Status from "./Status"
      * @return string 
      */
     private getProviderCache(): any {
-        return (window as any).localStorage.getItem(this.providerCacheName) || null 
+        return _window.localStorage.getItem(this.providerCacheName) || null 
     }//end 
 
     /**
@@ -145,14 +128,14 @@ import Status from "./Status"
      * @param string the provider name 
      */
     private cacheProviderName(providerName: string) {
-        (window as any).localStorage.setItem(this.providerCacheName, providerName) 
+        _window.localStorage.setItem(this.providerCacheName, providerName) 
     }//end fun 
 
     /**
      * removeProviderCache
      */
     removeProviderCache(): boolean {
-        (window as any).localStorage.removeItem(this.providerCacheName)
+        _window.localStorage.removeItem(this.providerCacheName)
         return true;
     }
 
@@ -189,33 +172,14 @@ import Status from "./Status"
     }
 
     /**
-     * on Modal show event
-     */
-    private _onModalShow(modal: any){
-        this.isModalVisible = true;
-        this.dispatchEvent("modalOpen",modal);
-    }
-
-    /**
-     * on modal close  event
-     * @param any 
-     */
-    private _onModalClose(modal: any){
-        this.isModalVisible = false;
-        this.dispatchEvent("modalClose",modal);
-        this.hideLoader()
-    }
-
-    /**
      * show the modal
      */
     async showModal(): Promise<string>{
         
         if(!this.isModalVisible){
-            MicroModal.show(this.modalId,{
-                onShow: modal => this._onModalShow(modal), 
-                onClose: modal => this._onModalClose(modal),    
-            })
+          document.getElementById(this.modalId).classList.add("is_open");
+          this.isModalVisible = true;
+          this.dispatchEvent("modalOpen",this.modalId);
         }
 
         this.selectedProviderName = await this.handleProviderItemClick();
@@ -229,20 +193,17 @@ import Status from "./Status"
      * hide the modal
      */
     closeModal(){
-        MicroModal.close(this.modalId,{
-            onClose: modal => this._onModalClose(modal),   
-        })
-    }
+      let el = document.getElementById(this.modalId)
+      let c = el.classList
+      setTimeout(()=>{
+        c.remove("is_open")
+        c.remove("m__closing")
+       }, 4000); 
 
-    /**
-     * toggle modal
-     */
-    toggleModal(){
-        if(this.isModalVisible){
-            this.closeModal()
-        } else {
-            this.showModal()
-        }
+       //add Zoomin anim
+       c.add("m__closing")
+      this.isModalVisible = false;
+      this.dispatchEvent("modalClose",this.modalId);
     }
 
     /**
@@ -265,45 +226,59 @@ import Status from "./Status"
     private _injectModalMarkup(): void {
 
         let modalId = this.modalId;
-
-        let _this = this;
-
-        //lets check if the class is created already
-        let styleId = document.getElementById("wallet_provider__style")
-
-        if(styleId == null){
-            var style = document.createElement('style');
-            style.setAttribute("id","wallet_provider__style")
-            style.innerHTML = MainCssStyles;
-            document.head.appendChild(style);
-        }
         
         let providersMarkup = "";
+        let loadedImgStyles = "";
+        
+        Object.keys(this.config.providers).forEach(async (provider) => {
 
-        for(let provider of Object.keys(this.config.providers)){
-
+            
             let enabledProviderInfo = this.config.providers[provider];
             let providerDescText = enabledProviderInfo.connect_text || "";
-            let providerName = enabledProviderInfo.name || provider.replace(/(\_)+/g," ");
+            let providerName = enabledProviderInfo.name || null;
 
-            if(provider == "web3_wallets"){
-                providerDescText = `
-                    <div class="flex flex_row supported_wallets flex_wrap">
-                        <div class="flex flex_row">
-                            <div class="sub_icon metamask_16"></div>
-                            <div>MetaMask</div>
-                        </div>
-                        <div class="flex flex_row">
-                            <div class="sub_icon brave_16"></div>
-                            <div>Brave</div>
-                        </div>
-                        <div class="flex flex_row">
-                            <div class="sub_icon trustwallet_16"></div>
-                            <div>Trust Wallet</div>
-                        </div>
-                    </div>
-                `;
+            if(providerName == null){
+                switch(provider){
+                    case "walletconnect": providerName = "WalletConnect"; break;
+                    case "walletlink": providerName = "WalletLink"; break;
+                    default: providerName = provider.replace(/(\_)+/g," ");
+                }
             }
+            
+            let supportedWallets = 
+            {
+                "web3_wallets": ["MetaMask","Brave","Status"],
+                "walletconnect":["Rainbow","Trust","Argent"],
+                "walletlink": ["Coinbase Wallet"]
+            }
+
+            let walletsArray = supportedWallets[provider] || [];
+
+            if(walletsArray.length > 0){
+                
+                providerDescText = '<div class="flex flex_row supported_wallets flex_wrap">';
+
+                for(let wallet of walletsArray){
+                    let walletImg = wallet.toLowerCase().replace(/\s+/g,"_")+"_16";
+                    try{
+                        
+                        let subImgStyle = require("../assets/img/modules/"+walletImg).default;
+                        
+                        loadedImgStyles += subImgStyle;
+                       
+                        providerDescText += `<div class="flex flex_row">
+                                                <div class="sub_icon ${walletImg}_icon"></div>
+                                                <div>${wallet}</div>
+                                            </div>`;
+                    } catch(e){console.log(e)}
+                }  
+                
+                providerDescText += "</div>";
+            } //end sub icons
+            
+           let imgStyle = require("../assets/img/modules/"+provider).default;
+        
+           loadedImgStyles += imgStyle;
 
             providersMarkup  += `
                 <a href="#" data-provider="${provider}" class="m__col provider_item_btn">
@@ -316,31 +291,30 @@ import Status from "./Status"
                     </div>
                 </a>
             `;
-        } //end for loop
+        }) //end for loop
 
         let modalMarkup = `
             <div class="wallet_provider__wrapper">
-                <div class="modal micromodal-slide" id="${modalId}" class="modal" aria-hidden="true">
-                    <div class="modal__overlay" tabindex="-1" data-micromodal-close>
-                        <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="${modalId}-title">
-                            <header class="modal__header">
-                                <h2 class="modal__title" id="${modalId}-title">
+                <div class="modal" id="${modalId}">
+                    <div class="m__container">
+                        <div class="m__body">
+                            <header class="m__header">
+                                <h2 class="m__title">
                                     ${this.config.modalTitle}
                                 </h2>
-                                <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+                                <a type="button" class="m__close">
+                                    &times
+                                </a>
                             </header>
-                            <main class="modal__content" id="${modalId}-content">
-                              <div class="m__row">
-                                ${providersMarkup}
-                              </div>
-                              <div class="spinner_overlay hide">
-                               <div class="spinner_wrapper">
-                                    <div class="spinner">
-                                        <div class="double-bounce1"></div>
-                                        <div class="double-bounce2"></div>
-                                    </div>
+                            <main class="m__content">
+                                <div class="m__row">
+                                    ${providersMarkup}
                                 </div>
-                              </div>
+                                <div class="spinner_overlay hide">
+                                    <div class="spinner_w">
+                                        <div class="spinner"></div>
+                                    </div>
+                               </div>
                             </main>
                         </div>
                     </div>
@@ -348,10 +322,43 @@ import Status from "./Status"
             </div>
         `;
 
+         //lets check if the class is created already
+         let walletProviderLoaded = document.body.dataset.__wps_loaded || "0";
+
+         if(walletProviderLoaded != "1"){
+            
+            let mainStyle = require("../assets/styles/modules/main").default
+            let  modalStyle = require("../assets/styles/modules/modal").default
+
+            let styleData = `${mainStyle}${modalStyle}`;
+
+             var style = document.createElement('style');
+             style.innerHTML = `${styleData}${loadedImgStyles}`;
+
+             document.head.appendChild(style)
+             document.body.dataset.__wps_loaded = "1";
+         }
+
         let modalNode = document.createElement("div");
         modalNode.innerHTML = modalMarkup;
 
         document.body.appendChild(modalNode)
+
+        //handle click to close
+        modalNode.querySelector(".m__close").addEventListener("click",(e)=>{
+            e.preventDefault()
+            this.closeModal()
+        })
+
+        /**
+         * when clicked on the layer close it 
+         */
+        if(!this.config.showLoader){           
+            modalNode.querySelector(".modal").addEventListener("click",(e)=>{
+                if(e.target !== e.currentTarget) return;
+                this.closeModal()
+            })
+        }  
     }
 
     /**
@@ -359,12 +366,8 @@ import Status from "./Status"
      */
     showLoader(){
         if(!this.config.showLoader) return;
-        let wpc = document.querySelector(".wallet_provider__wrapper");
-        let spo = wpc.querySelector(".spinner_overlay");
-        let mc =  wpc.querySelector(".modal__container");
-        wpc.querySelector(".modal__close").classList.add("hide")
+        let spo = document.querySelector(".spinner_overlay");
         spo.classList.remove('hide')
-        spo.setAttribute("style","height:"+mc.scrollHeight+"px")
     }
 
     /**
@@ -372,11 +375,8 @@ import Status from "./Status"
      */
     hideLoader(){
         if(!this.config.showLoader) return;
-        let wpc = document.querySelector(".wallet_provider__wrapper");
-        let spo = wpc.querySelector(".spinner_overlay");
-        wpc.querySelector(".modal__close").classList.remove("hide")
+        let spo = document.querySelector(".spinner_overlay");
         spo.classList.add('hide')
-        wpc.querySelector(".modal__container").classList.remove("no_scroll");
     }
 
     /**
@@ -453,13 +453,17 @@ import Status from "./Status"
         providerInst.onConnectError(this.registeredEvents.connectError || defaultFun)
         providerInst.onMessage(this.registeredEvents.message || defaultFun)
 
-        //show the loader 
-        this.showLoader();
+       
         try{
+
+             //show the loader 
+            this.showLoader();
 
             //initialize 
             await providerInst._initialize(providerInfo);
             let connectStatus = await providerInst.connect() as Status;
+
+            this.hideLoader();
 
             //if success, and provider cache is enabled, lets cache the provider
             if(connectStatus.isError()){
@@ -499,7 +503,7 @@ import Status from "./Status"
         }
 
         let module =  await import(`../providers/${providerModule}`);
-
+        
         return module.default;
     } //end
 

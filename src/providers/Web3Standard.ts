@@ -9,6 +9,7 @@
  import Status from "../classes/Status"
  import ProviderEventRegistry from "../classes/ProviderEventRegistry"
 import Exception from '../classes/Exception';
+import Utils from '../classes/Utils';
 
  class Web3Standard  extends ProviderEventRegistry implements Provider {
 
@@ -38,8 +39,8 @@ import Exception from '../classes/Exception';
     /**
      * _initialize
      */
-    _initialize(providerInfo: any){
-        this.setProvider(providerInfo.provider)
+    async _initialize(providerInfo: any){
+        throw new Error("Kindly set the provider from the provider's class")
     }
 
     /**
@@ -49,18 +50,21 @@ import Exception from '../classes/Exception';
      */
      async  setProvider(
         provider: any, 
-        pakageInst: any = null
+        pkgInstance: any = null
     ){
 
         this._provider = provider;
-        this._providerPackage = pakageInst;
+        this._providerPackage = pkgInstance;
 
-        console.log(this._provider)
         if(typeof this._provider == 'undefined'){
             throw new Exception("undefined_provider","Provider is required")
         }
 
         this._provider.autoRefreshOnNetworkChange = false;
+
+        if(pkgInstance != null){
+            this._provider.__proto__.providerPackage = pkgInstance;
+        }
 
         this.handlerEventLiteners();
     } //end fun
@@ -131,8 +135,14 @@ import Exception from '../classes/Exception';
         //lets request access 
         try {
 
-             this._accounts = await  this._provider.request({ method: 'eth_requestAccounts' });
-            console.log(this._provider)
+            let accounts;
+
+            if(typeof this._provider["enable"] == "function"){
+                this._accounts = await this._provider.enable();  
+            } else {
+                this._accounts = await this.getAccounts();
+            }
+             
             let account = this._accounts[0]
 
             let resultObj = {
@@ -141,7 +151,9 @@ import Exception from '../classes/Exception';
                 provider: this._provider
             }
 
-            if(!this.isOnconnectEventTriggered && this.isConnected()) {
+            console.log(resultObj)
+
+            if(!this.isOnconnectEventTriggered ) {
                  this._onConnectCallback(resultObj)
                  this.isOnconnectEventTriggered = true;
             }
@@ -158,22 +170,30 @@ import Exception from '../classes/Exception';
      * getChainId
      */
     async getChainId(): Promise<string> {
-       this.chainId = this._provider.chainId;
-       return Promise.resolve(this.chainId);
+        this.chainId = await Utils.getChainIdByRequest(this)
+        return this.chainId;
     }
 
     /**
      * getAccounts
      */
      async getAccounts(): Promise<Array<string>> {
-        
-        if(this._accounts.length > 0){
-            return this._accounts;
-        }
+       
+        return new Promise((resolve,reject)=>{
+            this._provider.sendAsync({
+                method: 'eth_requestAccounts' 
+            },(error,data)=>{
 
-        let accounts = await this._provider.request({ method: 'eth_requestAccounts' });
+                console.log(data)
+                if(error != null){
+                    this._onErrorCallback(error)
+                    Utils.logError(error)
+                    return reject(error)
+                }
 
-        return accounts;
+                resolve(data.result)
+            });
+        });
     } //end fun 
 
 
@@ -181,7 +201,7 @@ import Exception from '../classes/Exception';
      * isConnected
      */
     isConnected(): boolean {
-        return this._provider.isConnected()
+        return this._provider.connected || this._provider.isConnected()
     }
 
     /**

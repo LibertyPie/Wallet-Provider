@@ -20,21 +20,9 @@ export default class PortisProvider  extends _PlatformWallets implements Provide
         }
 
         let packageOpts = providerInfo.options || {};  
-        let packageInst = new providerPackage(packageOpts.dappId,packageOpts.network)
+        let pkgInstance = new providerPackage(packageOpts.dappId,packageOpts.network)
         
-        this.setProvider(packageInst.provider, packageInst)
-
-        //add request method to make it act as metamask api
-        this._provider.__proto__.request = this._provider.sendAsync;
-
-    }
-
-    /**
-     * getChainId
-     */
-    async getChainId(): Promise<string> {
-        this.chainId = "0x"+this._providerPackage.config.network.chainId.toString(16);
-        return Promise.resolve(this.chainId);
+        this.setProvider(pkgInstance.provider, pkgInstance)
     }
     
     
@@ -52,23 +40,6 @@ export default class PortisProvider  extends _PlatformWallets implements Provide
         }
     }
 
-    handlerEventLiteners(){
-
-        super.handlerEventLiteners();
-
-        this._providerPackage.onError(error => {
-           this._onErrorCallback(error)
-        });
-
-        this._providerPackage.onActiveWalletChanged(walletAddress => {
-            this._onAccountsChangedCallback([walletAddress])
-        });
-
-        this._providerPackage.onLogout(() => {
-            this._onDisconnectCallback()
-        });
-          
-    }
     
 }  //end class
 

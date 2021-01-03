@@ -6,13 +6,13 @@
 
 import Exception from "../classes/Exception"
 import _PlatformWallets from './_PlatformWallets';
+import Provider from "../interface/Provider"
+import Utils from '../classes/Utils';
 
 export default class AuthereumProvider  extends _PlatformWallets implements Provider {
  
-    constructor(providerInfo: any){
-
-        super();
-
+    async _initialize(providerInfo: any){
+        
         //lets do validation
         let providerPackage = providerInfo.package || null;
 
@@ -22,8 +22,9 @@ export default class AuthereumProvider  extends _PlatformWallets implements Prov
 
         let packageOpts = providerInfo.options || {};  
 
-        let packageInst= new providerPackage(packageOpts.network);
+        let pkgInstance = new providerPackage(packageOpts.network);
 
-        this.init(packageInst.getProvider(),providerPackage)
+        this.setProvider(pkgInstance.getProvider(),pkgInstance)
     }
+
 }    

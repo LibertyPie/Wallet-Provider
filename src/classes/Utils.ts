@@ -4,20 +4,31 @@
  * @author https://github.com/libertypie
  */
 
+
 export default class Utils {
 
-    static async getChainIdByRequest(provider: any,requestMethod: string = "request"): Promise<string>{
-        try{
+    static async getChainIdByRequest(providerClass: any): Promise<string>{
+        return new Promise((resolve,reject)=>{
+            providerClass._provider.sendAsync({
+                method: 'eth_chainId'
+            },(error,data)=>{
+                if(error){
+                    this.logError(error)
+                    providerClass._onErrorCallback(error)
+                   return reject(error)
+                }
 
-            let queryChainId = await provider[requestMethod]({
-                method: 'eth_chainId',
-                params: [],
+                let r = data.result;
+
+                if(!/^(0x)/g.test(r)) r = "0x"+r.toString(16)
+                
+                resolve(r)
             })
-             return Promise.resolve(queryChainId);
-         } catch(e){
-             console.log(e,e.stack)
-            return Promise.resolve(null);
-        }  
+        });
     }
 
+    static logError(error: Error){
+        if(!(window as any)._debug_wallet_provider) return;
+        console.log(error,error.stack);
+    }
 }

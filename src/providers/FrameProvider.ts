@@ -25,19 +25,6 @@ class FrameProvider  extends Web3Standard implements Provider {
        this.setProvider(provider)
     }
 
-        /**
-     * isConnected
-     */
-    isConnected(): boolean {
-        return this._provider.connected;
-    }
-
-    /**
-     * getChainId
-     */
-    async getChainId(): Promise<string> {
-      return Utils.getChainIdByRequest(this._provider);     
-    }
 }  //end class
 
 export default FrameProvider;

@@ -1,16 +1,14 @@
 {
   "name": "@libertypie/wallet-provider",
-  "main": "./dist/src/index.js",
+  "main": "./lib/src/index.js",
   "version": "1.0.3",
-  "description": "A unified api for web3 wallet  connections",
+  "description": "A cross-blockchain single api to connect between dApps & wallets",
   "scripts": {
-    "copy-assets": "npx copy-and-watch src/**/*.{css,json,svg,png,scss} dist/src",
-    "copy-assets-dev": "npx copy-and-watch --watch src/**/*.{css,json,svg,png} dist/src",
-    "dev-compile-style": "npx node-sass --include-path scss ./src/assets/styles/main.scss  ./src/assets/styles/main.css --watch --output-style compressed",
+    "watcher-dev": "node ./tools/watcher.js --watch_dir --path ./src/assets/",
     "build-dev": "npx tsc --watch --project tsconfig.json",
-    "dev": "npx concurrently \"npm:copy-assets-dev\" \"npm:dev-compile-style\" \"npm:build-dev\"",
-    "compile-style": "npx node-sass --include-path scss ./src/assets/styles/main.scss  ./src/assets/styles/main.css --output-style compressed",
-    "build": "npm run compile-style && npx tsc --project tsconfig.json && npm run copy-assets"
+    "dev": "npx concurrently \"npm:watcher-dev\" \"npm:build-dev\"",
+    "watcher": "node ./tools/watcher.js  --path ./src/assets/",
+    "build": "npm run watcher && npx tsc --project tsconfig.json"
   },
   "publishConfig": {
     "access": "public"
@@ -43,13 +41,26 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-typescript": "^7.12.7",
     "@types/node": "^14.14.16",
+    "arg": "^5.0.0",
+    "colors": "^1.4.0",
     "concurrently": "^5.3.0",
     "copy-and-watch": "^0.1.5",
+    "glob": "^7.1.6",
+    "jss-cli": "^6.0.2",
     "node-sass": "^5.0.0",
-    "typescript": "^4.1.3"
+    "node-watch": "^0.7.1",
+    "patch-package": "^6.2.2",
+    "style-loader": "^2.0.0",
+    "ts-loader": "^8.0.13",
+    "typescript": "^4.1.3",
+    "webpack": "^5.11.1",
+    "webpack-cli": "^4.3.1"
   },
-  "dependencies": {
-    "micromodal": "^0.4.6"
-  }
+  "dependencies": {}
 }

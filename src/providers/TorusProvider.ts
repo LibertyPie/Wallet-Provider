@@ -9,6 +9,7 @@ import Status from "../classes/Status";
 import _PlatformWallets from './_PlatformWallets';
 import Provider from '../interface/Provider';
 import Web3Standard from './Web3Standard';
+import Utils from '../classes/Utils';
 
 export default class TorusProvider  extends Web3Standard implements Provider  {
 
@@ -35,21 +36,11 @@ export default class TorusProvider  extends Web3Standard implements Provider  {
 
         } catch (e){
             this._onConnectErrorCallback(e)
+            Utils.logError(e)
             throw e;
         }
-
-        //add request method to make it act as metamask api
-        this._provider.__proto__.request = this._provider.sendAsync;
     }
 
-    /**
-     * getChainId
-     */
-    async getChainId(): Promise<string> {
-        this.chainId = "0x"+parseInt((await super.getChainId())).toString(16)
-        return Promise.resolve(this.chainId);
-    }
-    
     
     /**
      * disconnect
@@ -61,6 +52,7 @@ export default class TorusProvider  extends Web3Standard implements Provider  {
             return Status.successPromise("");
         } catch(e){
             this._onErrorCallback(e)
+            Utils.logError(e)
             return Status.errorPromise("disconnection_failed")
         }
     }

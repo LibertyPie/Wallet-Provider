@@ -24,20 +24,4 @@ export default class WalletConnectProvider  extends _PlatformWallets   implement
         this.setProvider(provider)
     }
 
-
-    /**
-     * override connected 
-     */
-    isConnected(): boolean {
-        return this._provider.connected;
-    }
-
-    /**
-     * getChainId
-     */
-    async getChainId(): Promise<string> {
-        this.chainId = "0x"+this._provider.chainId.toString(16);
-        return Promise.resolve(this.chainId);
-    }
-
 }  //end class

@@ -8,8 +8,11 @@ import Exception from '../classes/Exception';
 import _PlatformWallets  from "./_PlatformWallets"
 import Provider from '../interface/Provider';
 import Status from "../classes/Status";
-export default class WalletLinkProvider  extends _PlatformWallets implements Provider {
+import Utils from '../classes/Utils';
 
+const _window = window as any;
+export default class WalletLinkProvider  extends _PlatformWallets implements Provider {
+   
    async _initialize(providerInfo: any){
 
         //lets do validation
@@ -26,47 +29,24 @@ export default class WalletLinkProvider  extends _PlatformWallets implements Pro
         let network =  packageOpts.network || {}
 
         try{
-            let packageInst = new providerPackage(appConfig);
 
-            let provider = packageInst.makeWeb3Provider(network.rpc,network.chainId)
+            let pkgInstance = new providerPackage(appConfig);
+
+            let provider = pkgInstance.makeWeb3Provider(network.rpc,network.chainId)
             
             //provider is same as package
-            this.setProvider(provider,packageInst)
+            this.setProvider(provider,pkgInstance)
+
         } catch(e) {
             this._onConnectErrorCallback(e)
             throw e;
         }
     }
 
-    /**
-     * handleEvents
-     */
-    handlerEventLiteners(){
-
-        //lets inject .on to web3 provider
-        this._provider.__proto__.on = (_event: string,_callback: Function) => {
-            switch(_event){
-                case "connected":
-                    this._onAccountsChangedCallback = _callback;
-                break;
-                case "disconnect":
-                    this._onDisconnectCallback = _callback;
-                break;
-                case "chainChanged":
-                    this._onChainChangedCallback = _callback;
-                break;
-                case "accountsChanged":
-                    this._onAccountsChangedCallback = _callback;
-                break;
-                case "error":
-                    this._onErrorCallback = _callback;
-                break;
-            }
-        }
-
-        super.handlerEventLiteners();
+    async getChainId(): Promise<string>{
+        return "";
     }
-
+    
     /**
      * disconnect
      */
@@ -78,15 +58,9 @@ export default class WalletLinkProvider  extends _PlatformWallets implements Pro
             return Status.successPromise("")
         } catch (e){
             this._onErrorCallback(e)
-            return Status.errorPromise(e.message,e)
+            Utils.logError(e)
+            return Status.errorPromise("disconnection_failed",e)
         }
     }
 
-    /**
-     * getChainId
-     */
-    async getChainId(): Promise<string> {
-        this.chainId = "0x"+this._provider._chainId.toString(16);   
-        return this.chainId;  
-    }
 }
