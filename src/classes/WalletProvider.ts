@@ -7,6 +7,7 @@
 //import ErrorCodes from './ErrorCodes'; 
 import Exception from "./Exception"
 import Status from "./Status"
+import MainStyle from "../assets/styles/main.css";
 
 const _window = window as any;
  export default class WalletProvider {
@@ -237,6 +238,7 @@ const _window = window as any;
             let providerDescText = enabledProviderInfo.connect_text || "";
             let providerName = enabledProviderInfo.name || null;
 
+            /*
             if(providerName == null){
                 switch(provider){
                     case "walletconnect": providerName = "WalletConnect"; break;
@@ -276,9 +278,9 @@ const _window = window as any;
                 providerDescText += "</div>";
             } //end sub icons
             
-           let imgStyle = require("../assets/img/modules/"+provider).default;
+           //let imgStyle = require("../assets/img/modules/"+provider).default;
         
-           loadedImgStyles += imgStyle;
+           //loadedImgStyles += imgStyle;*/
 
             providersMarkup  += `
                 <a href="#" data-provider="${provider}" class="m__col provider_item_btn">
@@ -327,15 +329,15 @@ const _window = window as any;
 
          if(walletProviderLoaded != "1"){
             
-            let mainStyle = require("../assets/styles/modules/main").default
-            let  modalStyle = require("../assets/styles/modules/modal").default
+           // let mainStyle = require("../assets/styles/modules/main").default
+           // let  modalStyle = require("../assets/styles/modules/modal").default
 
-            let styleData = `${mainStyle}${modalStyle}`;
+            //let styleData = `${mainStyle}${modalStyle}`;
 
-             var style = document.createElement('style');
-             style.innerHTML = `${styleData}${loadedImgStyles}`;
+             //var style = document.createElement('style');
+             //style.innerHTML = `${styleData}${loadedImgStyles}`;
 
-             document.head.appendChild(style)
+             //document.head.appendChild(style)
              document.body.dataset.__wps_loaded = "1";
          }
 

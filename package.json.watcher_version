@@ -4,13 +4,11 @@
   "version": "1.0.7",
   "description": "A cross-blockchain single api to connect between dApps & wallets",
   "scripts": {
-    "copy-assets": "npx copy-and-watch src/**/*.{css,json,svg,png,scss} lib/src",
-    "copy-assets-dev": "npx copy-and-watch --watch src/**/*.{css,json,svg,png} lib/src",
-    "dev-compile-style": "npx node-sass --include-path scss ./src/assets/styles/main.scss  ./src/assets/styles/main.css --watch --output-style compressed",
-    "compile-style": "npx node-sass --include-path scss ./src/assets/styles/main.scss  ./src/assets/styles/main.css --output-style compressed",
+    "watcher-dev": "node ./tools/watcher.js --watch_dir --path ./src/assets/",
     "build-dev": "npx tsc --watch --project tsconfig.json",
-    "build": "npm run copy-assets && npm run compile-style && npx tsc --project tsconfig.json",
-    "dev": "npx concurrently \"npm:dev-compile-style\" \"npm:copy-assets-dev\"  \"npm:build-dev\""
+    "dev": "npx concurrently \"npm:watcher-dev\" \"npm:build-dev\"",
+    "watcher": "node ./tools/watcher.js  --path ./src/assets/",
+    "build": "npm run watcher && npx tsc --project tsconfig.json"
   },
   "publishConfig": {
     "access": "public"
