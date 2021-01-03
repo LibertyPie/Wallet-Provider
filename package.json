@@ -1,7 +1,7 @@
 {
   "name": "@libertypie/wallet-provider",
   "main": "./lib/src/index.js",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A cross-blockchain single api to connect between dApps & wallets",
   "scripts": {
     "watcher-dev": "node ./tools/watcher.js --watch_dir --path ./src/assets/",
