@@ -8,7 +8,7 @@
 import Exception from "./Exception"
 import Status from "./Status"
 require ("../assets/styles/main.css");
-
+ 
 const _window = window as any;
  export default class WalletProvider {
 
@@ -229,11 +229,9 @@ const _window = window as any;
         let modalId = this.modalId;
         
         let providersMarkup = "";
-        let loadedImgStyles = "";
         
         Object.keys(this.config.providers).forEach(async (provider) => {
 
-            
             let enabledProviderInfo = this.config.providers[provider];
             let providerDescText = enabledProviderInfo.connect_text || "";
             let providerName = enabledProviderInfo.name || null;
@@ -262,26 +260,16 @@ const _window = window as any;
                 providerDescText = '<div class="flex flex_row supported_wallets flex_wrap">';
 
                 for(let wallet of walletsArray){
-                    let walletImg = wallet.toLowerCase().replace(/\s+/g,"_")+"_16";
-                    try{
-                        
-                        let subImgStyle = require("../assets/img/modules/"+walletImg).default;
-                        
-                        loadedImgStyles += subImgStyle;
-                       
+                    let walletImg = wallet.toLowerCase().replace(/\s+/g,"_")+"_16";                                                                       
                         providerDescText += `<div class="flex flex_row">
                                                 <div class="sub_icon ${walletImg}_icon"></div>
                                                 <div>${wallet}</div>
                                             </div>`;
-                    } catch(e){console.log(e)}
                 }  
                 
                 providerDescText += "</div>";
             } //end sub icons
             
-           //let imgStyle = require("../assets/img/modules/"+provider).default;
-        
-           //loadedImgStyles += imgStyle;*/
 
             providersMarkup  += `
                 <a href="#" data-provider="${provider}" class="m__col provider_item_btn">
@@ -325,23 +313,6 @@ const _window = window as any;
             </div>
         `;
 
-         //lets check if the class is created already
-         let walletProviderLoaded = document.body.dataset.__wps_loaded || "0";
-
-         if(walletProviderLoaded != "1"){
-            
-           // let mainStyle = require("../assets/styles/modules/main").default
-           // let  modalStyle = require("../assets/styles/modules/modal").default
-
-            //let styleData = `${mainStyle}${modalStyle}`;
-
-             //var style = document.createElement('style');
-             //style.innerHTML = MainStyle;
-
-             //document.head.appendChild(style)
-             document.body.dataset.__wps_loaded = "1";
-         }
-
         let modalNode = document.createElement("div");
         modalNode.innerHTML = modalMarkup;
 
@@ -369,8 +340,7 @@ const _window = window as any;
      */
     showLoader(){
         if(!this.config.showLoader) return;
-        let spo = document.querySelector(".spinner_overlay");
-        spo.classList.remove('hide')
+        document.querySelector(".spinner_overlay").classList.remove('hide')
     }
 
     /**
@@ -378,16 +348,13 @@ const _window = window as any;
      */
     hideLoader(){
         if(!this.config.showLoader) return;
-        let spo = document.querySelector(".spinner_overlay");
-        spo.classList.add('hide')
+        document.querySelector(".spinner_overlay").classList.add('hide')
     }
 
     /**
      * handleProviderItemClick
      */
     async handleProviderItemClick(): Promise<string> {
-
-        let _this = this;
 
         return new Promise((resolve,reject)=>{
             Array.from(document.querySelectorAll(".provider_item_btn")).forEach((el)=>{
