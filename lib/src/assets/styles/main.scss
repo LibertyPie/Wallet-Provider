@@ -122,7 +122,7 @@
 
         /*
          * icons 
-         */
+         *
         .web3_wallets_icon{background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' baseProfile='tiny' overflow='visible' viewBox='0 0 512 512'%3E%3Cdefs/%3E%3Cpath fill='%2347568c' d='M256 466a15 15 0 110-30c48 0 93-19 127-53 6-6 16-6 21 0l44 44c6 5 6 15 0 21s-16 6-21 0l-34-33c-38 33-86 51-137 51zm195-195a15 15 0 01-15-15c0-48-19-93-53-127-6-6-6-16 0-21l44-44c6-6 15-6 21 0s6 16 0 21l-33 34c33 38 51 86 51 137a15 15 0 01-15 15z'/%3E%3Ccircle cx='50' cy='50' r='50' fill='%23a5e887'/%3E%3Ccircle cx='462' cy='50' r='50' fill='%2300cc76'/%3E%3Ccircle cx='50' cy='462' r='50' fill='%23a5e887'/%3E%3Ccircle cx='462' cy='462' r='50' fill='%2300cc76'/%3E%3Cpath fill='%234bb9ec' d='M256 106c-9 0-29 13-29 13l-20-5c-54 19-94 68-100 127 0 0 8 10 8 15s-8 15-8 15c6 59 46 108 101 127l19-2s19 10 29 10 28-10 28-10l20 2c55-19 95-68 101-127 0 0-11-10-11-15s11-15 11-15c-6-59-46-108-101-127l-18 3s-19-11-30-11z'/%3E%3Cpath fill='%230095ff' d='M395 256c0-5 10-15 10-15-6-59-46-108-100-127l-19 3s-19-11-30-11v300c10 0 28-10 28-10l20 2c55-19 95-68 101-127 0 0-10-10-10-15z'/%3E%3Cpath fill='%23b5dbff' d='M405 241H256v30h149a148 148 0 000-30z'/%3E%3Cpath fill='%23d5e8fe' d='M284 143c11 30 17 70 17 113s-6 83-17 113c-9 26-21 37-28 37a150 150 0 0049-8c17-35 26-89 26-142s-9-107-26-142c-16-5-32-8-49-8 7 0 19 11 28 37z'/%3E%3Cpath fill='%23edf5ff' d='M228 369c-11-30-17-70-17-113s6-83 17-113c9-26 21-37 28-37a150 150 0 00-48 8c-18 35-27 89-27 142s9 107 27 142c15 5 31 8 48 8-7 0-19-11-28-37z'/%3E%3C/svg%3E");}
 
         .torus_icon{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20fill%3D%27none%27%20viewBox%3D%270%200%2068%2072%27%3E%3Cdefs%2F%3E%3Cg%20fill%3D%27%230364FF%27%20clip-path%3D%27url(%23clip0)%27%3E%3Cpath%20d%3D%27M39.99%200H0v21.71h39.99V0z%27%2F%3E%3Cpath%20d%3D%27M39.99.03H18.28V72h21.71V.03zM56.22%2021.7c5.992%200%2010.85-4.858%2010.85-10.85S62.212%200%2056.22%200%2045.37%204.858%2045.37%2010.85%2050.228%2021.7%2056.22%2021.7z%27%2F%3E%3C%2Fg%3E%3Cdefs%3E%3CclipPath%20id%3D%27clip0%27%3E%3Cpath%20fill%3D%27%23fff%27%20d%3D%27M0%200h67.07v72H0z%27%2F%3E%3C%2FclipPath%3E%3C%2Fdefs%3E%3C%2Fsvg%3E")}
@@ -145,7 +145,7 @@
 
         /**
          * sub wallets
-         */ 
+         *
 
          .metamask_16_icon{background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAQCAMAAADH72RtAAAA2FBMVEUAAAD2hRvpehv2hRvkdhvyghvkdhvjdhvMuKntgBvkdhvidhu4Xxnkdht2PRbIoIPkdhvArZ52PRbYcRt2PRbcdyfcdxp2PRbArZ7kdht2PRbkdhvkdhuVTRd2PRbidhuiVBjArZ52PRb2hRt2PRbkdhvecRrOYhb0gxu/rJ7ufxvObBnZaxh9QRbxgBvrfBvpeRtBPDi1Yx7ddxricxrBZBmxXRifUhiLSBfRvK7ep3pmXVffklRkSzTdei26aiXXcBrWbxqZUBiOSxeKSBeGRhdOMhdAKxfp7GsDAAAAI3RSTlMAgDDfv49QEO/v7+/v39/Pz7+/r6+fn5+Pj4+AcHBwUFAgILtYeZ0AAADGSURBVBjTTZBXlgJBCEUZHZ2cgzkCVZ3bnHPc/458an94fwruoeAAUbNONzxUiIrhayGV5LWfoRC9iwzN5x3IvPg7gREw8iNmjgehnM23nOkzexsBMLnLGzJ3JTG/l29r1PTDq6nKtuMbddjTlT/Yw9ATc8+YiGNjWsz/RClMMdZ63LMWJk2UgYm6HYdby9hBTJTmBKQA5l41sGgMFVijSlRWVbuYHA/zWRAgRmfV579Ht92ejj9Q/4bpJWze+HJdN49jZLMnDIogWiD49ZYAAAAASUVORK5CYII=")}
 
@@ -160,7 +160,7 @@
          .brave_16_icon{background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAulBMVEUAAADxVCvpSCjhPCbxVSvxVSvgPCbxVivfPCbxVSvgPCboSSjxUSrjPCbxVCvhPCbvRynsPyngPCbfPCbgPCbxUyvhPCbxVSvgPCbxVivfPCb////hPCbxVSvxUyvwTyrmPSf+9PL3nYjwRyrsPyn83df7yL33w7z6v7D5uK/2lHv708r5z8n0tq7yqqDukYXshXf1iG3jSDT6w7z4rqL2q6H4p5X2n5TynpPtkYXtemvza0bkVEHyXjh9kLt/AAAAG3RSTlMA7zDv37+/n5+Pj2BQUBAQ7+/v38+vr4CAICABrmMIAAAAr0lEQVQY0y2PVQLDMAxD0zEzy8nWbuV2hTHd/1oLVH9+tmyLKdWs/fF0qNeY0bppCQWo3tqousu5ExVh+M4zop4EbR6hUkYdCZofG8HdxjMFvi0JGgWAGPABvObaEgAekACptvQ59xB7YQKfqC/BVl4B3AtwJtoxtUQC+/qwJVgw84iIXMDNS+ppMODiFwB+STTUYGQJsXduB6LZmJlsVRadzswsFVhVfbNnMjV+9gcQXBUQsXO9fwAAAABJRU5ErkJggg==")}
 
          .status_16_icon{background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAMFBMVEUAAABbbe5bbe5bbe5bbe5bbe5bbe7////W2/t6iPHM0fq3v/ittveOm/OEkvJwf/DcYthnAAAABnRSTlMAz79gIO+tFDY8AAAAbklEQVQI12NgYDBKS1NmAALHNCAQYWBgCQMxUh0YGIFU3rQ0AQaztLSc8qq0ZAa1tLTt5eVpSQxpafnlQEYakJHZ0dELZtzo6JgGZgBlvgEZakBGdVpaElD78vJjaUDtjGmZz4BmCsCtgFsKdwYAndQtXIEfsPUAAAAASUVORK5CYII=")}
-
+        */
     } //end provider Item
 
     .hide{display:none !important;}
