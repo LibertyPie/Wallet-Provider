@@ -238,7 +238,7 @@ const _window = window as any;
             let providerDescText = enabledProviderInfo.connect_text || "";
             let providerName = enabledProviderInfo.name || null;
 
-            /*
+            
             if(providerName == null){
                 switch(provider){
                     case "walletconnect": providerName = "WalletConnect"; break;
@@ -247,6 +247,7 @@ const _window = window as any;
                 }
             }
             
+            /*
             let supportedWallets = 
             {
                 "web3_wallets": ["MetaMask","Brave","Status"],
@@ -334,10 +335,10 @@ const _window = window as any;
 
             //let styleData = `${mainStyle}${modalStyle}`;
 
-             //var style = document.createElement('style');
-             //style.innerHTML = `${styleData}${loadedImgStyles}`;
+             var style = document.createElement('style');
+             style.innerHTML = MainStyle;
 
-             //document.head.appendChild(style)
+             document.head.appendChild(style)
              document.body.dataset.__wps_loaded = "1";
          }
 
