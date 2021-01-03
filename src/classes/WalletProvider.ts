@@ -7,7 +7,7 @@
 //import ErrorCodes from './ErrorCodes'; 
 import Exception from "./Exception"
 import Status from "./Status"
-import MainStyle from "../assets/styles/main.css";
+require ("../assets/styles/main.css");
 
 const _window = window as any;
  export default class WalletProvider {
@@ -247,7 +247,7 @@ const _window = window as any;
                 }
             }
             
-            /*
+            
             let supportedWallets = 
             {
                 "web3_wallets": ["MetaMask","Brave","Status"],
@@ -335,10 +335,10 @@ const _window = window as any;
 
             //let styleData = `${mainStyle}${modalStyle}`;
 
-             var style = document.createElement('style');
-             style.innerHTML = MainStyle;
+             //var style = document.createElement('style');
+             //style.innerHTML = MainStyle;
 
-             document.head.appendChild(style)
+             //document.head.appendChild(style)
              document.body.dataset.__wps_loaded = "1";
          }
 
