@@ -17,7 +17,7 @@ export default class WalletConnectProvider  extends _PlatformWallets   implement
         if(typeof providerPackage == null){
             throw new Exception("wc_package_required","WalletConnect package is required")
         }
-
+        
         let provider = new providerPackage(providerInfo.options || {});
 
         //provider is same as package

@@ -199,7 +199,7 @@ const _window = window as any;
       setTimeout(()=>{
         c.remove("is_open")
         c.remove("m__closing")
-       }, 4000); 
+       }, 810); 
 
        //add Zoomin anim
        c.add("m__closing")
@@ -419,7 +419,7 @@ const _window = window as any;
         //providerInst.onPermissionRequest(this.registeredEvents.permissionRequest || defaultFun)
         providerInst.onError(this.registeredEvents.error || defaultFun)
         providerInst.onAccountsChanged(this.registeredEvents.accountChange || defaultFun)
-        providerInst.onChainChanged(this.registeredEvents.chainChange || defaultFun)
+        providerInst.onChainChanged(this.registeredEvents.onChainChanged || defaultFun)
         providerInst.onConnectError(this.registeredEvents.connectError || defaultFun)
         providerInst.onMessage(this.registeredEvents.message || defaultFun)
 

@@ -135,8 +135,6 @@ import Utils from '../classes/Utils';
         //lets request access 
         try {
 
-            let accounts;
-
             if(typeof this._provider["enable"] == "function"){
                 this._accounts = await this._provider.enable();  
             } else {
@@ -151,8 +149,6 @@ import Utils from '../classes/Utils';
                 provider: this._provider
             }
 
-            console.log(resultObj)
-
             if(!this.isOnconnectEventTriggered ) {
                  this._onConnectCallback(resultObj)
                  this.isOnconnectEventTriggered = true;
@@ -161,6 +157,7 @@ import Utils from '../classes/Utils';
             return Status.successPromise("",resultObj)
             
         } catch (e) {
+            console.log(e)
             this._onConnectErrorCallback(e)
             return Promise.resolve(Status.error(e.message).setCode(e.code));
         }
