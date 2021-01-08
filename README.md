@@ -160,8 +160,9 @@ Example:\
         console.log(error.message,error.code)
     })  
 ```
-
-### Wallets & Integrations
-Wallet Provider  has a native support for several wallets, below is the list of supported wallets & how to embed them
+\
+## Supported Wallets & Integrations
+Wallet Provider  has a native support for several wallets, below is the list of supported wallets & how to integrate them
 
   1. [Web3 Wallets: Metamask, Dapper, TrustWallet, Brave & most extension wallets](docs/web3-wallets.md)
+  2. [Binance Chain Wallet](docs/binance-chain-wallet.md)
