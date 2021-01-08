@@ -164,4 +164,4 @@ Example:\
 ### Wallets & Integrations
 Wallet Provider  has a native support for several wallets, below is the list of supported wallets & how to embed them
 
-  * Web3 Wallets [ Metamask, Dapper, TrustWallet, Brave & most extension wallets] ("docs/web3-wallets.md")
+  * Web3 Wallets [Metamask, Dapper, TrustWallet, Brave & most extension wallets]("./docs/web3-wallets.md")
