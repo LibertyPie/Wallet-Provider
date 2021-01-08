@@ -160,7 +160,7 @@ Example:\
         console.log(error.message,error.code)
     })  
 ```
-\
+/
 ## Supported Wallets & Integrations
 Wallet Provider  has a native support for several wallets, below is the list of supported wallets & how to integrate them
 
