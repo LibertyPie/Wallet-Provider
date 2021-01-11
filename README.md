@@ -1,38 +1,44 @@
 # WalletProvider
+
 Wallet Provider is a lightweight library which provides a single api for Dapps to interact with various wallets. The main goal and purpose is to support all major blockchains & wallets.
 
-Any library meant for frontend use should be light-weight enough. 
-Wallet provider is only 6.8kB minified & gzipped.
+Any library meant for frontend use should be light-weight enough. Wallet provider is only 6.8kB minified & gzipped.
 
-![LibertyPie Wallet Provider](wallet_provider.png)
+![LibertyPie Wallet Provider](.gitbook/assets/wallet_provider.png)
 
 ## Code Repository
-https://github.com/libertypie/Wallet-Provider
-## Installation 
 
-#### via npm 
-```sh
+[https://github.com/libertypie/Wallet-Provider](https://github.com/libertypie/Wallet-Provider)
+
+## Installation
+
+### via npm
+
+```bash
 npm i --save @libertypie/wallet-provider
 ```
 
-#### via yarn 
-```sh
+### via yarn
+
+```bash
 yarn add @libertypie/wallet-provider
 ```
 
 ## Usage
-#### ES6
-```js
+
+### ES6
+
+```javascript
 import WalletProvider from "@libertypie/wallet-provider"
 ```
-#### Typescript
-```js
+
+### Typescript
+
+```javascript
 import WalletProvider from "@libertypie/wallet-provider/src/index"
 ```
 
-
-```js
-
+```javascript
     let providers = {
         "web3_wallets": {
              connect_text: "Connect with Metamask or Brave"
@@ -62,15 +68,15 @@ import WalletProvider from "@libertypie/wallet-provider/src/index"
     let provider = resultInfo.provider;
     let account = resultInfo.account;
     let chainId = resultInfo.chainId;
-
 ```
 
-#### Methods
-##### connect():
-Establish a connection between the dApp and the wallet, if providerCache was enabled on previous connection and a cache exists,
-the previously connected provider will be used, otherwise a modal will be opened for user to select a provider.
+### Methods
 
-```js 
+#### connect\(\):
+
+Establish a connection between the dApp and the wallet, if providerCache was enabled on previous connection and a cache exists, the previously connected provider will be used, otherwise a modal will be opened for user to select a provider.
+
+```javascript
     //returns a Status object.
     let connectResult = await  walletProvider.connect();
 
@@ -88,30 +94,29 @@ the previously connected provider will be used, otherwise a modal will be opened
     let chainId = resultInfo.chainId;
 ```
 
+#### showModal\(\):
 
-##### showModal():
 manually open the modal, this method returns selected provider id
-```js 
+
+```javascript
 let selectedProviderId = await walletProvider.showModal();
 ```
-##### closeModal():
-manually close the modal, returns void 
-```js 
+
+#### closeModal\(\):
+
+manually close the modal, returns void
+
+```javascript
  await walletProvider.closeModal();
 ```
 
-#### Events
-There are two ways to listen to events, 
-    1. on the provider\
-    2. from Wallet Provider object it self\
+### Events
 
-Wallet Provider events are the same as the provider's event but with support for custom provider events.\
-Example:\
- Portis custom event mapping\ 
- onActiveWalletChanged(walletAddress,()=>{}) =>  walletProvider.on("accountsChanged",()=>{})
+There are two ways to listen to events, 1. on the provider 2. from Wallet Provider object it self\
 
-```js
+Wallet Provider events are the same as the provider's event but with support for custom provider events. Example: Portis custom event mapping onActiveWalletChanged\(walletAddress,\(\)=&gt;{}\) =&gt; walletProvider.on\("accountsChanged",\(\)=&gt;{}\)
 
+```javascript
     //listen to modal open
     walletProvider.on("modalOpen",(modal)=>{
         console.log(`Modal ${modal.id} opened`)
@@ -158,13 +163,15 @@ Example:\
     walletProvider.on("error",(error)=>{
         console.log("an Error occurred")
         console.log(error.message,error.code)
-    })  
+    })
 ```
 
 ## Supported Wallets & Integrations
-Wallet Provider  has a native support for several wallets, below is the list of supported wallets & how to integrate them
 
-  1. [Web3 Wallets: Metamask, Dapper, TrustWallet, Brave & most extension wallets](docs/web3-wallets.md)
-  2. [Binance Chain Wallet](docs/binance-chain-wallet.md)
-  3. [Portis](docs/portis.md)
-  4. [WalletLink](docs/walletlink.md)
+Wallet Provider has a native support for several wallets, below is the list of supported wallets & how to integrate them
+
+1. [Web3 Wallets: Metamask, Dapper, TrustWallet, Brave & most extension wallets](docs/web3-wallets.md)
+2. [Binance Chain Wallet](docs/binance-chain-wallet.md)
+3. [Portis](docs/portis.md)
+4. [WalletLink](docs/walletlink.md)
+
