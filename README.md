@@ -102,12 +102,13 @@ manually close the modal, returns void
 
 #### Events
 There are two ways to listen to events, 
-    1. on the provider\
-    2. from Wallet Provider object it self\
+ 1. on the provider
+ 2. from Wallet Provider object it self
 
-Wallet Provider events are the same as the provider's event but with support for custom provider events.\
-Example:\
- Portis custom event mapping\ 
+Wallet Provider events are the same as the provider's event but with support for custom provider events.
+
+Example:
+ Portis custom event mapping
  onActiveWalletChanged(walletAddress,()=>{}) =>  walletProvider.on("accountsChanged",()=>{})
 
 ```js
@@ -168,3 +169,4 @@ Wallet Provider  has a native support for several wallets, below is the list of 
   2. [Binance Chain Wallet](docs/binance-chain-wallet.md)
   3. [Portis](docs/portis.md)
   4. [WalletLink](docs/walletlink.md)
+  5. [WalletConnect](docs/walletconnect.md)
