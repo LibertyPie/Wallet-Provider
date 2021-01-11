@@ -15,10 +15,9 @@ Wallet Provider automatically includes Web3 provider to the modal if it detects 
    let _walletProvider = new WalletProvider({
         debug: true, // debug mode????
         showLoader: true, //show loading window which blocks the screen until completed
+        connect_text: "Connect to Web3 Wallets",
         providers: {
-            "web3_wallets": {
-                name: "Web3 Wallets" //custom name, can be anything
-            }
+            "web3_wallets": {}
         }
     })
 

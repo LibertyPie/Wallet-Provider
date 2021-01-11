@@ -7,10 +7,9 @@ Binance chain wallet automatically injects BinanceChain object into the browser'
    let _walletProvider = new WalletProvider({
         debug: true, // debug mode????
         showLoader: true, //show loading window which blocks the screen until completed
+        connect_text: "Connect to Binance Chain Wallet",
         providers: {
-            "binance_chain_wallet": {
-                name: "Binance Chain Wallet"  //custom name, can be anything
-            }
+            "binance_chain_wallet": {}
         }
     })
 
