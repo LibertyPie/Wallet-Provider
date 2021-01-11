@@ -167,3 +167,4 @@ Wallet Provider  has a native support for several wallets, below is the list of 
   1. [Web3 Wallets: Metamask, Dapper, TrustWallet, Brave & most extension wallets](docs/web3-wallets.md)
   2. [Binance Chain Wallet](docs/binance-chain-wallet.md)
   3. [Portis](docs/portis.md)
+  4. [WalletLink](docs/walletlink.md)

@@ -18,7 +18,6 @@ To integrate Portis using LibertyPie's Wallet Provider you will need to add thei
 
     import Portis from "@portis/web3"
 
- 
    let _walletProvider = new WalletProvider({
         debug: true, // debug mode????
         showLoader: true, //show loading window which blocks the screen until completed
