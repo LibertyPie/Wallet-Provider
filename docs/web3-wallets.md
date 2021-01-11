@@ -10,12 +10,15 @@ Web3 based wallets are those that injects web3 instance into the browser window 
   
 Wallet Provider automatically includes Web3 provider to the modal if it detects it, but can be manually be enabled using:
 
+
 ```js 
    let _walletProvider = new WalletProvider({
-        debug: true,
-        showLoader: true,
+        debug: true, // debug mode????
+        showLoader: true, //show loading window which blocks the screen until completed
         providers: {
-            "web3_wallets": {}
+            "web3_wallets": {
+                name: "Web3 Wallets" //custom name, can be anything
+            }
         }
     })
 
