@@ -21,9 +21,10 @@ const _window = window as any;
         },
         modalClass: "",
         modalTitle: "Select Wallet",
+        templaeMode: 'standard',
         cacheProvider: true,
         showLoader: true,
-        debug: false
+        debug: false,
     }
 
     /**
@@ -271,17 +272,28 @@ const _window = window as any;
             } //end sub icons
             
 
-            providersMarkup  += `
-                <a href="#" data-provider="${provider}" class="m__col provider_item_btn">
-                    <div class="provider_item">
-                        <div class="icon ${provider}_icon"></div>
-                        <h1 class="title">${providerName}</h1>
-                        <div class="provider_info">
-                            ${providerDescText}
+            if(this.config.templaeMode == 'standard') {
+                providersMarkup  += `
+                    <a href="#" data-provider="${provider}" class="m__col provider_item_btn">
+                        <div class="provider_item">
+                            <div class="icon ${provider}_icon"></div>
+                            <h1 class="title">${providerName}</h1>
+                            <div class="provider_info">
+                                ${providerDescText}
+                            </div>
                         </div>
-                    </div>
-                </a>
-            `;
+                    </a>
+                `;
+            } else {
+                providersMarkup  += `
+                    <a href="#" data-provider="${provider}" class="t_compact provider_item_btn">
+                        <div class="m_row provider_item">
+                            <div class="icon ${provider}_icon"></div>
+                            <div><h1 class="title">${providerName}</h1></div>
+                        </div>
+                    </a>
+                `;
+            }
         }) //end for loop
 
         let modalMarkup = `
