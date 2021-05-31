@@ -1,19 +1,22 @@
-## WalletLink
-WalletLink serves as a bridge between  dApps and multiple wallet providers.
-To integrate WalletLink using LibertyPie's Wallet Provider, You will need their official library.
+# WalletLink
 
-#### npm
-```bash 
+WalletLink serves as a bridge between dApps and multiple wallet providers. To integrate WalletLink using LibertyPie's Wallet Provider, You will need their official library.
+
+### npm
+
+```bash
     npm install walletlink
 ```
 
-### yarn 
-```bash 
+## yarn
+
+```bash
     yarn add walletlink
 ```
 
-### Integration 
-```js
+## Integration
+
+```javascript
     import WalletLink from 'walletlink'
 
     let infuraId = "xxxxx";

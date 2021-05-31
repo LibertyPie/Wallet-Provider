@@ -1,17 +1,18 @@
-## Web3Wallets
-Web3 based wallets are those that injects web3 instance into the browser window object, previously it was window.web3 but due to ethereum standards it has now been changed to window.ethereum 
+# Web3Wallets
 
-### Supported web3 wallets 
+Web3 based wallets are those that injects web3 instance into the browser window object, previously it was window.web3 but due to ethereum standards it has now been changed to window.ethereum
+
+## Supported web3 wallets
+
 * Metamask
 * Dapper 
 * Trust Wallet Dapp Browser
 * Brave
 * etc
-  
+
 Wallet Provider automatically includes Web3 provider to the modal if it detects it, but can be manually be enabled using:
 
-
-```js 
+```javascript
    let _walletProvider = new WalletProvider({
         debug: true, // debug mode????
         showLoader: true, //show loading window which blocks the screen until completed
@@ -23,3 +24,4 @@ Wallet Provider automatically includes Web3 provider to the modal if it detects 
 
    let connectStatus = await _walletProvider.connect();
 ```
+
